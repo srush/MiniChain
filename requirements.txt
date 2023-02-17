@@ -1,0 +1,5 @@
+google-search-results
+openai
+jinja2
+parsita==1.7.1
+trio

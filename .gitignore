@@ -1,3 +1,9 @@
+# User Defined
+.vscode
+
+# Temporary files
+*.swp
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -8,6 +14,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.archives/
 build/
 develop-eggs/
 dist/

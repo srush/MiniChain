@@ -1,0 +1,310 @@
+site_name: minichain
+site_url: https://srush.github.io/minichain
+site_description: Mini-Chain
+site_author: Sasha Rush
+
+### Repository
+repo_url: https://github.com/srush/chainchomp
+edit_uri: '' # comment this out to disable allowing editing of the docs from the website.
+remote_branch: gh-pages
+remote_name: origin
+
+### Copyright
+copyright: |
+  Maintained by <a href="https://github.com/srush">Alexander Rush</a>.
+
+### Preview Controls
+use_directory_urls: true
+strict: false
+dev_addr: localhost:8000
+
+### Configuration
+docs_dir: docs
+# watch a list of directories for changes
+# and automatically regenerate the docs
+watch:
+  - minichain
+
+### Theme
+theme:
+  name: material
+  include_sidebar: true
+  custom_dir: docs/overrides
+  #custom_dir: overrides
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: amber
+    #   toggle:
+    #     # icon: material/lightbulb-outline
+    #     icon: material/toggle-switch-off-outline
+    #     name: Switch to dark mode
+    # - media: "(prefers-color-scheme: dark)"
+    #   scheme: slate
+    #   primary: white
+    #   accent: amber
+    #   toggle:
+    #     # icon: material/lightbulb
+    #     icon: material/toggle-switch
+    #     name: Switch to light mode
+  features:
+    - content.code.annotate
+    - content.tabs.link
+    # - header.autohide
+    # - navigation.expand
+    - navigation.indexes # @regular
+    - navigation.instant # @regular | enables "instant-loading"; good for a very large docs repo.
+    - navigation.sections # @regular | extending top level sections.
+    - navigation.tabs # @regular | enables showing toplevel sections as tabs (horizontal).
+    - navigation.tabs.sticky # @regular | keeps the tabs visible even when you have scrolled down.
+    - navigation.top # @regular | adds a "back-to-top" is shown after the user scrolls down and then starts to come back up again.
+    - navigation.tracking # @insiders
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.integrate: false # @regular | integrates the nav (on-left) with toc (on-right) and places the integrated nav+toc on-left.
+  icon:
+    # repo: fontawesome/brands/git-square
+    repo: fontawesome/brands/git-alt
+    # repo: fontawesome/brands/github
+    # repo: fontawesome/brands/github-alt
+    # repo: fontawesome/brands/github-square
+  logo: logo.png # img/icon-white.svg
+  # favicon: logo.png # img/favicon.png
+  font:
+    text: Roboto
+    code: Roboto Mono # Source Code Pro, JetBrains Mono, Roboto Mono
+  language: en
+
+### Plugins
+plugins:
+  - exclude:
+      glob:
+        - '*/storage/*'
+  - search:
+      indexing: 'full' # 'full' (default), 'sections', 'titles'
+  - autorefs
+  - git-revision-date
+  # macros must be placed after plugin: git-revision-date
+  - macros:
+      include_dir: docs/assets/snippets # snippets
+      # j2_block_start_string: '{{%'
+      # j2_block_end_string: '%}}'
+      # j2_variable_start_string: '{{'
+      # j2_variable_end_string: '}}'
+  - markdownextradata:
+      data: data
+  - minify:
+      minify_html: true
+  # - social # @insiders
+  - mkdocs-jupyter:
+      include_source: true
+      ignore_h1_titles: true
+      execute: true
+  - tooltips
+  - mkdocstrings
+
+### Extensions
+markdown_extensions:
+  # - abbr
+  # - admonition
+  # - attr_list
+  # - codehilite
+  # - def_list
+  # - extra
+  # - footnotes
+  # - meta
+  # - md_in_html
+  # - smarty
+  # - tables
+  # - toc
+  ##! Controls: markdown.extensions
+  - markdown.extensions.abbr # same as: - abbr
+  - markdown.extensions.admonition # same as: - admonition
+  - markdown.extensions.attr_list # same as: - attr_list
+  - markdown.extensions.codehilite: # same as: - codehilite
+      guess_lang: false
+  - markdown.extensions.def_list # same as: - def_list
+  - markdown.extensions.extra # same as: - extra
+  - markdown.extensions.footnotes # same as: - footnotes
+  - markdown.extensions.meta: # same as: - meta
+  - markdown.extensions.md_in_html # same as: - md_in_html
+  - markdown.extensions.smarty: # same as: - smarty
+      smart_quotes: false
+  - markdown.extensions.tables # same as: - tables
+  - markdown.extensions.toc: # same as: - toc
+      slugify: !!python/name:pymdownx.slugs.uslugify
+      permalink: true
+      toc_depth: 6 # default: 6
+      #separator: "-"
+
+  - markdown_include.include:
+      base_path: docs
+
+  ##! Controls: mdx
+  - mdx_include:
+      base_path: docs
+  - mdx_truly_sane_lists:
+      nested_indent: 2
+      truly_sane: true
+
+  ##! Controls: pymdownx
+  - pymdownx.arithmatex:
+      generic: true
+  # - pymdownx.b64:
+  #     base_path: '.'
+  - pymdownx.betterem:
+      smart_enable: all # default: 'underscore' ; options: 'underscore', 'all', 'asterisk', or 'none'
+  - pymdownx.caret: # "super^script^" will render as superscript text: super<sup>script</sup>.
+      smart_insert: true # default: true
+      insert: true # default: true
+      superscript: true # default: true
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.escapeall:
+      hardbreak: false
+      nbsp: false
+  # Uncomment these 2 lines during development to more easily add highlights
+  - pymdownx.highlight:
+      use_pygments: true # this uses pygments
+      linenums: false # Set "linenums" to true for enabling
+                      #     code-block line-numbering
+                      #     globally.
+                      # None: only enable line-numbering on a per code-block basis.
+                      # False: disable line-numbering globally.
+      auto_title: false
+      auto_title_map: {
+          "Python Console Session": "Python", # lang: pycon
+        }
+      linenums_style: pymdownx-inline # table or pymdownx-inline
+  - pymdownx.inlinehilite:
+      custom_inline:
+        - name: math
+          class: arithmatex
+          format: !!python/name:pymdownx.arithmatex.inline_mathjax_format
+  - pymdownx.keys:
+      separator: "\uff0b"
+  - pymdownx.magiclink:
+      repo_url_shortener: true
+      repo_url_shorthand: true #
+      social_url_shorthand: true
+      social_url_shortener: true
+      user: !ENV REPO_OWNER # sugatoray, danoneata (github userid)
+      repo: chalk #
+      normalize_issue_symbols: true
+  - pymdownx.mark:
+      smart_mark: true
+  - pymdownx.pathconverter:
+      base_path: 'chalk' # default: ''
+      relative_path: '' # default ''
+      absolute: true # default: false
+      tags: 'a script img link object embed'
+  - pymdownx.progressbar:
+      level_class: true
+      add_classes: ''
+        #'progress-0plus progress-10plus progress-20plus progress-30plus progress-40plus progress-50plus progress-60plus progress-70plus progress-80plus progress-90plus progress-100plus'
+      progress_increment: 10
+  - pymdownx.saneheaders
+  - pymdownx.superfences:
+      # highlight_code: true # This was removed from pymdownx v9.0
+      preserve_tabs: false
+      disable_indented_code_blocks: false # default: false | set this to "true"
+                                          # if you only use fenced code-blocks.
+      custom_fences:
+      - name: mermaid
+        class: mermaid
+        format: !!python/name:pymdownx.superfences.fence_code_format ''
+      - name: math
+        class: arithmatex
+        format: !!python/name:pymdownx.arithmatex.fence_mathjax_format
+      # - name: md-render
+      #   class: md-render
+      #   format: !!python/name:tools.pymdownx_md_render.md_sub_render
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      base_path:
+        - '.'
+        - './docs_src'
+        - './LICENSE'
+        - './README.md'
+        - './doc' # [TODO: move the contents of this folder to the docs folder]
+      encoding: 'utf-8' # Encoding to use when reading in the snippets.
+      check_paths: true # Make the build fail if a snippet can't be found.
+  - pymdownx.striphtml
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde # ~~text~~ will render as strikethrough text. "sub~script" will render as subscript text: sub<sub>script</sub>.
+
+
+### Customization
+# extra:
+  # version:
+  #   default: latest
+  #   provider: mike
+  # disqus: !ENV REPO_OWNER
+  #alternate:
+  #- name: en - English
+  #  link: /
+  #  lang: en
+
+
+
+### Extra CSS
+extra_css:
+  ## for: termynal (terminal animation)
+  - assets/css-js/termynal/css/termynal.css
+  - assets/css-js/termynal/css/custom.css
+  ## for: pymdownx.progressbar
+  - assets/css-js/general/css/progressbar.css
+  # - assets/css-js/pymdownx-extras/css/extra.css # (for striped progress bar)
+  ## for: mkdocs-tooltips
+  - assets/css-js/mkdocs-tooltips/css/hint.min.css
+  - assets/css-js/mkdocs-tooltips/css/custom.css
+  ## for: mkdocs-material using highlight.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css
+  ## for: fastapi like side-theme
+  - assets/css-js/fastapi/custom.css
+
+
+### Extra JS
+extra_javascript:
+  ## for: pymdownx.arithmatex
+  - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML
+  ## for: markdown.extensions.tables
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js
+  - assets/css-js/general/js/tables.js
+  ## for: termynal (terminal animation)
+  - assets/css-js/termynal/js/termynal.js
+  - assets/css-js/termynal/js/custom.js
+  # Set the environment variable "FONTAWESOME_KIT" with the value of the kit.
+  - !ENV FONTAWESOME_KIT
+  ## for: lottiefiles
+  - https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js
+  ## for: mkdocs-material using highlight.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js
+  - assets/css-js/general/js/highlight-config.js
+  ## for: mkdocs-markmap
+  - https://unpkg.com/d3@6.7.0/dist/d3.min.js
+  - https://unpkg.com/markmap-lib@0.11.5/dist/browser/index.min.js
+  - https://unpkg.com/markmap-view@0.2.6/dist/index.min.j
+  ## Others
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  # - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  ## for: fastapi like side-theme
+  - assets/css-js/fastapi/custom.js
+  - assets/css-js/fastapi/chat.js
+
+### Pages: Navigation
+
+## @@ Begin NAVIGATION
+nav:
+  - Home: index.md
+
+## @@ End NAVIGATION
