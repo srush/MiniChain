@@ -1,5 +1,6 @@
+eliot
 google-search-results
-openai
 jinja2
+openai
 parsita==1.7.1
 trio
