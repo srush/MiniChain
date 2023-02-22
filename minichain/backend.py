@@ -97,7 +97,7 @@ class OpenAI(Backend):
         import openai
 
         ans = openai.Completion.create(
-            model="text-davinci-002",
+            model="text-davinci-003",
             max_tokens=256,
             # stop=stop,
             prompt=question,

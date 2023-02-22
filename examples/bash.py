@@ -1,4 +1,4 @@
-from parsita import TextParsers, lit, reg, repsep
+from parsita import TextParsers, lit, reg, rep
 from minichain import Backend, JinjaPrompt, SimplePrompt, start_chain
 from typing import List
 
@@ -22,7 +22,7 @@ That is the format. Begin!
 Question: {{question}}"""
 
     class BashParser(TextParsers):  # type: ignore
-        result = (lit("```bash\n") >> repsep(reg(r'.*') > str, '\n') << lit("```"))
+        result = (lit("```bash\n") >> rep(reg(r'[^\n]*\n') > str) << lit("```"))
         
     @classmethod
     def parse(cls, inp: str) -> List[str]:
@@ -32,9 +32,7 @@ Question: {{question}}"""
         
 def bash(inp: str, openai: Backend, bash: Backend) -> str:
     result = Bash.run(openai, dict(question=inp), name="ask")
-    for cmd in result.val:
-        result = SimplePrompt.run(bash, cmd)
-        print(result.echo)
+    result = SimplePrompt.run(bash, ";".join(result.val).replace("\n", ""))
     return result.val
 
     
@@ -47,9 +45,9 @@ ls
 ```
 """])
 
-        openai = backend.OpenAI("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")
+        openai = backend.OpenAI("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")
         result = bash(
-            "\"list the files in the directory\"\n\nI need to take the following actions: ",
+            "\"go up one directory and list the files in the directory\"",
             openai,
             backend.BashProcess()
 
