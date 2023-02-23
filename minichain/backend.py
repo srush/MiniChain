@@ -1,6 +1,7 @@
-from types import TracebackType
-from typing import List, Sequence, Union
 import subprocess
+from types import TracebackType
+from typing import List, Sequence
+
 from eliot import start_action, to_file
 
 
@@ -55,10 +56,9 @@ class Google(Backend):
         return str(toret)
 
 
-
-class BashProcess:
+class BashProcess(Backend):
     """Executes bash commands and returns the output."""
-    
+
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
         """Initialize with stripping newlines."""
         self.strip_newlines = strip_newlines
@@ -66,9 +66,9 @@ class BashProcess:
 
     def run(self, commands: str, stop: Sequence[str]) -> str:
         """Run commands and return final output."""
-        if isinstance(commands, str):
-            commands = [commands]
-        commands = ";".join(commands)
+        # if isinstance(commands, str):
+        #     commands = [commands]
+        # commands = ";".join(commands)
         try:
             output = subprocess.run(
                 commands,
@@ -79,13 +79,12 @@ class BashProcess:
             ).stdout.decode()
         except subprocess.CalledProcessError as error:
             if self.return_err_output:
-                return error.stdout.decode()
+                return str(error.stdout.decode())
             return str(error)
         if self.strip_newlines:
             output = output.strip()
         return output
 
-    
 
 class OpenAI(Backend):
     def __init__(self, api_key: str):

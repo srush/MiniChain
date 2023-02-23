@@ -1,6 +1,8 @@
-from minichain import SimplePrompt, start_chain
 import trio
 from eliot import start_action
+
+from minichain import SimplePrompt, start_chain
+
 
 async def promptee(mock):
     out = mock(SimplePrompt, input="b", name=f"F1")
@@ -9,6 +11,5 @@ async def promptee(mock):
         nursery.start_soon(mock.ask, SimplePrompt, dict(input="a", name=f"F2"))
 
 
-
 with start_chain("parallel") as backend:
-    trio.run(promptee, backend.Mock(["a", "b",  "b", "d"]))
+    trio.run(promptee, backend.Mock(["a", "b", "b", "d"]))
