@@ -43,7 +43,6 @@ Code:
 
 ## Tutorial
 
-## Prompts
 
 Mini-chain is based on Prompts. 
 
