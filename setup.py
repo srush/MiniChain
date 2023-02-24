@@ -19,6 +19,7 @@ setup(
     long_description=README,
     long_description_content_type="text/markdown",
     include_package_data=True,
+    package_data={'':['*.tpl']},
     author="Sasha Rush",
     author_email="srush.research@gmail.com",
     url="https://github.com/srush/minichain",
