@@ -39,8 +39,8 @@ class JinjaPrompt(Prompt[Mapping[str, Any], Output]):
                 n[k] = v
         return HTML(self.prompt(n).prompt.replace("\n", "<br>"))
 
-    # def parse(self, result: Output, inp: Mapping[str, Any]) -> str:
-    #     return str(result)
+    def parse(self, result: str, inp: Mapping[str, Any]) -> Output:
+        return str(result)  # type: ignore
 
     def prompt(self, kwargs: Mapping[str, Any]) -> Request:
         if self.template_file:

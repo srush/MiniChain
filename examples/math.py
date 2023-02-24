@@ -1,11 +1,15 @@
+# Answer a math problem with code.
+# Adapted from Dust [maths-generate-code](https://dust.tt/spolu/a/d12ac33169)
+
 from typing import List
-from minichain import Backend, JinjaPrompt, Prompt, start_chain, SimplePrompt
+from minichain import Backend, JinjaPrompt, Prompt, start_chain, SimplePrompt, show_log
 
 
-# Prompt that asks LLM to produce a bash command.
+# Prompt that asks LLM for code from math.
 
 class MathPrompt(JinjaPrompt[str]):
     template_file = "math.pmpt.tpl"
+MathPrompt().show({"question": "What is 10 + 12?"}, "10 + 12")
 
 
 with start_chain("math") as backend:
@@ -15,3 +19,4 @@ with start_chain("math") as backend:
     print(result)
 
     
+show_log("math.log")

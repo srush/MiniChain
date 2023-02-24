@@ -1,11 +1,6 @@
-examples/bash.ipynb: examples/bash.py
-	jupytext --to ipynb --execute examples/bash.py 
+INPUTS = $(wildcard *.py) $(wildcard */*.py)
 
-examples/bash.html: examples/bash.ipynb
-	jupyter nbconvert --to html examples/bash.ipynb
+OUTPUTS = $(patsubst %.py,%.ipynb,$(INPUTS))
 
-examples/selfask.ipynb: examples/selfask.py
-	jupytext --to ipynb --execute examples/selfask.py 
-
-examples/selfask.html: examples/selfask.ipynb
-	jupyter nbconvert --to html examples/selfask.ipynb
+examples/%.ipynb : examples/%.py
+	jupytext --execute --to notebook $<

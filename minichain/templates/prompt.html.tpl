@@ -16,7 +16,7 @@
   <dt> Full Prompt: </dt>
   <dd>
     <details>
-      <summary></summary>
+      <summary>Prompt</summary>
       <p>{{prompt | safe}}</p>
     </details>
   </dd>

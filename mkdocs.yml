@@ -287,9 +287,11 @@ nav:
   - Home: index.md
   - Examples: 
     - examples/bash.ipynb
+    - examples/math.ipynb
+    - examples/pal.ipynb
     - examples/selfask.ipynb
     - examples/summary.ipynb
-    - examples/pal.ipynb
-    - examples/math.ipynb
+
+
 
 ## @@ End NAVIGATION

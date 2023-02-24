@@ -41,7 +41,7 @@ Code:
 > python math.py
 ```
 
-# Tutorial
+## Tutorial
 
 Mini-Chain defines one class called `Prompt[Input, Output]`. 
 It wraps a call to a language model in a type-safe way. `Input` is the input 
@@ -107,7 +107,7 @@ system.
 eliot-tree -l 0 mychain.log
 ```
 
-## Advanced: Asynchronous Calls
+### Advanced: Asynchronous Calls
 
 One benefit of wrapping prompts in this way is that it allows for
 asynchronous execution. We use the
@@ -138,7 +138,7 @@ with start_chain("summary") as backend:
 
 
 
-## Advanced: Parsing
+### Advanced: Parsing
 
 Another benefit of prompting is that it isolates text parsing from execution.
 For example, it allows you to integrate declarative parsers of the output of the 

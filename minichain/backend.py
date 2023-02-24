@@ -3,6 +3,8 @@ import subprocess
 from dataclasses import dataclass
 from types import TracebackType
 from typing import List, Optional, Sequence
+import json, sys
+from eliottree import tasks_from_iterable, render_tasks
 
 from eliot import start_action, to_file
 
@@ -117,13 +119,13 @@ x = "text-davinci-003"
 
 class OpenAI(Backend):
     def __init__(self, model: str = x) -> None:
-        import async_openai
+
         import openai
 
-        api_key = os.environ.get("OPENAI_KEY")
-        assert api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
-        async_openai.OpenAI.configure(api_key=api_key)
-        openai.api_key = api_key
+        self.api_key = os.environ.get("OPENAI_KEY")
+        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        import async_openai
+        openai.api_key = self.api_key
 
         self.options = dict(
             model=model,
@@ -143,7 +145,8 @@ class OpenAI(Backend):
 
     async def arun(self, request: Request) -> str:
         import async_openai
-
+        async_openai.OpenAI.configure(api_key=self.api_key,
+                                      debug_enabled = False,)
         ans = await async_openai.OpenAI.Completions.async_create(
             **self.options,
             stop=request.stop,
@@ -151,7 +154,8 @@ class OpenAI(Backend):
         )
         return str(ans.choices[0].text)
 
-
+    
+    
 class _MiniChain:
     def __init__(self, name: str):
         to_file(open(f"{name}.log", "w"))
@@ -169,6 +173,7 @@ class _MiniChain:
     ) -> None:
         self.action.finish()
 
+        
     Mock = Mock
     Google = Google
     OpenAI = OpenAI
@@ -178,3 +183,8 @@ class _MiniChain:
 
 def start_chain(name: str) -> _MiniChain:
     return _MiniChain(name)
+
+def show_log(s, o=sys.stderr.write):
+    render_tasks(o,
+                 tasks_from_iterable([json.loads(l) for l in open(s)]),
+                 colorize=True, human_readable=True)
