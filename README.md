@@ -1,10 +1,10 @@
 # Mini-Chain
 
-<img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/>
-
 A tiny library for **large** language models.
 
-It's annoyingly simple. Here's some code.
+<img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/>
+
+Code:
 
 ```python
 class MathPrompt(JinjaPrompt[str]):
@@ -17,7 +17,7 @@ with start_chain("math") as backend:
     print(result)
 ```
 
-Here's the template.
+Template:
 
 ```
 ...
@@ -31,16 +31,14 @@ Question:
 Code:
 ```
 
-Here's how you run. 
+Execution:
 
 ```bash
-export OPENAI_KEY="sk-***"
-python math.py
+> export OPENAI_KEY="sk-***"
+> python math.py
 ```
 
 # Tutorial
-
-## Prompts
 
 Mini-Chain defines one class called `Prompt[Input, Output]`. 
 It wraps a call to a language model in a type-safe way. `Input` is the input 
