@@ -14,14 +14,14 @@ setup(
         include=["minichain", "minichain*"],
         exclude=["examples", "docs", "test*"],
     ),
-    description="A declarative drawing API",
+    description="A tiny library for large language models",
     install_requires=[],
     extras_require={},
     long_description=README,
     long_description_content_type="text/markdown",
-    author="Dan Oneață",
-    author_email="dan.oneata@gmail.com",
-    url="https://github.com/chalk-diagrams/chalk",
+    author="Sasha Rush",
+    author_email="srush.research@gmail.com",
+    url="https://github.com/srush/minichain",
     project_urls={
         "Documentation": "https://srush.github.io/minichain",
         "Source Code": "https://github.com/srush/minichain",
@@ -39,4 +39,14 @@ setup(
         f"License :: OSI Approved :: {LICENSE} License",
         "Topic :: Scientific/Engineering",
     ],
+    install_requires=[
+        "async-openai",
+        "eliot",
+        "google-search-results",
+        "jinja2",
+        "jinja2-highlight",
+        "openai",
+        "parsita==1.7.1",
+        "trio"
+    ]
 )
