@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+{{ super() }}
+
+<style>
+// Do whatever changes you need here
+
+.jp-RenderedHTMLCommon p {
+    color: red;
+}
+
+.jupyter-wrapper .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
+   display: none;
+}
+.jupyter-wrapper .jp-CodeCell .jp-Cell-outputWrapper .jp-OutputPrompt {
+   display: none;
+}
+
+.jupyter-wrapper .celltag_hide {
+   display: none;
+}
+
+.jupyter-wrapper .celltag_hide_inp .jp-InputArea {
+   display: none;
+}
+
+.jupyter-wrapper .jp-OutputArea-output dt {
+    width: 100%;
+}
+.jupyter-wrapper .jp-OutputArea-output dd {
+    width: 100%;
+    margin-left: 20px;
+}
+
+.jupyter-wrapper .jp-OutputArea-output.jp-RenderedSVG {
+    text-align: center;
+    padding-top: 10px;
+}
+
+</style>
+{% endblock content %}
+
+  

@@ -1,0 +1,6 @@
+from minichain import Prompt, OpenAI, Google
+import trio
+
+async def promptee():
+    async with trio.open_nursery() as nursery:
+        pass
