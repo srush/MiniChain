@@ -6,6 +6,8 @@ A tiny library for **large** language models.
 
 <center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
 
+Write apps that can easily and efficiently call multiple language models.
+
 * Code:
 
 ```python
@@ -19,7 +21,7 @@ with start_chain("math") as backend:
     print(result)
 ```
 
-* Template:
+* Template (math.pmpt.tpl):
 
 ```
 ...
@@ -41,8 +43,15 @@ Code:
 > python math.py
 ```
 
-## Tutorial
+## Examples
 
+This library allows us to implement several popular approaches in a few lines of code. 
+
+* [PAL](https://srush.github.io/MiniChain/examples/pal/) - [(Gao et al 2023)](https://arxiv.org/pdf/2211.10435.pdf)
+* [Self-Ask](https://srush.github.io/MiniChain/examples/selfask/) - [(Press et al 2022)](https://ofir.io/self-ask.pdf)
+* [Chain-of-Thought](https://srush.github.io/MiniChain/examples/math/) - [(Wei et al 2022)](https://arxiv.org/abs/2201.11903)
+
+## Tutorial
 
 Mini-chain is based on Prompts. 
 
