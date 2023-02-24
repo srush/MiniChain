@@ -2,9 +2,11 @@
 
 A tiny library for **large** language models.
 
-<img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/>
+[Documentation and Examples](https://srush.github.io/minichain)
 
-Code:
+<center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
+
+* Code:
 
 ```python
 class MathPrompt(JinjaPrompt[str]):
@@ -17,7 +19,7 @@ with start_chain("math") as backend:
     print(result)
 ```
 
-Template:
+* Template:
 
 ```
 ...
@@ -31,7 +33,7 @@ Question:
 Code:
 ```
 
-Execution:
+* Execution:
 
 ```bash
 > export OPENAI_KEY="sk-***"
