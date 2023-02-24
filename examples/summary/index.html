@@ -12,14 +12,14 @@
         <meta name="author" content="Sasha Rush">
       
       
-        <link rel="canonical" href="https://srush.github.io/minichain/examples/bash/">
+        <link rel="canonical" href="https://srush.github.io/minichain/examples/summary/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.1.3">
     
     
       
-        <title>Bash - Mini-Chain</title>
+        <title>Summary - Mini-Chain</title>
       
     
     
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bash
+              Summary
             
           </span>
         </div>
@@ -214,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="./" class="md-tabs__link md-tabs__link--active">
+      <a href="../bash/" class="md-tabs__link md-tabs__link--active">
         Examples
       </a>
     </li>
@@ -331,19 +331,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../bash/" class="md-nav__link">
         Bash
       </a>
-      
     </li>
   
 
@@ -395,11 +387,19 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../summary/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Summary
       </a>
+      
     </li>
   
 
@@ -425,7 +425,7 @@
 
                 
 
-  <h1>Bash</h1>
+  <h1>Summary</h1>
 
 <script>
 (function (global, factory) {
@@ -1463,8 +1463,9 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Generate and run a bash command. 
-Adapted from LangChain <a href="https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html">BashChain</a></p>
+<p>Summarize a long document by chunking and summarizing parts.
+Uses aynchronous calls to the API.
+Adapted from LangChain <a href="https://langchain.readthedocs.io/en/stable/_modules/langchain/chains/mapreduce.html">Map-Reduce summary</a>.</p>
 
 </div>
 </div>
@@ -1490,11 +1491,11 @@ Adapted from LangChain <a href="https://langchain.readthedocs.io/en/latest/modul
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">JinjaPrompt</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">start_chain</span><span class="p">,</span> <span class="n">show_log</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">JinjaPrompt</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">start_chain</span><span class="p">,</span> <span class="n">show_log</span>
+<span class="kn">import</span> <span class="nn">trio</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from typing import List
-from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
+<div id="cell-1" class="clipboard-copy-txt">from minichain import Backend, JinjaPrompt, Prompt, start_chain, show_log
+import trio</div>
     
         </div>
     </div>
@@ -1515,8 +1516,8 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1536,21 +1537,15 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">CLIPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
-    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;bash.pmpt.tpl&quot;</span>
-
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">JinjaPrompt</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;```bash&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SummaryPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;summary.pmpt.tpl&quot;</span>
+<span class="n">SummaryPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">({</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;One way to fight inflation is to drive down wages and make Americans poorer.&quot;</span><span class="p">},</span>
+                     <span class="s2">&quot;Make Americans poorer&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">class CLIPrompt(JinjaPrompt[List[str]]):
-    template_file = "bash.pmpt.tpl"
-
-    def parse(self, out: str, inp: JinjaPrompt.IN) -> List[str]:
-        out = out.strip()
-        assert out.startswith("```bash")
-        return out.split("\n")[1:-1]</div>
+<div id="cell-2" class="clipboard-copy-txt">class SummaryPrompt(JinjaPrompt[str]):
+    template_file = "summary.pmpt.tpl"
+SummaryPrompt().show({"text": "One way to fight inflation is to drive down wages and make Americans poorer."},
+                     "Make Americans poorer")</div>
     
         </div>
     </div>
@@ -1558,9 +1553,68 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
 </div>
 </div>
 
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
+ <main class="container">
+
+<h3>SummaryPrompt</h3>
+
+<dl>
+  <dt>Input:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;One way to fight inflation is to drive down wages and make Americans poorer.&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+  </dd>
+
+  <dt> Full Prompt: </dt>
+  <dd>
+    <details>
+      <summary>Prompt</summary>
+      <p>Write a concise summary of the following:<br><br><br>"<div style='color:red'>One way to fight inflation is to drive down wages and make Americans poorer.</div>"<br><br><br>CONCISE SUMMARY:</p>
+    </details>
+  </dd>
+  
+  <dt> Response: </dt>
+  <dd>     
+    Make Americans poorer
+  </dd>
+
+  <dt>Value:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="n">Make</span> <span class="n">Americans</span> <span class="n">poorer</span>
+</pre></div>
+
+  </dd>
+</main>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1580,15 +1634,29 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">CLIPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;list the files in the directory&quot;</span><span class="p">},</span>
-    <span class="sd">&quot;&quot;&quot;```bash\nls\n```&quot;&quot;&quot;</span>
-<span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">chunk</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="s2">&quot;Split a documents into 4800 character overlapping chunks&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="mi">4000</span>
+    <span class="n">O</span> <span class="o">=</span> <span class="mi">800</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">*</span> <span class="n">W</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">W</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">W</span> <span class="o">+</span> <span class="n">O</span><span class="p">]})</span>
+    <span class="k">return</span> <span class="n">chunks</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">CLIPrompt().show(
-    {"question": "list the files in the directory"},
-    """```bash\nls\n```"""
-)</div>
+<div id="cell-3" class="clipboard-copy-txt">def chunk(f):
+    "Split a documents into 4800 character overlapping chunks"
+    text = open(f).read().replace("\n\n", "\n")
+    chunks = []
+    W = 4000
+    O = 800
+    for i in range(4):
+        if i* W > len(text):
+            break
+        chunks.append({"text": text[i * W: (i+1) * W + O]})
+    return chunks</div>
     
         </div>
     </div>
@@ -1596,80 +1664,9 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
 </div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-
-<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
- <main class="container">
-
-<h3>CLIPrompt</h3>
-
-<dl>
-  <dt>Input:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;list the files in the directory&#39;</span><span class="p">}</span>
-</pre></div>
-
-
-  </dd>
-
-  <dt> Full Prompt: </dt>
-  <dd>
-    <details>
-      <summary>Prompt</summary>
-      <p>If someone asks you to perform a task, your job is to come up with a series of bash commands that will perform the task. There is no need to put "#!/bin/bash" in your answer. Make sure to reason step by step, using this format:<br><br>Question: "copy the files in the directory named 'target' into a new directory at the same level as target called 'myNewDirectory'"<br><br>I need to take the following actions:<br>- List all files in the directory<br>- Create a new directory<br>- Copy the files from the first directory into the second directory<br>```bash<br>ls<br>mkdir myNewDirectory<br>cp -r target/* myNewDirectory<br>```<br><br>That is the format. Begin!<br><br>Question: <div style='color:red'>list the files in the directory</div></p>
-    </details>
-  </dd>
-  
-  <dt> Response: </dt>
-  <dd>     
-    ```bash<br>ls<br>```
-  </dd>
-
-  <dt>Value:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">]</span>
-</pre></div>
-
-  </dd>
-</main>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Prompt that runs the bash command.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1689,24 +1686,55 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">BashPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]):</span>
-    <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">SummaryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
+    <span class="n">list_prompt</span> <span class="o">=</span> <span class="n">prompt</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
+    
+    <span class="c1"># Map - Summarize each chunk in parallel</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">list_prompt</span><span class="o">.</span><span class="n">arun</span><span class="p">,</span> <span class="n">chunk</span><span class="p">(</span><span class="s2">&quot;../state_of_the_union.txt&quot;</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">out</span>
+    <span class="c1"># Reduce - Summarize the summarized chunks</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)}))</span>
 </pre></div>
-<div id="cell-4" class="clipboard-copy-txt">class BashPrompt(Prompt[List[str], str]):
-    def prompt(self, inp: List[str]) -> str:
-        return ";".join(inp).replace("\n", "")
+<div id="cell-4" class="clipboard-copy-txt">with start_chain("summary") as backend:
+    prompt = SummaryPrompt(backend.OpenAI())
+    list_prompt = prompt.map()
+    
+    # Map - Summarize each chunk in parallel
+    out = trio.run(list_prompt.arun, chunk("../state_of_the_union.txt"))
 
-    def parse(self, out: str, inp: List[str]) -> str:
-        return out</div>
+    # Reduce - Summarize the summarized chunks
+    print(prompt({"text": "\n".join(out)}))</div>
     
         </div>
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre><span class="ansi-bold">INFO    </span> <span class="ansi-green-fg">2023-02-24 13:23:21.275</span>: <span class="ansi-cyan-fg">async_openai.client</span>:<span class="ansi-cyan-fg">__init__</span>: <span class="ansi-bold">OpenAI Client initialized: https://api.openai.com/v1</span>
+<span class="ansi-bold">INFO    </span> <span class="ansi-green-fg">2023-02-24 13:23:21.275</span>: <span class="ansi-cyan-fg">async_openai.client</span>:<span class="ansi-cyan-fg">__init__</span>: <span class="ansi-bold">OpenAI Client initialized: https://api.openai.com/v1</span>
+ In response to Russia&#39;s aggression in Ukraine, President Biden has taken action to provide military, economic, and humanitarian assistance to Ukraine, impose economic sanctions on Russia, and close off American airspace to Russian flights. He has also passed the American Rescue Plan to provide economic relief to Americans and the Bipartisan Innovation Act to level the playing field with China and other competitors. This bill will create 10,000 new jobs and increase Intel&#39;s investment to $100 billion. President Biden is also fighting inflation by capping the cost of insulin at $35 a month and allowing Medicare to negotiate lower prices for prescription drugs.
+</pre>
+</div>
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -1731,170 +1759,9 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">BashPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">([</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="s2">&quot;cat file.txt&quot;</span><span class="p">],</span> <span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;summary.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt">BashPrompt().show(["ls", "cat file.txt"], "hello")</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-
-<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
- <main class="container">
-
-<h3>BashPrompt</h3>
-
-<dl>
-  <dt>Input:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">,</span> <span class="s1">&#39;cat file.txt&#39;</span><span class="p">]</span>
-</pre></div>
-
-
-  </dd>
-
-  <dt> Full Prompt: </dt>
-  <dd>
-    <details>
-      <summary>Prompt</summary>
-      <p>ls;cat file.txt</p>
-    </details>
-  </dd>
-  
-  <dt> Response: </dt>
-  <dd>     
-    hello
-  </dd>
-
-  <dt>Value:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="n">hello</span>
-</pre></div>
-
-  </dd>
-</main>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-6">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;bash&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="n">question</span> <span class="o">=</span> <span class="s1">&#39;&quot;go up one directory, and then into the minichain directory, and list the files in the directory&quot;&#39;</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="n">CLIPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">BashPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">BashProcess</span><span class="p">()))</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</pre></div>
-<div id="cell-6" class="clipboard-copy-txt">with start_chain("bash") as backend:
-    question = '"go up one directory, and then into the minichain directory, and list the files in the directory"'
-    prompt = CLIPrompt(backend.OpenAI()).chain(BashPrompt(backend.BashProcess()))
-    result = prompt({"question": question})
-    print(result)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>backend.py
-base.py
-__init__.py
-lang.py
-prompts.py
-__pycache__
-templates
-
-</pre>
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-7">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;bash.log&quot;</span><span class="p">)</span>
-</pre></div>
-<div id="cell-7" class="clipboard-copy-txt">show_log("bash.log")</div>
+<div id="cell-5" class="clipboard-copy-txt">show_log("summary.log")</div>
     
         </div>
     </div>
@@ -1916,68 +1783,477 @@ templates
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">c1dcc6a1-0de5-41bf-aa63-5614284879b2</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.CLIPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.426s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+<pre><span class="ansi-white-intense-fg">20a1ac3f-edea-4723-9ac7-8c0243260035</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">4.606s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
-    │   │   └── <span class="ansi-blue-fg">question</span>: &#34;go up one directory, and then into the minichain directory, and list the files in the directory&#34;
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.425s</span>
-    │   ├── <span class="ansi-blue-fg">prompt</span>: If someone asks you to perform a task, your job is to come up with a series of bash commands that will perform the task. There is no need to put &#34;#!/bin/bash&#34; in your answer. Make sure to reason step by step, using this format:⏎
+    │   │   └── <span class="ansi-blue-fg">text</span>: st things I did as President was fight to pass the American Rescue Plan.  ⏎
+    │   │       Because people were hurting. We needed to act, and we did. ⏎
+    │   │       Few pieces of legislation have done more in a critical moment in our history to lift us out of crisis. ⏎
+    │   │       It fueled our efforts to vaccinate the nation and combat COVID-19. It delivered immediate economic relief for tens of millions of Americans.  ⏎
+    │   │       Helped put food on their table, keep a roof over their heads, and cut the cost of health insurance. ⏎
+    │   │       And as my Dad used to say, it gave people a little breathing room. ⏎
+    │   │       And unlike the $2 Trillion tax cut passed in the previous administration that benefitted the top 1% of Americans, the American Rescue Plan helped working people—and left no one behind. ⏎
+    │   │       And it worked. It created jobs. Lots of jobs. ⏎
+    │   │       In fact—our economy created over 6.5 Million new jobs just last year, more jobs created in one year  ⏎
+    │   │       than ever before in the history of America. ⏎
+    │   │       Our economy grew at a rate of 5.7% last year, the strongest growth in nearly 40 years, the first step in bringing fundamental change to an economy that hasn’t worked for the working people of this nation for too long.  ⏎
+    │   │       For the past 40 years we were told that if we gave tax breaks to those at the very top, the benefits would trickle down to everyone else. ⏎
+    │   │       But that trickle-down theory led to weaker economic growth, lower wages, bigger deficits, and the widest gap between those at the top and everyone else in nearly a century. ⏎
+    │   │       Vice President Harris and I ran for office with a new economic vision for America. ⏎
+    │   │       Invest in America. Educate Americans. Grow the workforce. Build the economy from the bottom up  ⏎
+    │   │       and the middle out, not from the top down.  ⏎
+    │   │       Because we know that when the middle class grows, the poor have a ladder up and the wealthy do very well. ⏎
+    │   │       America used to have the best roads, bridges, and airports on Earth. ⏎
+    │   │       Now our infrastructure is ranked 13th in the world. ⏎
+    │   │       We won’t be able to compete for the jobs of the 21st Century if we don’t fix that. ⏎
+    │   │       That’s why it was so important to pass the Bipartisan Infrastructure Law—the most sweeping investment to rebuild America in history. ⏎
+    │   │       This was a bipartisan effort, and I want to thank the members of both parties who worked to make it happen. ⏎
+    │   │       We’re done talking about infrastructure weeks. ⏎
+    │   │       We’re going to have an infrastructure decade. ⏎
+    │   │       It is going to transform America and put us on a path to win the economic competition of the 21st Century that we face with the rest of the world—particularly with China.  ⏎
+    │   │       As I’ve told Xi Jinping, it is never a good bet to bet against the American people. ⏎
+    │   │       We’ll create good jobs for millions of Americans, modernizing roads, airports, ports, and waterways all across America. ⏎
+    │   │       And we’ll do it all to withstand the devastating effects of the climate crisis and promote environmental justice. ⏎
+    │   │       We’ll build a national network of 500,000 electric vehicle charging stations, begin to replace poisonous lead pipes—so every child—and every American—has clean water to drink at home and at school, provide affordable high-speed internet for every American—urban, suburban, rural, and tribal communities. ⏎
+    │   │       4,000 projects have already been announced. ⏎
+    │   │       And tonight, I’m announcing that this year we will start fixing over 65,000 miles of highway and 1,500 bridges in disrepair. ⏎
+    │   │       When we use taxpayer dollars to rebuild America – we are going to Buy American: buy American products to support American jobs. ⏎
+    │   │       The federal government spends about $600 Billion a year to keep the country safe and secure. ⏎
+    │   │       There’s been a law on the books for almost a century ⏎
+    │   │       to make sure taxpayers’ dollars support American jobs and businesses. ⏎
+    │   │       Every Administration says they’ll do it, but we are actually doing it. ⏎
+    │   │       We will buy American to make sure everything from the deck of an aircraft carrier to the steel on highway guardrails are made in America. ⏎
+    │   │       But to compete for the best jobs of the future, we also need to level the playing field with China and other competitors. ⏎
+    │   │       That’s why it is so important to pass the Bipartisan Innovation Act sitting in Congress that will make record investments in emerging technologies and American manufacturing. ⏎
+    │   │       Let me give you one example of why it’s so important to pass it. ⏎
+    │   │       If you travel 20 miles east of Columbus, Ohio, you’ll find 1,000 empty acres of land. ⏎
+    │   │       It won’t look like much, but if you stop and look closely, you’ll see a “Field of dreams,” the ground on which America’s future will be built. ⏎
+    │   │       This is where Intel, the American company that helped build Silicon Valley, is going to build its $20 billion semiconductor “mega site”. ⏎
+    │   │       Up to eight state-of-the-art factories in one place. 10,000 new good-paying jobs. ⏎
+    │   │       Some of the most sophisticated manufacturing in the world to make computer chips the size of a fingertip that po
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">4.605s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Write a concise summary of the following:⏎
     │   │   ⏎
-    │   │   Question: &#34;copy the files in the directory named &#39;target&#39; into a new directory at the same level as target called &#39;myNewDirectory&#39;&#34;⏎
     │   │   ⏎
-    │   │   I need to take the following actions:⏎
-    │   │   - List all files in the directory⏎
-    │   │   - Create a new directory⏎
-    │   │   - Copy the files from the first directory into the second directory⏎
-    │   │   ```bash⏎
-    │   │   ls⏎
-    │   │   mkdir myNewDirectory⏎
-    │   │   cp -r target/* myNewDirectory⏎
-    │   │   ```⏎
+    │   │   &#34;st things I did as President was fight to pass the American Rescue Plan.  ⏎
+    │   │   Because people were hurting. We needed to act, and we did. ⏎
+    │   │   Few pieces of legislation have done more in a critical moment in our history to lift us out of crisis. ⏎
+    │   │   It fueled our efforts to vaccinate the nation and combat COVID-19. It delivered immediate economic relief for tens of millions of Americans.  ⏎
+    │   │   Helped put food on their table, keep a roof over their heads, and cut the cost of health insurance. ⏎
+    │   │   And as my Dad used to say, it gave people a little breathing room. ⏎
+    │   │   And unlike the $2 Trillion tax cut passed in the previous administration that benefitted the top 1% of Americans, the American Rescue Plan helped working people—and left no one behind. ⏎
+    │   │   And it worked. It created jobs. Lots of jobs. ⏎
+    │   │   In fact—our economy created over 6.5 Million new jobs just last year, more jobs created in one year  ⏎
+    │   │   than ever before in the history of America. ⏎
+    │   │   Our economy grew at a rate of 5.7% last year, the strongest growth in nearly 40 years, the first step in bringing fundamental change to an economy that hasn’t worked for the working people of this nation for too long.  ⏎
+    │   │   For the past 40 years we were told that if we gave tax breaks to those at the very top, the benefits would trickle down to everyone else. ⏎
+    │   │   But that trickle-down theory led to weaker economic growth, lower wages, bigger deficits, and the widest gap between those at the top and everyone else in nearly a century. ⏎
+    │   │   Vice President Harris and I ran for office with a new economic vision for America. ⏎
+    │   │   Invest in America. Educate Americans. Grow the workforce. Build the economy from the bottom up  ⏎
+    │   │   and the middle out, not from the top down.  ⏎
+    │   │   Because we know that when the middle class grows, the poor have a ladder up and the wealthy do very well. ⏎
+    │   │   America used to have the best roads, bridges, and airports on Earth. ⏎
+    │   │   Now our infrastructure is ranked 13th in the world. ⏎
+    │   │   We won’t be able to compete for the jobs of the 21st Century if we don’t fix that. ⏎
+    │   │   That’s why it was so important to pass the Bipartisan Infrastructure Law—the most sweeping investment to rebuild America in history. ⏎
+    │   │   This was a bipartisan effort, and I want to thank the members of both parties who worked to make it happen. ⏎
+    │   │   We’re done talking about infrastructure weeks. ⏎
+    │   │   We’re going to have an infrastructure decade. ⏎
+    │   │   It is going to transform America and put us on a path to win the economic competition of the 21st Century that we face with the rest of the world—particularly with China.  ⏎
+    │   │   As I’ve told Xi Jinping, it is never a good bet to bet against the American people. ⏎
+    │   │   We’ll create good jobs for millions of Americans, modernizing roads, airports, ports, and waterways all across America. ⏎
+    │   │   And we’ll do it all to withstand the devastating effects of the climate crisis and promote environmental justice. ⏎
+    │   │   We’ll build a national network of 500,000 electric vehicle charging stations, begin to replace poisonous lead pipes—so every child—and every American—has clean water to drink at home and at school, provide affordable high-speed internet for every American—urban, suburban, rural, and tribal communities. ⏎
+    │   │   4,000 projects have already been announced. ⏎
+    │   │   And tonight, I’m announcing that this year we will start fixing over 65,000 miles of highway and 1,500 bridges in disrepair. ⏎
+    │   │   When we use taxpayer dollars to rebuild America – we are going to Buy American: buy American products to support American jobs. ⏎
+    │   │   The federal government spends about $600 Billion a year to keep the country safe and secure. ⏎
+    │   │   There’s been a law on the books for almost a century ⏎
+    │   │   to make sure taxpayers’ dollars support American jobs and businesses. ⏎
+    │   │   Every Administration says they’ll do it, but we are actually doing it. ⏎
+    │   │   We will buy American to make sure everything from the deck of an aircraft carrier to the steel on highway guardrails are made in America. ⏎
+    │   │   But to compete for the best jobs of the future, we also need to level the playing field with China and other competitors. ⏎
+    │   │   That’s why it is so important to pass the Bipartisan Innovation Act sitting in Congress that will make record investments in emerging technologies and American manufacturing. ⏎
+    │   │   Let me give you one example of why it’s so important to pass it. ⏎
+    │   │   If you travel 20 miles east of Columbus, Ohio, you’ll find 1,000 empty acres of land. ⏎
+    │   │   It won’t look like much, but if you stop and look closely, you’ll see a “Field of dreams,” the ground on which America’s future will be built. ⏎
+    │   │   This is where Intel, the American company that helped build Silicon Valley, is going to build its $20 billion semiconductor “mega site”. ⏎
+    │   │   Up to eight state-of-the-art factories in one place. 10,000 new good-paying jobs. ⏎
+    │   │   Some of the most sophisticated manufacturing in the world to make computer chips the size of a fingertip that po&#34;⏎
     │   │   ⏎
-    │   │   That is the format. Begin!⏎
     │   │   ⏎
-    │   │   Question: &#34;go up one directory, and then into the minichain directory, and list the files in the directory&#34;
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
-    │   │   ⏎
-    │   │   ```bash⏎
-    │   │   cd ..⏎
-    │   │   cd minichain⏎
-    │   │   ls⏎
-    │   │   ```
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.CLIPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
+    │   │   CONCISE SUMMARY:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:25Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:25Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  President Biden fought to pass the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs. He also passed the Bipartisan Infrastructure Law to rebuild America and the Bipartisan Innovation Act to level the playing field with China and other competitors. An example of this is Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio, which will create 10,000 new jobs.
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:25Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:25Z</span>
 
-<span class="ansi-white-intense-fg">e9a19dde-cbdd-4054-950c-b6924b6ba5bb</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.BashPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.039s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">dbe4d3db-d66d-4d09-b6a2-550a984ec08d</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.630s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
-    │   │   ├── <span class="ansi-blue-fg">0</span>: cd ..
-    │   │   ├── <span class="ansi-blue-fg">1</span>: cd minichain
-    │   │   └── <span class="ansi-blue-fg">2</span>: ls
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.038s</span>
-    │   ├── <span class="ansi-blue-fg">prompt</span>: cd ..;cd minichain;ls
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    │   ├── <span class="ansi-blue-fg">result</span>: backend.py⏎
-    │   │   base.py⏎
-    │   │   __init__.py⏎
-    │   │   lang.py⏎
-    │   │   prompts.py⏎
-    │   │   __pycache__⏎
-    │   │   templates⏎
-    │   │   
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.BashPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
+    │   │   └── <span class="ansi-blue-fg">text</span>: r economy. The Ruble has lost 30% of its value. ⏎
+    │   │       The Russian stock market has lost 40% of its value and trading remains suspended. Russia’s economy is reeling and Putin alone is to blame. ⏎
+    │   │       Together with our allies we are providing support to the Ukrainians in their fight for freedom. Military assistance. Economic assistance. Humanitarian assistance. ⏎
+    │   │       We are giving more than $1 Billion in direct assistance to Ukraine. ⏎
+    │   │       And we will continue to aid the Ukrainian people as they defend their country and to help ease their suffering.  ⏎
+    │   │       Let me be clear, our forces are not engaged and will not engage in conflict with Russian forces in Ukraine.  ⏎
+    │   │       Our forces are not going to Europe to fight in Ukraine, but to defend our NATO Allies – in the event that Putin decides to keep moving west.  ⏎
+    │   │       For that purpose we’ve mobilized American ground forces, air squadrons, and ship deployments to protect NATO countries including Poland, Romania, Latvia, Lithuania, and Estonia. ⏎
+    │   │       As I have made crystal clear the United States and our Allies will defend every inch of territory of NATO countries with the full force of our collective power.  ⏎
+    │   │       And we remain clear-eyed. The Ukrainians are fighting back with pure courage. But the next few days weeks, months, will be hard on them.  ⏎
+    │   │       Putin has unleashed violence and chaos.  But while he may make gains on the battlefield – he will pay a continuing high price over the long run. ⏎
+    │   │       And a proud Ukrainian people, who have known 30 years  of independence, have repeatedly shown that they will not tolerate anyone who tries to take their country backwards.  ⏎
+    │   │       To all Americans, I will be honest with you, as I’ve always promised. A Russian dictator, invading a foreign country, has costs around the world. ⏎
+    │   │       And I’m taking robust action to make sure the pain of our sanctions  is targeted at Russia’s economy. And I will use every tool at our disposal to protect American businesses and consumers. ⏎
+    │   │       Tonight, I can announce that the United States has worked with 30 other countries to release 60 Million barrels of oil from reserves around the world.  ⏎
+    │   │       America will lead that effort, releasing 30 Million barrels from our own Strategic Petroleum Reserve. And we stand ready to do more if necessary, unified with our allies.  ⏎
+    │   │       These steps will help blunt gas prices here at home. And I know the news about what’s happening can seem alarming. ⏎
+    │   │       But I want you to know that we are going to be okay. ⏎
+    │   │       When the history of this era is written Putin’s war on Ukraine will have left Russia weaker and the rest of the world stronger. ⏎
+    │   │       While it shouldn’t have taken something so terrible for people around the world to see what’s at stake now everyone sees it clearly. ⏎
+    │   │       We see the unity among leaders of nations and a more unified Europe a more unified West. And we see unity among the people who are gathering in cities in large crowds around the world even in Russia to demonstrate their support for Ukraine.  ⏎
+    │   │       In the battle between democracy and autocracy, democracies are rising to the moment, and the world is clearly choosing the side of peace and security. ⏎
+    │   │       This is a real test. It’s going to take time. So let us continue to draw inspiration from the iron will of the Ukrainian people. ⏎
+    │   │       To our fellow Ukrainian Americans who forge a deep bond that connects our two nations we stand with you. ⏎
+    │   │       Putin may circle Kyiv with tanks, but he will never gain the hearts and souls of the Ukrainian people. ⏎
+    │   │       He will never extinguish their love of freedom. He will never weaken the resolve of the free world. ⏎
+    │   │       We meet tonight in an America that has lived through two of the hardest years this nation has ever faced. ⏎
+    │   │       The pandemic has been punishing. ⏎
+    │   │       And so many families are living paycheck to paycheck, struggling to keep up with the rising cost of food, gas, housing, and so much more. ⏎
+    │   │       I understand. ⏎
+    │   │       I remember when my Dad had to leave our home in Scranton, Pennsylvania to find work. I grew up in a family where if the price of food went up, you felt it. ⏎
+    │   │       That’s why one of the first things I did as President was fight to pass the American Rescue Plan.  ⏎
+    │   │       Because people were hurting. We needed to act, and we did. ⏎
+    │   │       Few pieces of legislation have done more in a critical moment in our history to lift us out of crisis. ⏎
+    │   │       It fueled our efforts to vaccinate the nation and combat COVID-19. It delivered immediate economic relief for tens of millions of Americans.  ⏎
+    │   │       Helped put food on their table, keep a roof over their heads, and cut the cost of health insurance. ⏎
+    │   │       And as my Dad used to say, it gave people a little breathing room. ⏎
+    │   │       And unlike the $2 Trillion tax cut passed in the previous administration that benefitted the top 1% of Americans, the American Rescue Plan helped working people—and left no one behind. ⏎
+    │   │       And it worked. It created jobs. Lots of jobs. ⏎
+    │   │       In fact—our econ
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.629s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Write a concise summary of the following:⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   &#34;r economy. The Ruble has lost 30% of its value. ⏎
+    │   │   The Russian stock market has lost 40% of its value and trading remains suspended. Russia’s economy is reeling and Putin alone is to blame. ⏎
+    │   │   Together with our allies we are providing support to the Ukrainians in their fight for freedom. Military assistance. Economic assistance. Humanitarian assistance. ⏎
+    │   │   We are giving more than $1 Billion in direct assistance to Ukraine. ⏎
+    │   │   And we will continue to aid the Ukrainian people as they defend their country and to help ease their suffering.  ⏎
+    │   │   Let me be clear, our forces are not engaged and will not engage in conflict with Russian forces in Ukraine.  ⏎
+    │   │   Our forces are not going to Europe to fight in Ukraine, but to defend our NATO Allies – in the event that Putin decides to keep moving west.  ⏎
+    │   │   For that purpose we’ve mobilized American ground forces, air squadrons, and ship deployments to protect NATO countries including Poland, Romania, Latvia, Lithuania, and Estonia. ⏎
+    │   │   As I have made crystal clear the United States and our Allies will defend every inch of territory of NATO countries with the full force of our collective power.  ⏎
+    │   │   And we remain clear-eyed. The Ukrainians are fighting back with pure courage. But the next few days weeks, months, will be hard on them.  ⏎
+    │   │   Putin has unleashed violence and chaos.  But while he may make gains on the battlefield – he will pay a continuing high price over the long run. ⏎
+    │   │   And a proud Ukrainian people, who have known 30 years  of independence, have repeatedly shown that they will not tolerate anyone who tries to take their country backwards.  ⏎
+    │   │   To all Americans, I will be honest with you, as I’ve always promised. A Russian dictator, invading a foreign country, has costs around the world. ⏎
+    │   │   And I’m taking robust action to make sure the pain of our sanctions  is targeted at Russia’s economy. And I will use every tool at our disposal to protect American businesses and consumers. ⏎
+    │   │   Tonight, I can announce that the United States has worked with 30 other countries to release 60 Million barrels of oil from reserves around the world.  ⏎
+    │   │   America will lead that effort, releasing 30 Million barrels from our own Strategic Petroleum Reserve. And we stand ready to do more if necessary, unified with our allies.  ⏎
+    │   │   These steps will help blunt gas prices here at home. And I know the news about what’s happening can seem alarming. ⏎
+    │   │   But I want you to know that we are going to be okay. ⏎
+    │   │   When the history of this era is written Putin’s war on Ukraine will have left Russia weaker and the rest of the world stronger. ⏎
+    │   │   While it shouldn’t have taken something so terrible for people around the world to see what’s at stake now everyone sees it clearly. ⏎
+    │   │   We see the unity among leaders of nations and a more unified Europe a more unified West. And we see unity among the people who are gathering in cities in large crowds around the world even in Russia to demonstrate their support for Ukraine.  ⏎
+    │   │   In the battle between democracy and autocracy, democracies are rising to the moment, and the world is clearly choosing the side of peace and security. ⏎
+    │   │   This is a real test. It’s going to take time. So let us continue to draw inspiration from the iron will of the Ukrainian people. ⏎
+    │   │   To our fellow Ukrainian Americans who forge a deep bond that connects our two nations we stand with you. ⏎
+    │   │   Putin may circle Kyiv with tanks, but he will never gain the hearts and souls of the Ukrainian people. ⏎
+    │   │   He will never extinguish their love of freedom. He will never weaken the resolve of the free world. ⏎
+    │   │   We meet tonight in an America that has lived through two of the hardest years this nation has ever faced. ⏎
+    │   │   The pandemic has been punishing. ⏎
+    │   │   And so many families are living paycheck to paycheck, struggling to keep up with the rising cost of food, gas, housing, and so much more. ⏎
+    │   │   I understand. ⏎
+    │   │   I remember when my Dad had to leave our home in Scranton, Pennsylvania to find work. I grew up in a family where if the price of food went up, you felt it. ⏎
+    │   │   That’s why one of the first things I did as President was fight to pass the American Rescue Plan.  ⏎
+    │   │   Because people were hurting. We needed to act, and we did. ⏎
+    │   │   Few pieces of legislation have done more in a critical moment in our history to lift us out of crisis. ⏎
+    │   │   It fueled our efforts to vaccinate the nation and combat COVID-19. It delivered immediate economic relief for tens of millions of Americans.  ⏎
+    │   │   Helped put food on their table, keep a roof over their heads, and cut the cost of health insurance. ⏎
+    │   │   And as my Dad used to say, it gave people a little breathing room. ⏎
+    │   │   And unlike the $2 Trillion tax cut passed in the previous administration that benefitted the top 1% of Americans, the American Rescue Plan helped working people—and left no one behind. ⏎
+    │   │   And it worked. It created jobs. Lots of jobs. ⏎
+    │   │   In fact—our econ&#34;⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   CONCISE SUMMARY:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:26Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:26Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  In response to Russian President Putin&#39;s invasion of Ukraine, the US and its allies are providing military, economic, and humanitarian assistance to the Ukrainians. The US is also leading an effort to release 60 million barrels of oil from reserves around the world, including 30 million from the US Strategic Petroleum Reserve, to help blunt gas prices. The US President has also passed the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs.
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:26Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:26Z</span>
 
-<span class="ansi-white-intense-fg">03bac5e5-455f-4892-aa9e-13f3c3370769</span>
-└── <span class="ansi-magenta-fg">bash</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.833s</span>
-    └── <span class="ansi-magenta-fg">bash</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
+<span class="ansi-white-intense-fg">5bd012ed-9259-4927-8b5d-980f03ade834</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.737s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+    │   ├── <span class="ansi-blue-fg">input</span>: 
+    │   │   └── <span class="ansi-blue-fg">text</span>: Madam Speaker, Madam Vice President, our First Lady and Second Gentleman. Members of Congress and the Cabinet. Justices of the Supreme Court. My fellow Americans.  ⏎
+    │   │       Last year COVID-19 kept us apart. This year we are finally together again. ⏎
+    │   │       Tonight, we meet as Democrats Republicans and Independents. But most importantly as Americans. ⏎
+    │   │       With a duty to one another to the American people to the Constitution. ⏎
+    │   │       And with an unwavering resolve that freedom will always triumph over tyranny. ⏎
+    │   │       Six days ago, Russia’s Vladimir Putin sought to shake the foundations of the free world thinking he could make it bend to his menacing ways. But he badly miscalculated. ⏎
+    │   │       He thought he could roll into Ukraine and the world would roll over. Instead he met a wall of strength he never imagined. ⏎
+    │   │       He met the Ukrainian people. ⏎
+    │   │       From President Zelenskyy to every Ukrainian, their fearlessness, their courage, their determination, inspires the world. ⏎
+    │   │       Groups of citizens blocking tanks with their bodies. Everyone from students to retirees teachers turned soldiers defending their homeland. ⏎
+    │   │       In this struggle as President Zelenskyy said in his speech to the European Parliament “Light will win over darkness.” The Ukrainian Ambassador to the United States is here tonight. ⏎
+    │   │       Let each of us here tonight in this Chamber send an unmistakable signal to Ukraine and to the world. ⏎
+    │   │       Please rise if you are able and show that, Yes, we the United States of America stand with the Ukrainian people. ⏎
+    │   │       Throughout our history we’ve learned this lesson when dictators do not pay a price for their aggression they cause more chaos.   ⏎
+    │   │       They keep moving.   ⏎
+    │   │       And the costs and the threats to America and the world keep rising.   ⏎
+    │   │       That’s why the NATO Alliance was created to secure peace and stability in Europe after World War 2. ⏎
+    │   │       The United States is a member along with 29 other nations. ⏎
+    │   │       It matters. American diplomacy matters. American resolve matters. ⏎
+    │   │       Putin’s latest attack on Ukraine was premeditated and unprovoked. ⏎
+    │   │       He rejected repeated efforts at diplomacy. ⏎
+    │   │       He thought the West and NATO wouldn’t respond. And he thought he could divide us at home. Putin was wrong. We were ready.  Here is what we did.   ⏎
+    │   │       We prepared extensively and carefully. ⏎
+    │   │       We spent months building a coalition of other freedom-loving nations from Europe and the Americas to Asia and Africa to confront Putin. ⏎
+    │   │       I spent countless hours unifying our European allies. We shared with the world in advance what we knew Putin was planning and precisely how he would try to falsely justify his aggression.  ⏎
+    │   │       We countered Russia’s lies with truth.   ⏎
+    │   │       And now that he has acted the free world is holding him accountable. ⏎
+    │   │       Along with twenty-seven members of the European Union including France, Germany, Italy, as well as countries like the United Kingdom, Canada, Japan, Korea, Australia, New Zealand, and many others, even Switzerland. ⏎
+    │   │       We are inflicting pain on Russia and supporting the people of Ukraine. Putin is now isolated from the world more than ever. ⏎
+    │   │       Together with our allies –we are right now enforcing powerful economic sanctions. ⏎
+    │   │       We are cutting off Russia’s largest banks from the international financial system.  ⏎
+    │   │       Preventing Russia’s central bank from defending the Russian Ruble making Putin’s $630 Billion “war fund” worthless.   ⏎
+    │   │       We are choking off Russia’s access to technology that will sap its economic strength and weaken its military for years to come.  ⏎
+    │   │       Tonight I say to the Russian oligarchs and corrupt leaders who have bilked billions of dollars off this violent regime no more. ⏎
+    │   │       The U.S. Department of Justice is assembling a dedicated task force to go after the crimes of Russian oligarchs.  ⏎
+    │   │       We are joining with our European allies to find and seize your yachts your luxury apartments your private jets. We are coming for your ill-begotten gains. ⏎
+    │   │       And tonight I am announcing that we will join our allies in closing off American air space to all Russian flights – further isolating Russia – and adding an additional squeeze –on their economy. The Ruble has lost 30% of its value. ⏎
+    │   │       The Russian stock market has lost 40% of its value and trading remains suspended. Russia’s economy is reeling and Putin alone is to blame. ⏎
+    │   │       Together with our allies we are providing support to the Ukrainians in their fight for freedom. Military assistance. Economic assistance. Humanitarian assistance. ⏎
+    │   │       We are giving more than $1 Billion in direct assistance to Ukraine. ⏎
+    │   │       And we will continue to aid the Ukrainian people as they defend their country and to help ease their suffering.  ⏎
+    │   │       Let me be clear, our forces are not engaged and will not engage in conflict with Russian forces in Ukraine.  ⏎
+    │   │       Our forces are not going to Europe to fight in Ukraine, but to defend our NATO Allies – in the event that Putin decides to keep moving west.  ⏎
+    │   │       For that pu
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.735s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Write a concise summary of the following:⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   &#34;Madam Speaker, Madam Vice President, our First Lady and Second Gentleman. Members of Congress and the Cabinet. Justices of the Supreme Court. My fellow Americans.  ⏎
+    │   │   Last year COVID-19 kept us apart. This year we are finally together again. ⏎
+    │   │   Tonight, we meet as Democrats Republicans and Independents. But most importantly as Americans. ⏎
+    │   │   With a duty to one another to the American people to the Constitution. ⏎
+    │   │   And with an unwavering resolve that freedom will always triumph over tyranny. ⏎
+    │   │   Six days ago, Russia’s Vladimir Putin sought to shake the foundations of the free world thinking he could make it bend to his menacing ways. But he badly miscalculated. ⏎
+    │   │   He thought he could roll into Ukraine and the world would roll over. Instead he met a wall of strength he never imagined. ⏎
+    │   │   He met the Ukrainian people. ⏎
+    │   │   From President Zelenskyy to every Ukrainian, their fearlessness, their courage, their determination, inspires the world. ⏎
+    │   │   Groups of citizens blocking tanks with their bodies. Everyone from students to retirees teachers turned soldiers defending their homeland. ⏎
+    │   │   In this struggle as President Zelenskyy said in his speech to the European Parliament “Light will win over darkness.” The Ukrainian Ambassador to the United States is here tonight. ⏎
+    │   │   Let each of us here tonight in this Chamber send an unmistakable signal to Ukraine and to the world. ⏎
+    │   │   Please rise if you are able and show that, Yes, we the United States of America stand with the Ukrainian people. ⏎
+    │   │   Throughout our history we’ve learned this lesson when dictators do not pay a price for their aggression they cause more chaos.   ⏎
+    │   │   They keep moving.   ⏎
+    │   │   And the costs and the threats to America and the world keep rising.   ⏎
+    │   │   That’s why the NATO Alliance was created to secure peace and stability in Europe after World War 2. ⏎
+    │   │   The United States is a member along with 29 other nations. ⏎
+    │   │   It matters. American diplomacy matters. American resolve matters. ⏎
+    │   │   Putin’s latest attack on Ukraine was premeditated and unprovoked. ⏎
+    │   │   He rejected repeated efforts at diplomacy. ⏎
+    │   │   He thought the West and NATO wouldn’t respond. And he thought he could divide us at home. Putin was wrong. We were ready.  Here is what we did.   ⏎
+    │   │   We prepared extensively and carefully. ⏎
+    │   │   We spent months building a coalition of other freedom-loving nations from Europe and the Americas to Asia and Africa to confront Putin. ⏎
+    │   │   I spent countless hours unifying our European allies. We shared with the world in advance what we knew Putin was planning and precisely how he would try to falsely justify his aggression.  ⏎
+    │   │   We countered Russia’s lies with truth.   ⏎
+    │   │   And now that he has acted the free world is holding him accountable. ⏎
+    │   │   Along with twenty-seven members of the European Union including France, Germany, Italy, as well as countries like the United Kingdom, Canada, Japan, Korea, Australia, New Zealand, and many others, even Switzerland. ⏎
+    │   │   We are inflicting pain on Russia and supporting the people of Ukraine. Putin is now isolated from the world more than ever. ⏎
+    │   │   Together with our allies –we are right now enforcing powerful economic sanctions. ⏎
+    │   │   We are cutting off Russia’s largest banks from the international financial system.  ⏎
+    │   │   Preventing Russia’s central bank from defending the Russian Ruble making Putin’s $630 Billion “war fund” worthless.   ⏎
+    │   │   We are choking off Russia’s access to technology that will sap its economic strength and weaken its military for years to come.  ⏎
+    │   │   Tonight I say to the Russian oligarchs and corrupt leaders who have bilked billions of dollars off this violent regime no more. ⏎
+    │   │   The U.S. Department of Justice is assembling a dedicated task force to go after the crimes of Russian oligarchs.  ⏎
+    │   │   We are joining with our European allies to find and seize your yachts your luxury apartments your private jets. We are coming for your ill-begotten gains. ⏎
+    │   │   And tonight I am announcing that we will join our allies in closing off American air space to all Russian flights – further isolating Russia – and adding an additional squeeze –on their economy. The Ruble has lost 30% of its value. ⏎
+    │   │   The Russian stock market has lost 40% of its value and trading remains suspended. Russia’s economy is reeling and Putin alone is to blame. ⏎
+    │   │   Together with our allies we are providing support to the Ukrainians in their fight for freedom. Military assistance. Economic assistance. Humanitarian assistance. ⏎
+    │   │   We are giving more than $1 Billion in direct assistance to Ukraine. ⏎
+    │   │   And we will continue to aid the Ukrainian people as they defend their country and to help ease their suffering.  ⏎
+    │   │   Let me be clear, our forces are not engaged and will not engage in conflict with Russian forces in Ukraine.  ⏎
+    │   │   Our forces are not going to Europe to fight in Ukraine, but to defend our NATO Allies – in the event that Putin decides to keep moving west.  ⏎
+    │   │   For that pu&#34;⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   CONCISE SUMMARY:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  In this speech, the speaker addresses the American people and the world, emphasizing the strength of the Ukrainian people in the face of Russia&#39;s aggression. The speaker also announces that the US and its allies are imposing economic sanctions on Russia, and providing military, economic, and humanitarian assistance to Ukraine. The US is also joining its allies in closing off American airspace to all Russian flights, and the Department of Justice is assembling a task force to go after the crimes of Russian oligarchs. The speaker also clarifies that US forces are not engaging in conflict with Russian forces in Ukraine, but are there to defend NATO allies.
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+
+<span class="ansi-white-intense-fg">1e2ea7a6-93da-4576-bba4-06e9f28af783</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.798s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+    │   ├── <span class="ansi-blue-fg">input</span>: 
+    │   │   └── <span class="ansi-blue-fg">text</span>:  why it is so important to pass the Bipartisan Innovation Act sitting in Congress that will make record investments in emerging technologies and American manufacturing. ⏎
+    │   │       Let me give you one example of why it’s so important to pass it. ⏎
+    │   │       If you travel 20 miles east of Columbus, Ohio, you’ll find 1,000 empty acres of land. ⏎
+    │   │       It won’t look like much, but if you stop and look closely, you’ll see a “Field of dreams,” the ground on which America’s future will be built. ⏎
+    │   │       This is where Intel, the American company that helped build Silicon Valley, is going to build its $20 billion semiconductor “mega site”. ⏎
+    │   │       Up to eight state-of-the-art factories in one place. 10,000 new good-paying jobs. ⏎
+    │   │       Some of the most sophisticated manufacturing in the world to make computer chips the size of a fingertip that power the world and our everyday lives. ⏎
+    │   │       Smartphones. The Internet. Technology we have yet to invent. ⏎
+    │   │       But that’s just the beginning. ⏎
+    │   │       Intel’s CEO, Pat Gelsinger, who is here tonight, told me they are ready to increase their investment from  ⏎
+    │   │       $20 billion to $100 billion. ⏎
+    │   │       That would be one of the biggest investments in manufacturing in American history. ⏎
+    │   │       And all they’re waiting for is for you to pass this bill. ⏎
+    │   │       So let’s not wait any longer. Send it to my desk. I’ll sign it.  ⏎
+    │   │       And we will really take off. ⏎
+    │   │       And Intel is not alone. ⏎
+    │   │       There’s something happening in America. ⏎
+    │   │       Just look around and you’ll see an amazing story. ⏎
+    │   │       The rebirth of the pride that comes from stamping products “Made In America.” The revitalization of American manufacturing.   ⏎
+    │   │       Companies are choosing to build new factories here, when just a few years ago, they would have built them overseas. ⏎
+    │   │       That’s what is happening. Ford is investing $11 billion to build electric vehicles, creating 11,000 jobs across the country. ⏎
+    │   │       GM is making the largest investment in its history—$7 billion to build electric vehicles, creating 4,000 jobs in Michigan. ⏎
+    │   │       All told, we created 369,000 new manufacturing jobs in America just last year. ⏎
+    │   │       Powered by people I’ve met like JoJo Burgess, from generations of union steelworkers from Pittsburgh, who’s here with us tonight. ⏎
+    │   │       As Ohio Senator Sherrod Brown says, “It’s time to bury the label “Rust Belt.” ⏎
+    │   │       It’s time. ⏎
+    │   │       But with all the bright spots in our economy, record job growth and higher wages, too many families are struggling to keep up with the bills.  ⏎
+    │   │       Inflation is robbing them of the gains they might otherwise feel. ⏎
+    │   │       I get it. That’s why my top priority is getting prices under control. ⏎
+    │   │       Look, our economy roared back faster than most predicted, but the pandemic meant that businesses had a hard time hiring enough workers to keep up production in their factories. ⏎
+    │   │       The pandemic also disrupted global supply chains. ⏎
+    │   │       When factories close, it takes longer to make goods and get them from the warehouse to the store, and prices go up. ⏎
+    │   │       Look at cars. ⏎
+    │   │       Last year, there weren’t enough semiconductors to make all the cars that people wanted to buy. ⏎
+    │   │       And guess what, prices of automobiles went up. ⏎
+    │   │       So—we have a choice. ⏎
+    │   │       One way to fight inflation is to drive down wages and make Americans poorer.  ⏎
+    │   │       I have a better plan to fight inflation. ⏎
+    │   │       Lower your costs, not your wages. ⏎
+    │   │       Make more cars and semiconductors in America. ⏎
+    │   │       More infrastructure and innovation in America. ⏎
+    │   │       More goods moving faster and cheaper in America. ⏎
+    │   │       More jobs where you can earn a good living in America. ⏎
+    │   │       And instead of relying on foreign supply chains, let’s make it in America. ⏎
+    │   │       Economists call it “increasing the productive capacity of our economy.” ⏎
+    │   │       I call it building a better America. ⏎
+    │   │       My plan to fight inflation will lower your costs and lower the deficit. ⏎
+    │   │       17 Nobel laureates in economics say my plan will ease long-term inflationary pressures. Top business leaders and most Americans support my plan. And here’s the plan: ⏎
+    │   │       First – cut the cost of prescription drugs. Just look at insulin. One in ten Americans has diabetes. In Virginia, I met a 13-year-old boy named Joshua Davis.  ⏎
+    │   │       He and his Dad both have Type 1 diabetes, which means they need insulin every day. Insulin costs about $10 a vial to make.  ⏎
+    │   │       But drug companies charge families like Joshua and his Dad up to 30 times more. I spoke with Joshua’s mom. ⏎
+    │   │       Imagine what it’s like to look at your child who needs insulin and have no idea how you’re going to pay for it.  ⏎
+    │   │       What it does to your dignity, your ability to look your child in the eye, to be the parent you expect to be. ⏎
+    │   │       Joshua is here with us tonight. Yesterday was his birthday. Happy birthday, buddy.  ⏎
+    │   │       For Joshua, and for the 200,000 other young people with Type 1 diabetes, let’s cap the cost of insulin at $35 a month so everyone can afford it.  ⏎
+    │   │       Drug companies will still do very well. And while we’re at it let Medicare negotiate lower prices for prescription drugs, like the VA a
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:21Z</span> ⧖ <span class="ansi-blue-fg">5.797s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Write a concise summary of the following:⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   &#34; why it is so important to pass the Bipartisan Innovation Act sitting in Congress that will make record investments in emerging technologies and American manufacturing. ⏎
+    │   │   Let me give you one example of why it’s so important to pass it. ⏎
+    │   │   If you travel 20 miles east of Columbus, Ohio, you’ll find 1,000 empty acres of land. ⏎
+    │   │   It won’t look like much, but if you stop and look closely, you’ll see a “Field of dreams,” the ground on which America’s future will be built. ⏎
+    │   │   This is where Intel, the American company that helped build Silicon Valley, is going to build its $20 billion semiconductor “mega site”. ⏎
+    │   │   Up to eight state-of-the-art factories in one place. 10,000 new good-paying jobs. ⏎
+    │   │   Some of the most sophisticated manufacturing in the world to make computer chips the size of a fingertip that power the world and our everyday lives. ⏎
+    │   │   Smartphones. The Internet. Technology we have yet to invent. ⏎
+    │   │   But that’s just the beginning. ⏎
+    │   │   Intel’s CEO, Pat Gelsinger, who is here tonight, told me they are ready to increase their investment from  ⏎
+    │   │   $20 billion to $100 billion. ⏎
+    │   │   That would be one of the biggest investments in manufacturing in American history. ⏎
+    │   │   And all they’re waiting for is for you to pass this bill. ⏎
+    │   │   So let’s not wait any longer. Send it to my desk. I’ll sign it.  ⏎
+    │   │   And we will really take off. ⏎
+    │   │   And Intel is not alone. ⏎
+    │   │   There’s something happening in America. ⏎
+    │   │   Just look around and you’ll see an amazing story. ⏎
+    │   │   The rebirth of the pride that comes from stamping products “Made In America.” The revitalization of American manufacturing.   ⏎
+    │   │   Companies are choosing to build new factories here, when just a few years ago, they would have built them overseas. ⏎
+    │   │   That’s what is happening. Ford is investing $11 billion to build electric vehicles, creating 11,000 jobs across the country. ⏎
+    │   │   GM is making the largest investment in its history—$7 billion to build electric vehicles, creating 4,000 jobs in Michigan. ⏎
+    │   │   All told, we created 369,000 new manufacturing jobs in America just last year. ⏎
+    │   │   Powered by people I’ve met like JoJo Burgess, from generations of union steelworkers from Pittsburgh, who’s here with us tonight. ⏎
+    │   │   As Ohio Senator Sherrod Brown says, “It’s time to bury the label “Rust Belt.” ⏎
+    │   │   It’s time. ⏎
+    │   │   But with all the bright spots in our economy, record job growth and higher wages, too many families are struggling to keep up with the bills.  ⏎
+    │   │   Inflation is robbing them of the gains they might otherwise feel. ⏎
+    │   │   I get it. That’s why my top priority is getting prices under control. ⏎
+    │   │   Look, our economy roared back faster than most predicted, but the pandemic meant that businesses had a hard time hiring enough workers to keep up production in their factories. ⏎
+    │   │   The pandemic also disrupted global supply chains. ⏎
+    │   │   When factories close, it takes longer to make goods and get them from the warehouse to the store, and prices go up. ⏎
+    │   │   Look at cars. ⏎
+    │   │   Last year, there weren’t enough semiconductors to make all the cars that people wanted to buy. ⏎
+    │   │   And guess what, prices of automobiles went up. ⏎
+    │   │   So—we have a choice. ⏎
+    │   │   One way to fight inflation is to drive down wages and make Americans poorer.  ⏎
+    │   │   I have a better plan to fight inflation. ⏎
+    │   │   Lower your costs, not your wages. ⏎
+    │   │   Make more cars and semiconductors in America. ⏎
+    │   │   More infrastructure and innovation in America. ⏎
+    │   │   More goods moving faster and cheaper in America. ⏎
+    │   │   More jobs where you can earn a good living in America. ⏎
+    │   │   And instead of relying on foreign supply chains, let’s make it in America. ⏎
+    │   │   Economists call it “increasing the productive capacity of our economy.” ⏎
+    │   │   I call it building a better America. ⏎
+    │   │   My plan to fight inflation will lower your costs and lower the deficit. ⏎
+    │   │   17 Nobel laureates in economics say my plan will ease long-term inflationary pressures. Top business leaders and most Americans support my plan. And here’s the plan: ⏎
+    │   │   First – cut the cost of prescription drugs. Just look at insulin. One in ten Americans has diabetes. In Virginia, I met a 13-year-old boy named Joshua Davis.  ⏎
+    │   │   He and his Dad both have Type 1 diabetes, which means they need insulin every day. Insulin costs about $10 a vial to make.  ⏎
+    │   │   But drug companies charge families like Joshua and his Dad up to 30 times more. I spoke with Joshua’s mom. ⏎
+    │   │   Imagine what it’s like to look at your child who needs insulin and have no idea how you’re going to pay for it.  ⏎
+    │   │   What it does to your dignity, your ability to look your child in the eye, to be the parent you expect to be. ⏎
+    │   │   Joshua is here with us tonight. Yesterday was his birthday. Happy birthday, buddy.  ⏎
+    │   │   For Joshua, and for the 200,000 other young people with Type 1 diabetes, let’s cap the cost of insulin at $35 a month so everyone can afford it.  ⏎
+    │   │   Drug companies will still do very well. And while we’re at it let Medicare negotiate lower prices for prescription drugs, like the VA a&#34;⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   CONCISE SUMMARY:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  The Bipartisan Innovation Act is an important bill that is currently sitting in Congress. It will make record investments in emerging technologies and American manufacturing, such as Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio. This bill will create 10,000 new jobs and increase Intel&#39;s investment to $100 billion. Other companies, such as Ford and GM, are also investing in American manufacturing, creating 369,000 new jobs in the last year. President Biden&#39;s plan to fight inflation is to lower costs, not wages, by increasing the productive capacity of the economy. This includes capping the cost of insulin at $35 a month and allowing Medicare to negotiate lower prices for prescription drugs.
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+
+<span class="ansi-white-intense-fg">f67d62c3-7a44-4b2a-a688-af2de532d214</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span> ⧖ <span class="ansi-blue-fg">5.256s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
+    │   ├── <span class="ansi-blue-fg">input</span>: 
+    │   │   └── <span class="ansi-blue-fg">text</span>:  In this speech, the speaker addresses the American people and the world, emphasizing the strength of the Ukrainian people in the face of Russia&#39;s aggression. The speaker also announces that the US and its allies are imposing economic sanctions on Russia, and providing military, economic, and humanitarian assistance to Ukraine. The US is also joining its allies in closing off American airspace to all Russian flights, and the Department of Justice is assembling a task force to go after the crimes of Russian oligarchs. The speaker also clarifies that US forces are not engaging in conflict with Russian forces in Ukraine, but are there to defend NATO allies.⏎
+    │   │        In response to Russian President Putin&#39;s invasion of Ukraine, the US and its allies are providing military, economic, and humanitarian assistance to the Ukrainians. The US is also leading an effort to release 60 million barrels of oil from reserves around the world, including 30 million from the US Strategic Petroleum Reserve, to help blunt gas prices. The US President has also passed the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs.⏎
+    │   │        President Biden fought to pass the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs. He also passed the Bipartisan Infrastructure Law to rebuild America and the Bipartisan Innovation Act to level the playing field with China and other competitors. An example of this is Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio, which will create 10,000 new jobs.⏎
+    │   │        The Bipartisan Innovation Act is an important bill that is currently sitting in Congress. It will make record investments in emerging technologies and American manufacturing, such as Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio. This bill will create 10,000 new jobs and increase Intel&#39;s investment to $100 billion. Other companies, such as Ford and GM, are also investing in American manufacturing, creating 369,000 new jobs in the last year. President Biden&#39;s plan to fight inflation is to lower costs, not wages, by increasing the productive capacity of the economy. This includes capping the cost of insulin at $35 a month and allowing Medicare to negotiate lower prices for prescription drugs.
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:27Z</span> ⧖ <span class="ansi-blue-fg">5.254s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Write a concise summary of the following:⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   &#34; In this speech, the speaker addresses the American people and the world, emphasizing the strength of the Ukrainian people in the face of Russia&#39;s aggression. The speaker also announces that the US and its allies are imposing economic sanctions on Russia, and providing military, economic, and humanitarian assistance to Ukraine. The US is also joining its allies in closing off American airspace to all Russian flights, and the Department of Justice is assembling a task force to go after the crimes of Russian oligarchs. The speaker also clarifies that US forces are not engaging in conflict with Russian forces in Ukraine, but are there to defend NATO allies.⏎
+    │   │    In response to Russian President Putin&#39;s invasion of Ukraine, the US and its allies are providing military, economic, and humanitarian assistance to the Ukrainians. The US is also leading an effort to release 60 million barrels of oil from reserves around the world, including 30 million from the US Strategic Petroleum Reserve, to help blunt gas prices. The US President has also passed the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs.⏎
+    │   │    President Biden fought to pass the American Rescue Plan to provide economic relief to tens of millions of Americans and create jobs. He also passed the Bipartisan Infrastructure Law to rebuild America and the Bipartisan Innovation Act to level the playing field with China and other competitors. An example of this is Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio, which will create 10,000 new jobs.⏎
+    │   │    The Bipartisan Innovation Act is an important bill that is currently sitting in Congress. It will make record investments in emerging technologies and American manufacturing, such as Intel&#39;s $20 billion semiconductor &#34;mega site&#34; in Ohio. This bill will create 10,000 new jobs and increase Intel&#39;s investment to $100 billion. Other companies, such as Ford and GM, are also investing in American manufacturing, creating 369,000 new jobs in the last year. President Biden&#39;s plan to fight inflation is to lower costs, not wages, by increasing the productive capacity of the economy. This includes capping the cost of insulin at $35 a month and allowing Medicare to negotiate lower prices for prescription drugs.&#34;⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   CONCISE SUMMARY:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:32Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:32Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  In response to Russia&#39;s aggression in Ukraine, President Biden has taken action to provide military, economic, and humanitarian assistance to Ukraine, impose economic sanctions on Russia, and close off American airspace to Russian flights. He has also passed the American Rescue Plan to provide economic relief to Americans and the Bipartisan Innovation Act to level the playing field with China and other competitors. This bill will create 10,000 new jobs and increase Intel&#39;s investment to $100 billion. President Biden is also fighting inflation by capping the cost of insulin at $35 a month and allowing Medicare to negotiate lower prices for prescription drugs.
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:32Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SummaryPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:32Z</span>
+
+<span class="ansi-white-intense-fg">2e55baea-6562-45d6-bd73-9ab86d34404c</span>
+└── <span class="ansi-magenta-fg">summary</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:20Z</span> ⧖ <span class="ansi-blue-fg">11.495s</span>
+    └── <span class="ansi-magenta-fg">summary</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:23:32Z</span>
 
 </pre>
 </div>
@@ -2048,7 +2324,7 @@ templates
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home" rel="prev">
+        <a href="../selfask/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Selfask" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -2057,26 +2333,11 @@ templates
               <span class="md-footer__direction">
                 Previous
               </span>
-              Home
+              Selfask
             </div>
           </div>
         </a>
       
-      
-        
-        <a href="../math/" class="md-footer__link md-footer__link--next" aria-label="Next: Math" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Math
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
       
     </nav>
   

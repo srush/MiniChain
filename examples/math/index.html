@@ -12,14 +12,14 @@
         <meta name="author" content="Sasha Rush">
       
       
-        <link rel="canonical" href="https://srush.github.io/minichain/examples/bash/">
+        <link rel="canonical" href="https://srush.github.io/minichain/examples/math/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.1.3">
     
     
       
-        <title>Bash - Mini-Chain</title>
+        <title>Math - Mini-Chain</title>
       
     
     
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bash
+              Math
             
           </span>
         </div>
@@ -214,7 +214,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="./" class="md-tabs__link md-tabs__link--active">
+      <a href="../bash/" class="md-tabs__link md-tabs__link--active">
         Examples
       </a>
     </li>
@@ -331,6 +331,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="../bash/" class="md-nav__link">
+        Bash
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -341,23 +355,9 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Bash
-      </a>
-      
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../math/" class="md-nav__link">
         Math
       </a>
+      
     </li>
   
 
@@ -425,7 +425,7 @@
 
                 
 
-  <h1>Bash</h1>
+  <h1>Math</h1>
 
 <script>
 (function (global, factory) {
@@ -1463,8 +1463,8 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Generate and run a bash command. 
-Adapted from LangChain <a href="https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html">BashChain</a></p>
+<p>Answer a math problem with code.
+Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-code</a></p>
 
 </div>
 </div>
@@ -1491,10 +1491,10 @@ Adapted from LangChain <a href="https://langchain.readthedocs.io/en/latest/modul
             </clipboard-copy>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">JinjaPrompt</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">start_chain</span><span class="p">,</span> <span class="n">show_log</span>
+<span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">JinjaPrompt</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">start_chain</span><span class="p">,</span> <span class="n">SimplePrompt</span><span class="p">,</span> <span class="n">show_log</span>
 </pre></div>
 <div id="cell-1" class="clipboard-copy-txt">from typing import List
-from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
+from minichain import Backend, JinjaPrompt, Prompt, start_chain, SimplePrompt, show_log</div>
     
         </div>
     </div>
@@ -1510,13 +1510,13 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Prompt that asks LLM to produce a bash command.</p>
+<p>Prompt that asks LLM for code from math.</p>
 
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1536,26 +1536,77 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">CLIPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]):</span>
-    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;bash.pmpt.tpl&quot;</span>
-
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">JinjaPrompt</span><span class="o">.</span><span class="n">IN</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;```bash&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
+<span class="n">MathPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;What is 10 + 12?&quot;</span><span class="p">},</span> <span class="s2">&quot;10 + 12&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">class CLIPrompt(JinjaPrompt[List[str]]):
-    template_file = "bash.pmpt.tpl"
-
-    def parse(self, out: str, inp: JinjaPrompt.IN) -> List[str]:
-        out = out.strip()
-        assert out.startswith("```bash")
-        return out.split("\n")[1:-1]</div>
+<div id="cell-2" class="clipboard-copy-txt">class MathPrompt(JinjaPrompt[str]):
+    template_file = "math.pmpt.tpl"
+MathPrompt().show({"question": "What is 10 + 12?"}, "10 + 12")</div>
     
         </div>
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
+ <main class="container">
+
+<h3>MathPrompt</h3>
+
+<dl>
+  <dt>Input:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;What is 10 + 12?&#39;</span><span class="p">}</span>
+</pre></div>
+
+
+  </dd>
+
+  <dt> Full Prompt: </dt>
+  <dd>
+    <details>
+      <summary>Prompt</summary>
+      <p>Question:<br>What is 37593 * 67?<br>Code:<br>37593 * 67<br><br>Question:<br>Janet's ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?<br>Code:<br>(16-3-4)*2<br><br>Question:<br>How many of the integers between 0 and 99 inclusive are divisible by 8?<br>Code:<br>count = 0<br>for i in range(0, 99+1):<br>  if i % 8 == 0: count += 1<br><br>Question:<br>A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?<br>Code:<br>2 + 2/2<br><br>Question:<br><div style='color:red'>What is 10 + 12?</div><br>Code:</p>
+    </details>
+  </dd>
+  
+  <dt> Response: </dt>
+  <dd>     
+    10 + 12
+  </dd>
+
+  <dt>Value:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="mi">10</span> <span class="o">+</span> <span class="mi">12</span>
+</pre></div>
+
+  </dd>
+</main>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
@@ -1580,257 +1631,15 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">CLIPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;list the files in the directory&quot;</span><span class="p">},</span>
-    <span class="sd">&quot;&quot;&quot;```bash\nls\n```&quot;&quot;&quot;</span>
-<span class="p">)</span>
-</pre></div>
-<div id="cell-3" class="clipboard-copy-txt">CLIPrompt().show(
-    {"question": "list the files in the directory"},
-    """```bash\nls\n```"""
-)</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-
-<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
- <main class="container">
-
-<h3>CLIPrompt</h3>
-
-<dl>
-  <dt>Input:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;list the files in the directory&#39;</span><span class="p">}</span>
-</pre></div>
-
-
-  </dd>
-
-  <dt> Full Prompt: </dt>
-  <dd>
-    <details>
-      <summary>Prompt</summary>
-      <p>If someone asks you to perform a task, your job is to come up with a series of bash commands that will perform the task. There is no need to put "#!/bin/bash" in your answer. Make sure to reason step by step, using this format:<br><br>Question: "copy the files in the directory named 'target' into a new directory at the same level as target called 'myNewDirectory'"<br><br>I need to take the following actions:<br>- List all files in the directory<br>- Create a new directory<br>- Copy the files from the first directory into the second directory<br>```bash<br>ls<br>mkdir myNewDirectory<br>cp -r target/* myNewDirectory<br>```<br><br>That is the format. Begin!<br><br>Question: <div style='color:red'>list the files in the directory</div></p>
-    </details>
-  </dd>
-  
-  <dt> Response: </dt>
-  <dd>     
-    ```bash<br>ls<br>```
-  </dd>
-
-  <dt>Value:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">]</span>
-</pre></div>
-
-  </dd>
-</main>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Prompt that runs the bash command.</p>
-
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-4">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">BashPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]):</span>
-    <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">out</span>
-</pre></div>
-<div id="cell-4" class="clipboard-copy-txt">class BashPrompt(Prompt[List[str], str]):
-    def prompt(self, inp: List[str]) -> str:
-        return ";".join(inp).replace("\n", "")
-
-    def parse(self, out: str, inp: List[str]) -> str:
-        return out</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-5">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">BashPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">([</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="s2">&quot;cat file.txt&quot;</span><span class="p">],</span> <span class="s2">&quot;hello&quot;</span><span class="p">)</span>
-</pre></div>
-<div id="cell-5" class="clipboard-copy-txt">BashPrompt().show(["ls", "cat file.txt"], "hello")</div>
-    
-        </div>
-    </div>
-
-</div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-
-<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
- <main class="container">
-
-<h3>BashPrompt</h3>
-
-<dl>
-  <dt>Input:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">,</span> <span class="s1">&#39;cat file.txt&#39;</span><span class="p">]</span>
-</pre></div>
-
-
-  </dd>
-
-  <dt> Full Prompt: </dt>
-  <dd>
-    <details>
-      <summary>Prompt</summary>
-      <p>ls;cat file.txt</p>
-    </details>
-  </dd>
-  
-  <dt> Response: </dt>
-  <dd>     
-    hello
-  </dd>
-
-  <dt>Value:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="n">hello</span>
-</pre></div>
-
-  </dd>
-</main>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-6">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;bash&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="n">question</span> <span class="o">=</span> <span class="s1">&#39;&quot;go up one directory, and then into the minichain directory, and list the files in the directory&quot;&#39;</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="n">CLIPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">BashPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">BashProcess</span><span class="p">()))</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="s1">&#39;What is the sum of the powers of 3 (3^i) that are smaller than 100?&#39;</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">MathPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">SimplePrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">Python</span><span class="p">()))</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt">with start_chain("bash") as backend:
-    question = '"go up one directory, and then into the minichain directory, and list the files in the directory"'
-    prompt = CLIPrompt(backend.OpenAI()).chain(BashPrompt(backend.BashProcess()))
+<div id="cell-3" class="clipboard-copy-txt">with start_chain("math") as backend:
+    question = 'What is the sum of the powers of 3 (3^i) that are smaller than 100?'
+    prompt = MathPrompt(backend.OpenAI()).chain(SimplePrompt(backend.Python()))
     result = prompt({"question": question})
     print(result)</div>
     
@@ -1854,13 +1663,7 @@ from minichain import JinjaPrompt, Prompt, start_chain, show_log</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>backend.py
-base.py
-__init__.py
-lang.py
-prompts.py
-__pycache__
-templates
+<pre>121
 
 </pre>
 </div>
@@ -1877,12 +1680,12 @@ templates
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-7">
+            <clipboard-copy for="cell-4">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -1892,9 +1695,9 @@ templates
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;bash.log&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;math.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-7" class="clipboard-copy-txt">show_log("bash.log")</div>
+<div id="cell-4" class="clipboard-copy-txt">show_log("math.log")</div>
     
         </div>
     </div>
@@ -1916,68 +1719,79 @@ templates
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">c1dcc6a1-0de5-41bf-aa63-5614284879b2</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.CLIPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.426s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+<pre><span class="ansi-white-intense-fg">dbcf5c03-6a39-4046-b1e1-873255f7e3e2</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:12Z</span> ⧖ <span class="ansi-blue-fg">2.063s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:12Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
-    │   │   └── <span class="ansi-blue-fg">question</span>: &#34;go up one directory, and then into the minichain directory, and list the files in the directory&#34;
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.425s</span>
-    │   ├── <span class="ansi-blue-fg">prompt</span>: If someone asks you to perform a task, your job is to come up with a series of bash commands that will perform the task. There is no need to put &#34;#!/bin/bash&#34; in your answer. Make sure to reason step by step, using this format:⏎
+    │   │   └── <span class="ansi-blue-fg">question</span>: What is the sum of the powers of 3 (3^i) that are smaller than 100?
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:12Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:12Z</span> ⧖ <span class="ansi-blue-fg">2.062s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Question:⏎
+    │   │   What is 37593 * 67?⏎
+    │   │   Code:⏎
+    │   │   37593 * 67⏎
     │   │   ⏎
-    │   │   Question: &#34;copy the files in the directory named &#39;target&#39; into a new directory at the same level as target called &#39;myNewDirectory&#39;&#34;⏎
+    │   │   Question:⏎
+    │   │   Janet&#39;s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers&#39; market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers&#39; market?⏎
+    │   │   Code:⏎
+    │   │   (16-3-4)*2⏎
     │   │   ⏎
-    │   │   I need to take the following actions:⏎
-    │   │   - List all files in the directory⏎
-    │   │   - Create a new directory⏎
-    │   │   - Copy the files from the first directory into the second directory⏎
-    │   │   ```bash⏎
-    │   │   ls⏎
-    │   │   mkdir myNewDirectory⏎
-    │   │   cp -r target/* myNewDirectory⏎
-    │   │   ```⏎
+    │   │   Question:⏎
+    │   │   How many of the integers between 0 and 99 inclusive are divisible by 8?⏎
+    │   │   Code:⏎
+    │   │   count = 0⏎
+    │   │   for i in range(0, 99+1):⏎
+    │   │     if i % 8 == 0: count += 1⏎
     │   │   ⏎
-    │   │   That is the format. Begin!⏎
+    │   │   Question:⏎
+    │   │   A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?⏎
+    │   │   Code:⏎
+    │   │   2 + 2/2⏎
     │   │   ⏎
-    │   │   Question: &#34;go up one directory, and then into the minichain directory, and list the files in the directory&#34;
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   │   Question:⏎
+    │   │   What is the sum of the powers of 3 (3^i) that are smaller than 100?⏎
+    │   │   Code:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   sum = 0⏎
+    │   │   for i in range(0, 100):⏎
+    │   │     if 3**i &lt; 100:⏎
+    │   │       sum += 3**i⏎
     │   │   ⏎
-    │   │   ```bash⏎
-    │   │   cd ..⏎
-    │   │   cd minichain⏎
-    │   │   ls⏎
-    │   │   ```
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.CLIPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
+    │   │   print(sum)
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
 
-<span class="ansi-white-intense-fg">e9a19dde-cbdd-4054-950c-b6924b6ba5bb</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.BashPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.039s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    │   ├── <span class="ansi-blue-fg">input</span>: 
-    │   │   ├── <span class="ansi-blue-fg">0</span>: cd ..
-    │   │   ├── <span class="ansi-blue-fg">1</span>: cd minichain
-    │   │   └── <span class="ansi-blue-fg">2</span>: ls
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:58Z</span> ⧖ <span class="ansi-blue-fg">0.038s</span>
-    │   ├── <span class="ansi-blue-fg">prompt</span>: cd ..;cd minichain;ls
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    │   ├── <span class="ansi-blue-fg">result</span>: backend.py⏎
-    │   │   base.py⏎
-    │   │   __init__.py⏎
-    │   │   lang.py⏎
-    │   │   prompts.py⏎
-    │   │   __pycache__⏎
-    │   │   templates⏎
+<span class="ansi-white-intense-fg">b3d6e0de-c8e3-41d1-ad98-9e536f2f6744</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">input</span>: ⏎
+    │   │   sum = 0⏎
+    │   │   for i in range(0, 100):⏎
+    │   │     if 3**i &lt; 100:⏎
+    │   │       sum += 3**i⏎
+    │   │   ⏎
+    │   │   print(sum)
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: ⏎
+    │   │   sum = 0⏎
+    │   │   for i in range(0, 100):⏎
+    │   │     if 3**i &lt; 100:⏎
+    │   │       sum += 3**i⏎
+    │   │   ⏎
+    │   │   print(sum)
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: 121⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.BashPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
 
-<span class="ansi-white-intense-fg">03bac5e5-455f-4892-aa9e-13f3c3370769</span>
-└── <span class="ansi-magenta-fg">bash</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:57Z</span> ⧖ <span class="ansi-blue-fg">1.833s</span>
-    └── <span class="ansi-magenta-fg">bash</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 17:51:59Z</span>
+<span class="ansi-white-intense-fg">f89fb540-1592-460b-972a-8fd2a9be7d3a</span>
+└── <span class="ansi-magenta-fg">math</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:12Z</span> ⧖ <span class="ansi-blue-fg">2.431s</span>
+    └── <span class="ansi-magenta-fg">math</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:03:15Z</span>
 
 </pre>
 </div>
@@ -2048,7 +1862,7 @@ templates
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../.." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home" rel="prev">
+        <a href="../bash/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Bash" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -2057,20 +1871,20 @@ templates
               <span class="md-footer__direction">
                 Previous
               </span>
-              Home
+              Bash
             </div>
           </div>
         </a>
       
       
         
-        <a href="../math/" class="md-footer__link md-footer__link--next" aria-label="Next: Math" rel="next">
+        <a href="../pal/" class="md-footer__link md-footer__link--next" aria-label="Next: Pal" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Math
+              Pal
             </div>
           </div>
           <div class="md-footer__button md-icon">

@@ -102,7 +102,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="Mini-Chain" class="md-header__button md-logo" aria-label="Mini-Chain" data-md-component="logo">
       
-  <img src="logo.png" alt="logo">
+  <img src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -257,7 +257,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="." title="Mini-Chain" class="md-nav__button md-logo" aria-label="Mini-Chain" data-md-component="logo">
       
-  <img src="logo.png" alt="logo">
+  <img src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png" alt="logo">
 
     </a>
     Mini-Chain
@@ -294,9 +294,60 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         Home
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tutorial" class="md-nav__link">
+    Tutorial
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutorial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#advanced-asynchronous-calls" class="md-nav__link">
+    Advanced: Asynchronous Calls
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-parsing" class="md-nav__link">
+    Advanced: Parsing
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -362,6 +413,34 @@
   
   
     <li class="md-nav__item">
+      <a href="examples/math/" class="md-nav__link">
+        Math
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/pal/" class="md-nav__link">
+        Pal
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="examples/selfask/" class="md-nav__link">
         Selfask
       </a>
@@ -376,36 +455,8 @@
   
   
     <li class="md-nav__item">
-      <a href="examples/summary.ipynb" class="md-nav__link">
-        None
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="examples/pal.ipynb" class="md-nav__link">
-        None
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="examples/math.ipynb" class="md-nav__link">
-        None
+      <a href="examples/summary/" class="md-nav__link">
+        Summary
       </a>
     </li>
   
@@ -428,7 +479,7 @@
               
                 
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -439,6 +490,41 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tutorial" class="md-nav__link">
+    Tutorial
+  </a>
+  
+    <nav class="md-nav" aria-label="Tutorial">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#advanced-asynchronous-calls" class="md-nav__link">
+    Advanced: Asynchronous Calls
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-parsing" class="md-nav__link">
+    Advanced: Parsing
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -453,9 +539,12 @@
                 
 
 <h1 id="mini-chain">Mini-Chain<a class="headerlink" href="#mini-chain" title="Permanent link">&para;</a></h1>
-<p><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></p>
 <p>A tiny library for <strong>large</strong> language models.</p>
-<p>It's annoyingly simple. Here's some code.</p>
+<p>[<a href="https://srush.github.io/minichain">Documentation and Examples</a>]</p>
+<p><center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center></p>
+<ul>
+<li>Code:</li>
+</ul>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 
@@ -465,7 +554,9 @@
     <span class="n">result</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </code></pre></div>
-<p>Here's the template.</p>
+<ul>
+<li>Template:</li>
+</ul>
 <div class="highlight"><pre><span></span><code>...
 Question:
 A robe takes 2 bolts of blue fiber and half that much white fiber. How many bolts in total does it take?
@@ -476,12 +567,14 @@ Question:
 {{question}}
 Code:
 </code></pre></div>
-<p>Here's how you run. </p>
-<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">OPENAI_KEY</span><span class="o">=</span><span class="s2">&quot;sk-***&quot;</span>
-python math.py
+<ul>
+<li>Execution:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>&gt; pip install git+https://github.com/srush/MiniChain/
+&gt; <span class="nb">export</span> <span class="nv">OPENAI_KEY</span><span class="o">=</span><span class="s2">&quot;sk-***&quot;</span>
+&gt; python math.py
 </code></pre></div>
-<h1 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h1>
-<h2 id="prompts">Prompts<a class="headerlink" href="#prompts" title="Permanent link">&para;</a></h2>
+<h2 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h2>
 <p>Mini-Chain defines one class called <code>Prompt[Input, Output]</code>. 
 It wraps a call to a language model in a type-safe way. <code>Input</code> is the input 
 to the function and <code>Output</code> is what it returns. </p>
@@ -529,7 +622,7 @@ You can run the following command to get the full output of your
 system.</p>
 <div class="highlight"><pre><span></span><code>eliot-tree -l <span class="m">0</span> mychain.log
 </code></pre></div>
-<h2 id="advanced-asynchronous-calls">Advanced: Asynchronous Calls<a class="headerlink" href="#advanced-asynchronous-calls" title="Permanent link">&para;</a></h2>
+<h3 id="advanced-asynchronous-calls">Advanced: Asynchronous Calls<a class="headerlink" href="#advanced-asynchronous-calls" title="Permanent link">&para;</a></h3>
 <p>One benefit of wrapping prompts in this way is that it allows for
 asynchronous execution. We use the
 <a href="https://trio.readthedocs.io/en/stable/">trio</a> library for
@@ -550,7 +643,7 @@ summarization prompt with asynchonous calls to the API.</p>
     <span class="n">list_prompt</span> <span class="o">=</span> <span class="n">SummaryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">list_prompt</span><span class="o">.</span><span class="n">arun</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="advanced-parsing">Advanced: Parsing<a class="headerlink" href="#advanced-parsing" title="Permanent link">&para;</a></h2>
+<h3 id="advanced-parsing">Advanced: Parsing<a class="headerlink" href="#advanced-parsing" title="Permanent link">&para;</a></h3>
 <p>Another benefit of prompting is that it isolates text parsing from execution.
 For example, it allows you to integrate declarative parsers of the output of the 
 language model. </p>
