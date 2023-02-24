@@ -70,7 +70,7 @@ function on the `Prompt[Input, Output]` class.
 
 ```python
 class ColorPrompt(Prompt[str, bool]):
-    def parse(inp: str) -> str:
+    def prompt(inp: str) -> str:
         "Encode prompting logic"
         return f"Answer 'Yes' if this is a color, {inp}. Answer:"
     
