@@ -49,6 +49,7 @@ setup(
         "jinja2-highlight",
         "openai",
         "parsita==1.7.1",
-        "trio"
+        "trio",
+        "git+https://github.com/huggingface/hfapi/"
     ]
 )

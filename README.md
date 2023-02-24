@@ -51,6 +51,14 @@ This library allows us to implement several popular approaches in a few lines of
 * [Self-Ask](https://srush.github.io/MiniChain/examples/selfask/) - [(Press et al 2022)](https://ofir.io/self-ask.pdf)
 * [Chain-of-Thought](https://srush.github.io/MiniChain/examples/bash/) - [(Wei et al 2022)](https://arxiv.org/abs/2201.11903)
 
+It supports the current backends.
+
+* OpenAI
+* Hugging Face 🤗
+* Google Search
+* Python
+* Bash
+
 ## Tutorial
 
 Mini-chain is based on Prompts. 
@@ -71,14 +79,7 @@ class ColorPrompt(Prompt[str, bool]):
         return out == "Yes" 
 ```
 
-The LLM for the Prompt is specified by the backend. MiniChain has the following backends. 
-
-* OpenAI
-* Google Search
-* Python
-* Bash
-
-To run a prompt, we give a backend and then call it like a function. To access backends, you need to call `start_chain`
+The LLM for the Prompt is specified by the backend. To run a prompt, we give a backend and then call it like a function. To access backends, you need to call `start_chain`
 which also manages logging. 
 
 ```python

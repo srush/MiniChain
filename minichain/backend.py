@@ -155,6 +155,17 @@ class OpenAI(Backend):
         return str(ans.choices[0].text)
 
     
+
+class HuggingFace(Backend):
+    def __init__(self, model: str = "gpt2") -> None:
+        self.model = model
+
+    def run(self, request: Request) -> str:
+        import hfapi
+        client = hfapi.Client()
+        x = client.text_generation(request.prompt, model=self.model)
+        return x["generated_text"][len(request.prompt):]
+    
     
 class _MiniChain:
     def __init__(self, name: str):
