@@ -2,7 +2,7 @@
 
 A tiny library for **large** language models.
 
-[Documentation and Examples](https://srush.github.io/minichain)
+[[Documentation and Examples](https://srush.github.io/minichain)]
 
 <center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
 
