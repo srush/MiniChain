@@ -18,6 +18,7 @@ setup(
     extras_require={},
     long_description=README,
     long_description_content_type="text/markdown",
+    include_package_data=True,
     author="Sasha Rush",
     author_email="srush.research@gmail.com",
     url="https://github.com/srush/minichain",
@@ -41,6 +42,7 @@ setup(
     install_requires=[
         "async-openai",
         "eliot",
+        "eliot-tree",
         "google-search-results",
         "jinja2",
         "jinja2-highlight",

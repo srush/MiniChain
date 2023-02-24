@@ -6,3 +6,4 @@ jinja2-highlight
 openai
 parsita==1.7.1
 trio
+eliot-tree
