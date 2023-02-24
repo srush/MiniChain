@@ -43,39 +43,47 @@ Code:
 
 ## Tutorial
 
-Mini-Chain defines one class called `Prompt[Input, Output]`. 
-It wraps a call to a language model in a type-safe way. `Input` is the input 
-to the function and `Output` is what it returns. 
+## Prompts
+
+Mini-chain is based on Prompts. 
+
+![image](https://user-images.githubusercontent.com/35882/221280012-d58c186d-4da2-4cb6-96af-4c4d9069943f.png)
 
 You can write your own prompts by overriding the `prompt` and `parse`
-function to return a typed result. 
+function on the `Prompt[Input, Output]` class. 
 
 ```python
-class MyPrompt(Prompt[str, bool]):
+class ColorPrompt(Prompt[str, bool]):
     def parse(inp: str) -> str:
-        return f"Answer 'yes' if this is a color, {inp}. Answer:"
+        "Encode prompting logic"
+        return f"Answer 'Yes' if this is a color, {inp}. Answer:"
     
     def parse(out: str, inp) -> bool:
         # Encode the parsing logic
         return out == "Yes" 
 ```
 
-`Prompt` is instantiated by passing a `Backend`. The library is mainly
-designed to use OpenAI but there are also backends for Google Search,
-and random tools like bash and python.
+The LLM for the Prompt is specified by the backend. MiniChain has the following backends. 
 
+* OpenAI
+* Google Search
+* Python
+* Bash
+
+To run a prompt, we give a backend and then call it like a function. To access backends, you need to call `start_chain`
+which also manages logging. 
 
 ```python
-with start_chain("mychain") as backend:
-    prompt1 = MyPrompt(backend.OpenAI())
+with start_chain("color") as backend:
+    prompt1 = ColorPrompt(backend.OpenAI())
     if prompt1("blue"):
-        ...
+        print("It's a color!")
 ```
 
-You can write a type-safe Python program using these prompts in the
-standard manner, or you can chain together prompts using function
-composition. Specifically, turns `Prompt[Input, Mid]` and `Prompt[Mid,
-Output]` to `Prompt[Input, Output]`.
+You can write a standard Python program just by calling these prompts. Alternatively you can chain prompts together. 
+
+![image](https://user-images.githubusercontent.com/35882/221281771-3770be96-02ce-4866-a6f8-c458c9a11c6f.png)
+
 
 ```python
 with start_chain("mychain") as backend:
@@ -86,36 +94,32 @@ with start_chain("mychain") as backend:
 ```
 
 Prompt `SimplePrompt` simply passes its input string to the
-language-model and returns its output string.  Often the simplest way
-to use prompts is through the predefined `JinjaPrompt[Output]`.  You
-provide it with a
-[Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) which
-it uses to prompt the language model. You can also customize it's
-output type through a `parse` method.
+language-model and returns its output string. 
+
+We also include `JinjaPrompt[Output]` which assumes `parse` uses template from the   
+[Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language. 
 
 ```python
 class MathPrompt(JinjaPrompt[str]):
     template_file = "math.pmpt.tpl"
 ```
 
-To view the output of your program we use the
-[eliot](https://eliot.readthedocs.io/en/stable/) logging framework.
+Logging is done automatically based on the name of your chain using the [eliot](https://eliot.readthedocs.io/en/stable/) logging framework.
 You can run the following command to get the full output of your
 system.
 
-```bash
-eliot-tree -l 0 mychain.log
+```python
+show_log("mychain.log")
 ```
 
 ### Advanced: Asynchronous Calls
 
-One benefit of wrapping prompts in this way is that it allows for
-asynchronous execution. We use the
-[trio](https://trio.readthedocs.io/en/stable/) library for
-asynchronous running of prompts. Prompt has a method `arun` which will
+Prompt chains make it easier to manage asynchronous execution. Prompt has a method `arun` which will
 make the language model call asynchronous.
+Async calls need the [trio](https://trio.readthedocs.io/en/stable/) library.
 
 ```python
+import trio
 async def fn1(prompt1):
         if await prompt1.arun("blue"):
         ...
@@ -123,11 +127,12 @@ async def fn1(prompt1):
 trio.run(prompt1)
 ```
 
-A convenient construct is the `map` function which
-converts a `Prompt[Input, Output]` to `Prompt[Sequence[Input],
-Sequence[Output]]`. This method is particularly useful in conjunction
-with asynchronous execution. For example this code runs a
-summarization prompt with asynchonous calls to the API.
+A convenient construct is the `map` function which runs a prompt on a list of inputs. 
+
+![image](https://user-images.githubusercontent.com/35882/221283494-6f76ee85-3652-4bb3-bc42-4e961acd1477.png)
+
+
+This code runs a summarization prompt with asynchonous calls to the API.
 
 
 ```python
@@ -140,15 +145,10 @@ with start_chain("summary") as backend:
 
 ### Advanced: Parsing
 
-Another benefit of prompting is that it isolates text parsing from execution.
-For example, it allows you to integrate declarative parsers of the output of the 
-language model. 
-
-In the SelfAsk example, there are two possible outputs from the
-language model.  To make this convenient to parse, we use a parser
-combinator [parsita](https://parsita.drhagen.com/) to check for both
-possible outputs in a readable way with error checking.
-
+Minichain lets you use whatever parser you would like. 
+One example is [parsita](https://parsita.drhagen.com/) a 
+cool parser combinator library. This example builds a little 
+state machine based on the LLM response with error handling.
 
 ```python
 class SelfAsk(JinjaPrompt[IntermediateState | FinalState]):
@@ -162,3 +162,6 @@ class SelfAsk(JinjaPrompt[IntermediateState | FinalState]):
     def parse(self, response: str, inp):
         return self.Parser.response.parse(response).or_die()
 ```
+
+[[Full Examples](https://srush.github.io/minichain)]
+
