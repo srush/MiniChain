@@ -15,7 +15,6 @@ setup(
         exclude=["examples", "docs", "test*"],
     ),
     description="A tiny library for large language models",
-    install_requires=[],
     extras_require={},
     long_description=README,
     long_description_content_type="text/markdown",
