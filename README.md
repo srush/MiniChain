@@ -36,6 +36,7 @@ Code:
 * Execution:
 
 ```bash
+> pip install git+https://github.com/srush/MiniChain/
 > export OPENAI_KEY="sk-***"
 > python math.py
 ```
