@@ -323,7 +323,14 @@
     Tutorial
   </a>
   
-    <nav class="md-nav" aria-label="Tutorial">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompts" class="md-nav__link">
+    Prompts
+  </a>
+  
+    <nav class="md-nav" aria-label="Prompts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -502,7 +509,14 @@
     Tutorial
   </a>
   
-    <nav class="md-nav" aria-label="Tutorial">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompts" class="md-nav__link">
+    Prompts
+  </a>
+  
+    <nav class="md-nav" aria-label="Prompts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -575,31 +589,36 @@ Code:
 &gt; python math.py
 </code></pre></div>
 <h2 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h2>
-<p>Mini-Chain defines one class called <code>Prompt[Input, Output]</code>. 
-It wraps a call to a language model in a type-safe way. <code>Input</code> is the input 
-to the function and <code>Output</code> is what it returns. </p>
+<h2 id="prompts">Prompts<a class="headerlink" href="#prompts" title="Permanent link">&para;</a></h2>
+<p>Mini-chain is based on Prompts. </p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/35882/221280012-d58c186d-4da2-4cb6-96af-4c4d9069943f.png" /></p>
 <p>You can write your own prompts by overriding the <code>prompt</code> and <code>parse</code>
-function to return a typed result. </p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MyPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]):</span>
+function on the <code>Prompt[Input, Output]</code> class. </p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ColorPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]):</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer &#39;yes&#39; if this is a color, </span><span class="si">{</span><span class="n">inp</span><span class="si">}</span><span class="s2">. Answer:&quot;</span>
+        <span class="s2">&quot;Encode prompting logic&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answer &#39;Yes&#39; if this is a color, </span><span class="si">{</span><span class="n">inp</span><span class="si">}</span><span class="s2">. Answer:&quot;</span>
 
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="c1"># Encode the parsing logic</span>
         <span class="k">return</span> <span class="n">out</span> <span class="o">==</span> <span class="s2">&quot;Yes&quot;</span> 
 </code></pre></div>
-<p><code>Prompt</code> is instantiated by passing a <code>Backend</code>. The library is mainly
-designed to use OpenAI but there are also backends for Google Search,
-and random tools like bash and python.</p>
-<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;mychain&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="n">prompt1</span> <span class="o">=</span> <span class="n">MyPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
+<p>The LLM for the Prompt is specified by the backend. MiniChain has the following backends. </p>
+<ul>
+<li>OpenAI</li>
+<li>Google Search</li>
+<li>Python</li>
+<li>Bash</li>
+</ul>
+<p>To run a prompt, we give a backend and then call it like a function. To access backends, you need to call <code>start_chain</code>
+which also manages logging. </p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;color&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+    <span class="n">prompt1</span> <span class="o">=</span> <span class="n">ColorPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">prompt1</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">):</span>
-        <span class="o">...</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;It&#39;s a color!&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>You can write a type-safe Python program using these prompts in the
-standard manner, or you can chain together prompts using function
-composition. Specifically, turns <code>Prompt[Input, Mid]</code> and <code>Prompt[Mid,
-Output]</code> to <code>Prompt[Input, Output]</code>.</p>
+<p>You can write a standard Python program just by calling these prompts. Alternatively you can chain prompts together. </p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/35882/221281771-3770be96-02ce-4866-a6f8-c458c9a11c6f.png" /></p>
 <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;mychain&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
     <span class="n">prompt0</span> <span class="o">=</span> <span class="n">SimplePrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
     <span class="n">chained_prompt</span> <span class="o">=</span> <span class="n">prompt0</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">prompt1</span><span class="p">)</span>
@@ -607,50 +626,40 @@ Output]</code> to <code>Prompt[Input, Output]</code>.</p>
         <span class="o">...</span>
 </code></pre></div>
 <p>Prompt <code>SimplePrompt</code> simply passes its input string to the
-language-model and returns its output string.  Often the simplest way
-to use prompts is through the predefined <code>JinjaPrompt[Output]</code>.  You
-provide it with a
-<a href="https://jinja.palletsprojects.com/en/3.1.x/templates/">Jinja</a> which
-it uses to prompt the language model. You can also customize it's
-output type through a <code>parse</code> method.</p>
+language-model and returns its output string. </p>
+<p>We also include <code>JinjaPrompt[Output]</code> which assumes <code>parse</code> uses template from the <br />
+<a href="https://jinja.palletsprojects.com/en/3.1.x/templates/">Jinja</a> language. </p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 </code></pre></div>
-<p>To view the output of your program we use the
-<a href="https://eliot.readthedocs.io/en/stable/">eliot</a> logging framework.
+<p>Logging is done automatically based on the name of your chain using the <a href="https://eliot.readthedocs.io/en/stable/">eliot</a> logging framework.
 You can run the following command to get the full output of your
 system.</p>
-<div class="highlight"><pre><span></span><code>eliot-tree -l <span class="m">0</span> mychain.log
+<div class="highlight"><pre><span></span><code><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;mychain.log&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="advanced-asynchronous-calls">Advanced: Asynchronous Calls<a class="headerlink" href="#advanced-asynchronous-calls" title="Permanent link">&para;</a></h3>
-<p>One benefit of wrapping prompts in this way is that it allows for
-asynchronous execution. We use the
-<a href="https://trio.readthedocs.io/en/stable/">trio</a> library for
-asynchronous running of prompts. Prompt has a method <code>arun</code> which will
-make the language model call asynchronous.</p>
-<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">fn1</span><span class="p">(</span><span class="n">prompt1</span><span class="p">):</span>
+<p>Prompt chains make it easier to manage asynchronous execution. Prompt has a method <code>arun</code> which will
+make the language model call asynchronous.
+Async calls need the <a href="https://trio.readthedocs.io/en/stable/">trio</a> library.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">trio</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">fn1</span><span class="p">(</span><span class="n">prompt1</span><span class="p">):</span>
         <span class="k">if</span> <span class="k">await</span> <span class="n">prompt1</span><span class="o">.</span><span class="n">arun</span><span class="p">(</span><span class="s2">&quot;blue&quot;</span><span class="p">):</span>
         <span class="o">...</span>
 
 <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt1</span><span class="p">)</span>
 </code></pre></div>
-<p>A convenient construct is the <code>map</code> function which
-converts a <code>Prompt[Input, Output]</code> to <code>Prompt[Sequence[Input],
-Sequence[Output]]</code>. This method is particularly useful in conjunction
-with asynchronous execution. For example this code runs a
-summarization prompt with asynchonous calls to the API.</p>
+<p>A convenient construct is the <code>map</code> function which runs a prompt on a list of inputs. </p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/35882/221283494-6f76ee85-3652-4bb3-bc42-4e961acd1477.png" /></p>
+<p>This code runs a summarization prompt with asynchonous calls to the API.</p>
 <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
     <span class="n">list_prompt</span> <span class="o">=</span> <span class="n">SummaryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">list_prompt</span><span class="o">.</span><span class="n">arun</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="advanced-parsing">Advanced: Parsing<a class="headerlink" href="#advanced-parsing" title="Permanent link">&para;</a></h3>
-<p>Another benefit of prompting is that it isolates text parsing from execution.
-For example, it allows you to integrate declarative parsers of the output of the 
-language model. </p>
-<p>In the SelfAsk example, there are two possible outputs from the
-language model.  To make this convenient to parse, we use a parser
-combinator <a href="https://parsita.drhagen.com/">parsita</a> to check for both
-possible outputs in a readable way with error checking.</p>
+<p>Minichain lets you use whatever parser you would like. 
+One example is <a href="https://parsita.drhagen.com/">parsita</a> a 
+cool parser combinator library. This example builds a little 
+state machine based on the LLM response with error handling.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="n">IntermediateState</span> <span class="o">|</span> <span class="n">FinalState</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;selfask.pmpt.tpl&quot;</span>
 
@@ -662,6 +671,7 @@ possible outputs in a readable way with error checking.</p>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">or_die</span><span class="p">()</span>
 </code></pre></div>
+<p>[<a href="https://srush.github.io/minichain">Full Examples</a>]</p>
 
               
 
