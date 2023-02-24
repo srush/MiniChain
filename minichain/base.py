@@ -1,9 +1,14 @@
 from dataclasses import dataclass
-from typing import Generic, Sequence, Tuple, TypeVar
+from typing import Generic, List, Optional, Sequence, TypeVar
 
-from eliot import start_action, to_file
+import trio
+from eliot import start_action
+from jinja2 import Environment, PackageLoader, select_autoescape
 
-from .backend import Backend
+from .backend import Backend, Request
+
+
+# Type Variables.
 
 Input = TypeVar("Input")
 Input2 = TypeVar("Input2")
@@ -11,22 +16,24 @@ Output = TypeVar("Output")
 Output2 = TypeVar("Output2")
 
 
-@dataclass
-class Request:
-    prompt: str
-    stop: Sequence[str] = ()
+# Code for visualization. 
+env = Environment(
+    loader=PackageLoader("minichain"),
+    autoescape=select_autoescape(),
+    extensions=["jinja2_highlight.HighlightExtension"],
+)
 
 
 @dataclass
-class Response(Generic[Output]):
-    """
-    The return value of calling a prompt.
-    """
+class HTML:
+    html: str
 
-    val: Output
-    echo: str
+    def _repr_html_(self) -> str:
+        return self.html
 
 
+# Main Class
+    
 class Prompt(Generic[Input, Output]):
     """
     `Prompt` represents a typed function from Input to Output.
@@ -40,49 +47,87 @@ class Prompt(Generic[Input, Output]):
     `Output`.
 
 
-    To use the `Prompt` you call `run` or `arun` with an LLM backend and the arguments
+    To use the `Prompt` you call `__call__` or `arun` with an LLM backend and the arguments
     of the form `Input`.
     """
 
-    def __init__(self, backend: Backend):
+    def __init__(self, backend: Optional[Backend] = None):
         self.backend = backend
 
+
+    # START: Overloaded by the user prompts
     def prompt(self, inp: Input) -> Request | str:
+        """
+        Convert from the `Input` type of the function 
+        to a request that is sent to the backend. 
+        """
         raise NotImplementedError
 
-    def parse(self, out: str) -> Output:
+    def parse(self, response: str, inp: Input) -> Output:
+        """
+        Convert from the string response of the function 
+        to the output type.
+        """
         raise NotImplementedError
-
-    def __call__(self, inp: Input, name: str = "") -> Response[Output]:
-        with start_action(action_type=str(type(self)) + name):
-            with start_action(action_type="Input Function", input=inp):
-                r = self.prompt(inp)
+    # END: Overloaded by the user prompts
+    
+    def _prompt(self, inp: Input) -> Request:
+        with start_action(action_type="Input Function", input=inp):
+            r = self.prompt(inp)
             if isinstance(r, str):
-                request = Request(r)
+                return Request(r)
             else:
-                request = r
+                return r
 
+    def __call__(self, inp: Input) -> Output:
+        assert self.backend is not None
+        with start_action(action_type=str(type(self))):
+            request = self._prompt(inp)
             with start_action(action_type="Prompted", prompt=request.prompt):
-                result: str = self.backend.run(request.prompt, request.stop)
+                result: str = self.backend.run(request)
             with start_action(action_type="Result", result=result):
-                output: Output = self.parse(result)
-                start_action(action_type="Return", returned=output)
+                output = self.parse(result, inp)
+        return output
 
-        return Response(output, request.prompt + result)
+    async def arun(self, inp: Input) -> Output:
+        assert self.backend is not None
+        with start_action(action_type=str(type(self))):
+            request = self._prompt(inp)
+            with start_action(action_type="Prompted", prompt=request.prompt):
+                result = await self.backend.arun(request)
+            with start_action(action_type="Result", result=result):
+                output = self.parse(result, inp)
+        return output
+
+    def render_prompt_html(self, inp: Input, prompt: str) -> HTML:
+        return HTML(prompt.replace("\n", "<br>"))
+
+    # Other functions.
+    
+    def show(self, inp: Input, response: str) -> HTML:
+        prompt = self.prompt(inp)
+        if isinstance(prompt, Request):
+            prompt = prompt.prompt
+        tmp = env.get_template("prompt.html.tpl")
+        return HTML(
+            tmp.render(
+                **{
+                    "name": type(self).__name__,
+                    "input": str(inp),
+                    "response": response,
+                    "output": str(self.parse(response, inp)),
+                    "prompt": self.render_prompt_html(inp, prompt).html,
+                }
+            )
+        )
 
     def chain(self, other: "Prompt[Output, Output2]") -> "Prompt[Input, Output2]":
+        "Chain together two prompts"
         return ChainedPrompt(self, other)
 
-    def par(
-        self, other: "Prompt[Input2, Output2]"
-    ) -> "Prompt[Tuple[Input, Input2], Tuple[Output, Output2]]":
-        return ParallelPrompt(self, other)
-
     def map(self) -> "Prompt[Sequence[Input], Sequence[Output]]":
+        "Create a prompt the works on lists of inputs"
         return MapPrompt(self)
-
-    async def arun(self, inp: Input, name: str = "") -> Response[Output]:
-        return self(inp, name=name)
 
 
 class ChainedPrompt(Prompt[Input, Output2]):
@@ -92,46 +137,35 @@ class ChainedPrompt(Prompt[Input, Output2]):
         self.prompt1 = prompt1
         self.prompt2 = prompt2
 
-    def __call__(self, inp: Input, name: str = "") -> Response[Output2]:
+    def __call__(self, inp: Input) -> Output2:
         out = self.prompt1(inp)
-        out2 = self.prompt2(out.val)
-        return Response(out2.val, out.echo + out2.echo)
+        return self.prompt2(out)
 
-
-class ParallelPrompt(Prompt[Tuple[Input, Input2], Tuple[Output, Output2]]):
-    def __init__(
-        self, prompt1: Prompt[Input, Output], prompt2: Prompt[Input2, Output2]
-    ):
-        self.prompt1 = prompt1
-        self.prompt2 = prompt2
-
-    def __call__(
-        self, inp: Tuple[Input, Input2], name: str = ""
-    ) -> Response[Tuple[Output, Output2]]:
-        out1 = self.prompt1(inp[0])
-        out2 = self.prompt2(inp[1])
-        return Response((out1.val, out2.val), out1.echo + out2.echo)
+    async def arun(self, inp: Input) -> Output2:
+        out = await self.prompt1.arun(inp)
+        return await self.prompt2.arun(out)
 
 
 class MapPrompt(Prompt[Sequence[Input], Sequence[Output]]):
     def __init__(self, prompt: Prompt[Input, Output]):
         self.prompt1 = prompt
 
-    def __call__(
-        self, inp: Sequence[Input], name: str = ""
-    ) -> Response[Sequence[Output]]:
-        vals = []
-        echo = ""
-        for i in inp:
-            out = self.prompt1(i)
-            vals.append(out.val)
-            echo += out.echo
-        return Response(vals, echo)
+    def __call__(self, inp: Sequence[Input]) -> Sequence[Output]:
+        return [self.prompt1(i) for i in inp]
 
-    # def __call__(self, inp: Input):
-    #     async with trio.open_nursery() as nursery:
-    #         nursery.start_soon(mock.ask, SimplePrompt, dict(input="b", name=f"F1"))
-    #         nursery.start_soon(mock.ask, SimplePrompt, dict(input="a", name=f"F2"))
+    async def arun(self, inp: Sequence[Input]) -> Sequence[Output]:
+        results: List[Optional[Output]] = [None] * len(inp)
 
-    # out = self.prompt1(inp)
-    # return self.prompt2(out)
+        async def runner(i: int) -> None:
+            results[i] = await self.prompt1.arun(inp[i])
+
+        async with trio.open_nursery() as nursery:
+            for i in range(len(inp)):
+                nursery.start_soon(runner, i)
+
+        ret: List[Output] = []
+        for i in range(len(inp)):
+            r = results[i]
+            assert r is not None
+            ret.append(r)
+        return ret

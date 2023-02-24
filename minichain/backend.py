@@ -1,13 +1,24 @@
+import os
 import subprocess
+from dataclasses import dataclass
 from types import TracebackType
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 from eliot import start_action, to_file
 
 
+@dataclass
+class Request:
+    prompt: str
+    stop: Optional[Sequence[str]] = None
+
+
 class Backend:
-    def run(self, question: str, stop: Sequence[str]) -> str:
-        pass
+    def run(self, request: Request) -> str:
+        raise NotImplementedError
+
+    async def arun(self, request: Request) -> str:
+        return self.run(request)
 
 
 class Mock(Backend):
@@ -15,23 +26,26 @@ class Mock(Backend):
         self.i = 0
         self.answers = answers
 
-    def run(self, question: str, stop: Sequence[str]) -> str:
+    def run(self, request: Request) -> str:
         self.i += 1
         return self.answers[self.i - 1]
 
 
 class Google(Backend):
-    def __init__(self, serpapi_key: str):
-
+    def __init__(self) -> None:
+        serpapi_key = os.environ.get("SERP_KEY")
+        assert (
+            serpapi_key
+        ), "Need a SERP_KEY. Get one here https://serpapi.com/users/welcome"
         self.serpapi_key = serpapi_key
 
-    def run(self, question: str, stop: Sequence[str]) -> str:
+    def run(self, request: Request) -> str:
         from serpapi import GoogleSearch
 
         params = {
             "api_key": self.serpapi_key,
             "engine": "google",
-            "q": question,
+            "q": request.prompt,
             "google_domain": "google.com",
             "gl": "us",
             "hl": "en",
@@ -56,6 +70,21 @@ class Google(Backend):
         return str(toret)
 
 
+class Python(Backend):
+    """Executes bash commands and returns the output."""
+
+    def run(self, request: Request) -> str:
+        """Run commands and return final output."""
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        f = StringIO()
+        with redirect_stdout(f):
+            exec(request.prompt)
+        s = f.getvalue()
+        return s
+
+
 class BashProcess(Backend):
     """Executes bash commands and returns the output."""
 
@@ -64,14 +93,11 @@ class BashProcess(Backend):
         self.strip_newlines = strip_newlines
         self.return_err_output = return_err_output
 
-    def run(self, commands: str, stop: Sequence[str]) -> str:
+    def run(self, request: Request) -> str:
         """Run commands and return final output."""
-        # if isinstance(commands, str):
-        #     commands = [commands]
-        # commands = ";".join(commands)
         try:
             output = subprocess.run(
-                commands,
+                request.prompt,
                 shell=True,
                 check=True,
                 stdout=subprocess.PIPE,
@@ -86,23 +112,44 @@ class BashProcess(Backend):
         return output
 
 
+x = "text-davinci-003"
+
+
 class OpenAI(Backend):
-    def __init__(self, api_key: str):
+    def __init__(self, model: str = x) -> None:
+        import async_openai
         import openai
 
+        api_key = os.environ.get("OPENAI_KEY")
+        assert api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        async_openai.OpenAI.configure(api_key=api_key)
         openai.api_key = api_key
 
-    def run(self, question: str, stop: Sequence[str]) -> str:
+        self.options = dict(
+            model=model,
+            max_tokens=256,
+            temperature=0,
+        )
+
+    def run(self, request: Request) -> str:
         import openai
 
         ans = openai.Completion.create(
-            model="text-davinci-003",
-            max_tokens=256,
-            # stop=stop,
-            prompt=question,
-            temperature=0,
+            **self.options,
+            stop=request.stop,
+            prompt=request.prompt,
         )
         return str(ans["choices"][0]["text"])
+
+    async def arun(self, request: Request) -> str:
+        import async_openai
+
+        ans = await async_openai.OpenAI.Completions.async_create(
+            **self.options,
+            stop=request.stop,
+            prompt=request.prompt,
+        )
+        return str(ans.choices[0].text)
 
 
 class _MiniChain:
@@ -126,6 +173,7 @@ class _MiniChain:
     Google = Google
     OpenAI = OpenAI
     BashProcess = BashProcess
+    Python = Python
 
 
 def start_chain(name: str) -> _MiniChain:

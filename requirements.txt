@@ -1,6 +1,8 @@
+async-openai
 eliot
 google-search-results
 jinja2
+jinja2-highlight
 openai
 parsita==1.7.1
 trio

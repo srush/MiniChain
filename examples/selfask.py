@@ -18,20 +18,35 @@ class FinalState:
     s: str
 
 
-States = FinalState | IntermediateState
+@dataclass
+class Out:
+    echo: str
+    state: FinalState | IntermediateState
 
 
-class SelfAsk(JinjaPrompt[States]):
+class SelfAsk(JinjaPrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"
 
-    class SelfAskParser(TextParsers):  # type: ignore
+    class Parser(TextParsers):  # type: ignore
         follow = (lit("Follow up:") >> reg(r".*")) > IntermediateState
         finish = (lit("So the final answer is: ") >> reg(r".*")) > FinalState
         response = follow | finish
 
-    def parse(self, inp: str) -> States:
-        return self.SelfAskParser.response.parse(inp).or_die()  # type: ignore
+    def parse(self, response: str, inp: JinjaPrompt.IN) -> Out:
+        return Out(
+            self.prompt(inp).prompt + response,
+            self.Parser.response.parse(response).or_die(),
+        )
+
+
+SelfAsk().show(
+    {
+        "input": "What is the zip code of the city where George Washington was born?",
+        "agent_scratchpad": True,
+    },
+    "Follow up: Where was George Washington born?",
+)
 
 
 def selfask(inp: str, openai: Backend, google: Backend) -> str:
@@ -39,29 +54,30 @@ def selfask(inp: str, openai: Backend, google: Backend) -> str:
     prompt2 = SimplePrompt(google)
     suffix = ""
     for i in range(3):
-        r1 = prompt1(
-            dict(input=inp, suffix=suffix, agent_scratchpad=True), name=f"Chat {i}"
-        )
-        if isinstance(r1.val, FinalState):
+        out = prompt1(dict(input=inp, suffix=suffix, agent_scratchpad=True))
+
+        if isinstance(out.state, FinalState):
             break
-        out = prompt2(r1.val.s, name=f"Google{i}")
-        suffix += "\nIntermediate answer:" + out.echo
-    return r1.val.s
+        suffix += out.echo
+        out2 = prompt2(out.state.s)
+        suffix += "\nIntermediate answer:" + out2
+    return out.state.s
 
 
-if __name__ == "__main__":
-    with start_chain("selfask") as backend:
-        result = selfask(
-            "What is the zip code of the city where George Washington was born?",
-            backend.Mock(
-                [
-                    "Follow up: Where was George Washington born?",
-                    "Follow up: What is the zip code of Virginia?",
-                    "So the final answer is: 12312",
-                ]
-            ),
-            # OpenAI("")
-            backend.Mock(["Virginia", "12312"]),
-        )
-    print(result)
-    # Google("593a073fa4c730efe918e592a538b36e80841bc8f8dd4070c1566920f75ba140")))
+with start_chain("selfask") as backend:
+    result = selfask(
+        "What is the zip code of the city where George Washington was born?",
+        backend.Mock(
+            [
+                "Follow up: Where was George Washington born?",
+                "Follow up: What is the zip code of Virginia?",
+                "So the final answer is: 12312",
+            ]
+        ),
+        # OpenAI("")
+        backend.Mock(["Virginia", "12312"]),
+    )
+print(result)
+
+
+# Google("593a073fa4c730efe918e592a538b36e80841bc8f8dd4070c1566920f75ba140")))

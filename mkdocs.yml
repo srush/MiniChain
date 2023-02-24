@@ -1,17 +1,17 @@
-site_name: minichain
+site_name: Mini-Chain
 site_url: https://srush.github.io/minichain
 site_description: Mini-Chain
 site_author: Sasha Rush
 
 ### Repository
-repo_url: https://github.com/srush/chainchomp
+repo_url: https://github.com/srush/minichain
 edit_uri: '' # comment this out to disable allowing editing of the docs from the website.
 remote_branch: gh-pages
 remote_name: origin
 
 ### Copyright
 copyright: |
-  Maintained by <a href="https://github.com/srush">Alexander Rush</a>.
+  Maintained by <a href="https://github.com/srush">Sasha Rush</a>.
 
 ### Preview Controls
 use_directory_urls: true
@@ -81,28 +81,17 @@ theme:
 plugins:
   - exclude:
       glob:
-        - '*/storage/*'
+        - 'examples/*.py'
   - search:
       indexing: 'full' # 'full' (default), 'sections', 'titles'
   - autorefs
-  - git-revision-date
+  #  - git-revision-date
   # macros must be placed after plugin: git-revision-date
-  - macros:
-      include_dir: docs/assets/snippets # snippets
-      # j2_block_start_string: '{{%'
-      # j2_block_end_string: '%}}'
-      # j2_variable_start_string: '{{'
-      # j2_variable_end_string: '}}'
-  - markdownextradata:
-      data: data
-  - minify:
-      minify_html: true
   # - social # @insiders
   - mkdocs-jupyter:
       include_source: true
       ignore_h1_titles: true
-      execute: true
-  - tooltips
+      execute: false
   - mkdocstrings
 
 ### Extensions
@@ -243,16 +232,6 @@ markdown_extensions:
   - pymdownx.tilde # ~~text~~ will render as strikethrough text. "sub~script" will render as subscript text: sub<sub>script</sub>.
 
 
-### Customization
-# extra:
-  # version:
-  #   default: latest
-  #   provider: mike
-  # disqus: !ENV REPO_OWNER
-  #alternate:
-  #- name: en - English
-  #  link: /
-  #  lang: en
 
 
 
@@ -306,5 +285,11 @@ extra_javascript:
 ## @@ Begin NAVIGATION
 nav:
   - Home: index.md
+  - Examples: 
+    - examples/bash.ipynb
+    - examples/selfask.ipynb
+    - examples/summary.ipynb
+    - examples/pal.ipynb
+    - examples/math.ipynb
 
 ## @@ End NAVIGATION
