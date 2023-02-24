@@ -7,7 +7,6 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from .backend import Backend, Request
 
-
 # Type Variables.
 
 Input = TypeVar("Input")
@@ -16,7 +15,7 @@ Output = TypeVar("Output")
 Output2 = TypeVar("Output2")
 
 
-# Code for visualization. 
+# Code for visualization.
 env = Environment(
     loader=PackageLoader("minichain"),
     autoescape=select_autoescape(),
@@ -33,7 +32,8 @@ class HTML:
 
 
 # Main Class
-    
+
+
 class Prompt(Generic[Input, Output]):
     """
     `Prompt` represents a typed function from Input to Output.
@@ -54,23 +54,23 @@ class Prompt(Generic[Input, Output]):
     def __init__(self, backend: Optional[Backend] = None):
         self.backend = backend
 
-
     # START: Overloaded by the user prompts
     def prompt(self, inp: Input) -> Request | str:
         """
-        Convert from the `Input` type of the function 
-        to a request that is sent to the backend. 
+        Convert from the `Input` type of the function
+        to a request that is sent to the backend.
         """
         raise NotImplementedError
 
     def parse(self, response: str, inp: Input) -> Output:
         """
-        Convert from the string response of the function 
+        Convert from the string response of the function
         to the output type.
         """
         raise NotImplementedError
+
     # END: Overloaded by the user prompts
-    
+
     def _prompt(self, inp: Input) -> Request:
         with start_action(action_type="Input Function", input=inp):
             r = self.prompt(inp)
@@ -103,7 +103,7 @@ class Prompt(Generic[Input, Output]):
         return HTML(prompt.replace("\n", "<br>"))
 
     # Other functions.
-    
+
     def show(self, inp: Input, response: str) -> HTML:
         prompt = self.prompt(inp)
         if isinstance(prompt, Request):

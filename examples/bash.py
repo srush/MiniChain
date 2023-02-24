@@ -1,10 +1,13 @@
-# Generate and run a bash command. 
-# Adapted from LangChain [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
+# Generate and run a bash command.
+# Adapted from LangChain
+# [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
 
 from typing import List
-from minichain import JinjaPrompt, Prompt, start_chain, show_log
+
+from minichain import JinjaPrompt, Prompt, show_log, start_chain
 
 # Prompt that asks LLM to produce a bash command.
+
 
 class CLIPrompt(JinjaPrompt[List[str]]):
     template_file = "bash.pmpt.tpl"
@@ -13,14 +16,15 @@ class CLIPrompt(JinjaPrompt[List[str]]):
         out = out.strip()
         assert out.startswith("```bash")
         return out.split("\n")[1:-1]
-    
+
+
 CLIPrompt().show(
-    {"question": "list the files in the directory"},
-    """```bash\nls\n```"""
+    {"question": "list the files in the directory"}, """```bash\nls\n```"""
 )
 
 
 # Prompt that runs the bash command.
+
 
 class BashPrompt(Prompt[List[str], str]):
     def prompt(self, inp: List[str]) -> str:
@@ -28,7 +32,8 @@ class BashPrompt(Prompt[List[str], str]):
 
     def parse(self, out: str, inp: List[str]) -> str:
         return out
-    
+
+
 BashPrompt().show(["ls", "cat file.txt"], "hello")
 
 

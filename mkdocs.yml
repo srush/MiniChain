@@ -277,7 +277,7 @@ extra_javascript:
 ## @@ Begin NAVIGATION
 nav:
   - Home: index.md
-  - Examples: 
+  - Examples:
     - examples/bash.ipynb
     - examples/math.ipynb
     - examples/pal.ipynb

@@ -20,9 +20,9 @@
       <p>{{prompt | safe}}</p>
     </details>
   </dd>
-  
+
   <dt> Response: </dt>
-  <dd>     
+  <dd>
     {{response | replace("\n", "<br>")  | safe}}
   </dd>
 
