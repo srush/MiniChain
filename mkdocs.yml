@@ -70,7 +70,7 @@ theme:
     # repo: fontawesome/brands/github
     # repo: fontawesome/brands/github-alt
     # repo: fontawesome/brands/github-square
-  logo: logo.png # img/icon-white.svg
+  logo: https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png # img/icon-white.svg
   # favicon: logo.png # img/favicon.png
   font:
     text: Roboto
