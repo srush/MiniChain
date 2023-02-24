@@ -8,7 +8,7 @@ A tiny library for **large** language models.
 
 Write apps that can easily and efficiently call multiple language models.
 
-* Code:
+* Code (`math.py`):
 
 ```python
 class MathPrompt(JinjaPrompt[str]):
@@ -21,7 +21,7 @@ with start_chain("math") as backend:
     print(result)
 ```
 
-* Template (math.pmpt.tpl):
+* Template (`math.pmpt.tpl`):
 
 ```
 ...
