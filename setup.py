@@ -50,6 +50,6 @@ setup(
         "openai",
         "parsita==1.7.1",
         "trio",
-        "git+https://github.com/huggingface/hfapi/",
+        "hf-api @ git+https://github.com/huggingface/hfapi/",
     ],
 )
