@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, List, Optional, Sequence, TypeVar
+from typing import Generic, List, Optional, Sequence, TypeVar, Union
 
 import trio
 from eliot import start_action
@@ -55,7 +55,7 @@ class Prompt(Generic[Input, Output]):
         self.backend = backend
 
     # START: Overloaded by the user prompts
-    def prompt(self, inp: Input) -> Request | str:
+    def prompt(self, inp: Input) -> Union[Request, str]:
         """
         Convert from the `Input` type of the function
         to a request that is sent to the backend.
