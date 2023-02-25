@@ -4,10 +4,13 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from types import TracebackType
-from typing import List, Optional, Sequence
+from typing import TYPE_CHECKING, List, Optional, Sequence
 
 from eliot import start_action, to_file
 from eliottree import render_tasks, tasks_from_iterable
+
+if TYPE_CHECKING:
+    import manifest
 
 
 @dataclass
@@ -171,6 +174,23 @@ class HuggingFace(Backend):
         return x["generated_text"][len(request.prompt) :]  # type: ignore
 
 
+class Manifest(Backend):
+    def __init__(self, client: "manifest.Manifest") -> None:
+        self.client = client
+
+    def run(self, request: Request) -> str:
+        try:
+            import manifest
+        except ImportError:
+            raise ImportError(
+                "`pip install manifest-ml` to use the Manifest Backend."
+            )
+        assert isinstance(self.client, manifest.Manifest), \
+            "Client must be a `manifest.Manifest` instance."
+
+        return self.client.run(request.prompt)
+
+
 class _MiniChain:
     def __init__(self, name: str):
         to_file(open(f"{name}.log", "w"))
@@ -183,8 +203,8 @@ class _MiniChain:
     def __exit__(
         self,
         type: type[BaseException],
-        exception: BaseException | None,
-        traceback: TracebackType | None,
+        exception: Optional[BaseException],
+        traceback: Optional[TracebackType],
     ) -> None:
         self.action.finish()
 
@@ -193,6 +213,7 @@ class _MiniChain:
     OpenAI = OpenAI
     BashProcess = BashProcess
     Python = Python
+    Manifest = Manifest
 
 
 def start_chain(name: str) -> _MiniChain:
