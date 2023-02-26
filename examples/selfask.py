@@ -2,29 +2,26 @@
 # Adapted from https://github.com/ofirpress/self-ask
 
 from dataclasses import dataclass
-
 from parsita import TextParsers, lit, reg
-
 from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_chain
-
 
 # Define the state of the bot.
 @dataclass
 class IntermediateState:
     s: str
-
-
+    
 @dataclass
 class FinalState:
     s: str
-
-
+    
 @dataclass
 class Out:
     echo: str
     state: FinalState | IntermediateState
 
 
+# Self Ask Prompt
+    
 class SelfAsk(TemplatePrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"

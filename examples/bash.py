@@ -3,11 +3,9 @@
 # [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
 
 from typing import List
-
 from minichain import TemplatePrompt, Prompt, show_log, start_chain
 
 # Prompt that asks LLM to produce a bash command.
-
 
 class CLIPrompt(TemplatePrompt[List[str]]):
     template_file = "bash.pmpt.tpl"
@@ -17,11 +15,7 @@ class CLIPrompt(TemplatePrompt[List[str]]):
         assert out.startswith("```bash")
         return out.split("\n")[1:-1]
 
-
-
-
 # Prompt that runs the bash command.
-
 
 class BashPrompt(Prompt[List[str], str]):
     def prompt(self, inp: List[str]) -> str:
@@ -29,9 +23,6 @@ class BashPrompt(Prompt[List[str], str]):
 
     def parse(self, out: str, inp: List[str]) -> str:
         return out
-
-
-
 
 with start_chain("bash") as backend:
     question = '"go up one directory, and then into the minichain directory, and list the files in the directory"'
