@@ -4,22 +4,13 @@
 
 import trio
 
-from minichain import JinjaPrompt, show_log, start_chain
+from minichain import TemplatePrompt, show_log, start_chain
 
 # Prompt that asks LLM to produce a bash command.
 
 
-class SummaryPrompt(JinjaPrompt[str]):
+class SummaryPrompt(TemplatePrompt[str]):
     template_file = "summary.pmpt.tpl"
-
-
-SummaryPrompt().show(
-    {
-        "text": "One way to fight inflation is to drive down wages and make Americans poorer."
-    },
-    "Make Americans poorer",
-)
-
 
 def chunk(f):
     "Split a documents into 4800 character overlapping chunks"
@@ -44,5 +35,13 @@ with start_chain("summary") as backend:
     # Reduce - Summarize the summarized chunks
     print(prompt({"text": "\n".join(out)}))
 
-
+# + tags=["hide_inp"]
+SummaryPrompt().show(
+    {
+        "text": "One way to fight inflation is to drive down wages and make Americans poorer."
+    },
+    "Make Americans poorer",
+)
+# -
+    
 show_log("summary.log")
