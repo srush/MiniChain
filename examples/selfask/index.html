@@ -1479,7 +1479,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Implementation of the self-ask + Google tool use prompt.<br>
+<p>Implementation of the self-ask + Google tool use prompt.
 Adapted from <a href="https://github.com/ofirpress/self-ask">https://github.com/ofirpress/self-ask</a></p>
 
 </div>
@@ -1507,12 +1507,8 @@ Adapted from <a href="https://github.com/ofirpress/self-ask">https://github.com/
             </clipboard-copy>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">JinjaPrompt</span><span class="p">,</span> <span class="n">SimplePrompt</span><span class="p">,</span> <span class="n">start_chain</span><span class="p">,</span> <span class="n">show_log</span>
-<span class="kn">from</span> <span class="nn">parsita</span> <span class="kn">import</span> <span class="n">TextParsers</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">reg</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from dataclasses import dataclass
-from minichain import Backend, JinjaPrompt, SimplePrompt, start_chain, show_log
-from parsita import TextParsers, lit, reg</div>
+<div id="cell-1" class="clipboard-copy-txt">from dataclasses import dataclass</div>
     
         </div>
     </div>
@@ -1542,29 +1538,9 @@ from parsita import TextParsers, lit, reg</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the state of the bot.</span>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">IntermediateState</span><span class="p">:</span>
-    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">FinalState</span><span class="p">:</span>
-    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span>
-<span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Out</span><span class="p">:</span>
-    <span class="n">echo</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">FinalState</span> <span class="o">|</span> <span class="n">IntermediateState</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">parsita</span> <span class="kn">import</span> <span class="n">TextParsers</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">reg</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt"># Define the state of the bot.
-@dataclass
-class IntermediateState:
-    s: str
-@dataclass
-class FinalState:
-    s: str
-@dataclass
-class Out:
-    echo: str
-    state: FinalState | IntermediateState</div>
+<div id="cell-2" class="clipboard-copy-txt">from parsita import TextParsers, lit, reg</div>
     
         </div>
     </div>
@@ -1573,8 +1549,8 @@ class Out:
 </div>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -1594,115 +1570,14 @@ class Out:
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="n">Out</span><span class="p">]):</span>
-    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;selfask.pmpt.tpl&quot;</span>
-    <span class="n">stop_template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intermediate answer:&quot;</span>
-
-    <span class="c1"># Parsita parser.</span>
-    <span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">TextParsers</span><span class="p">):</span>
-        <span class="n">follow</span> <span class="o">=</span> <span class="p">(</span><span class="n">lit</span><span class="p">(</span><span class="s2">&quot;Follow up:&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">reg</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">IntermediateState</span>
-        <span class="n">finish</span> <span class="o">=</span> <span class="p">(</span><span class="n">lit</span><span class="p">(</span><span class="s2">&quot;So the final answer is: &quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">reg</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">FinalState</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">follow</span> <span class="o">|</span> <span class="n">finish</span>
-
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Out</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">Out</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span><span class="o">.</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">response</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">or_die</span><span class="p">(),</span>
-        <span class="p">)</span>
-<span class="n">SelfAsk</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;What is the zip code of the city where George Washington was born?&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;agent_scratchpad&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;Follow up: Where was George Washington born?&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">TemplatePrompt</span><span class="p">,</span> <span class="n">SimplePrompt</span><span class="p">,</span> <span class="n">show_log</span><span class="p">,</span> <span class="n">start_chain</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">class SelfAsk(JinjaPrompt[Out]):
-    template_file = "selfask.pmpt.tpl"
-    stop_template = "\nIntermediate answer:"
-
-    # Parsita parser.
-    class Parser(TextParsers):
-        follow = (lit("Follow up:") >> reg(r".*")) > IntermediateState
-        finish = (lit("So the final answer is: ") >> reg(r".*")) > FinalState
-        response = follow | finish
-
-    def parse(self, response: str, inp) -> Out:
-        return Out(
-            self.prompt(inp).prompt + response,
-            self.Parser.response.parse(response).or_die(),
-        )
-SelfAsk().show(
-    {
-        "input": "What is the zip code of the city where George Washington was born?",
-        "agent_scratchpad": True,
-    },
-    "Follow up: Where was George Washington born?",
-)</div>
+<div id="cell-3" class="clipboard-copy-txt">from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_chain</div>
     
         </div>
     </div>
 
 </div>
-</div>
-
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
-
-
-
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
-
-<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
- <main class="container">
-
-<h3>SelfAsk</h3>
-
-<dl>
-  <dt>Input:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="s1">&#39;What is the zip code of the city where George Washington was born?&#39;</span><span class="p">,</span> <span class="s1">&#39;agent_scratchpad&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
-</pre></div>
-
-
-  </dd>
-
-  <dt> Full Prompt: </dt>
-  <dd>
-    <details>
-      <summary>Prompt</summary>
-      <p>Question: Who lived longer, Muhammad Ali or Alan Turing?<br>Are follow up questions needed here: Yes.<br>Follow up: How old was Muhammad Ali when he died?<br>Intermediate answer: Muhammad Ali was 74 years old when he died.<br>Follow up: How old was Alan Turing when he died?<br>Intermediate answer: Alan Turing was 41 years old when he died.<br>So the final answer is: Muhammad Ali<br><br>Question: When was the founder of craigslist born?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the founder of craigslist?<br>Intermediate answer: Craigslist was founded by Craig Newmark.<br>Follow up: When was Craig Newmark born?<br>Intermediate answer: Craig Newmark was born on December 6, 1952.<br>So the final answer is: December 6, 1952<br><br>Question: Who was the maternal grandfather of George Washington?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the mother of George Washington?<br>Intermediate answer: The mother of George Washington was Mary Ball Washington.<br>Follow up: Who was the father of Mary Ball Washington?<br>Intermediate answer: The father of Mary Ball Washington was Joseph Ball.<br>So the final answer is: Joseph Ball<br><br>Question: Are both the directors of Jaws and Casino Royale from the same country?<br>Are follow up questions needed here: Yes.<br>Follow up: Who is the director of Jaws?<br>Intermediate answer: The director of Jaws is Steven Spielberg.<br>Follow up: Where is Steven Spielberg from?<br>Intermediate answer: The United States.<br>Follow up: Who is the director of Casino Royale?<br>Intermediate answer: The director of Casino Royale is Martin Campbell.<br>Follow up: Where is Martin Campbell from?<br>Intermediate answer: New Zealand.<br>So the final answer is: No<br><br>Question: <div style='color:red'>What is the zip code of the city where George Washington was born?</div><br>Are followup questions needed here: Yes.<br></p>
-    </details>
-  </dd>
-  
-  <dt> Response: </dt>
-  <dd>     
-    Follow up: Where was George Washington born?
-  </dd>
-
-  <dt>Value:</dt>
-  <dd>
-<div class="highlight"><pre><span></span><span class="n">Out</span><span class="p">(</span><span class="n">echo</span><span class="o">=</span><span class="s1">&#39;Question: Who lived longer, Muhammad Ali or Alan Turing?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: How old was Muhammad Ali when he died?</span><span class="se">\n</span><span class="s1">Intermediate answer: Muhammad Ali was 74 years old when he died.</span><span class="se">\n</span><span class="s1">Follow up: How old was Alan Turing when he died?</span><span class="se">\n</span><span class="s1">Intermediate answer: Alan Turing was 41 years old when he died.</span><span class="se">\n</span><span class="s1">So the final answer is: Muhammad Ali</span><span class="se">\n\n</span><span class="s1">Question: When was the founder of craigslist born?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who was the founder of craigslist?</span><span class="se">\n</span><span class="s1">Intermediate answer: Craigslist was founded by Craig Newmark.</span><span class="se">\n</span><span class="s1">Follow up: When was Craig Newmark born?</span><span class="se">\n</span><span class="s1">Intermediate answer: Craig Newmark was born on December 6, 1952.</span><span class="se">\n</span><span class="s1">So the final answer is: December 6, 1952</span><span class="se">\n\n</span><span class="s1">Question: Who was the maternal grandfather of George Washington?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who was the mother of George Washington?</span><span class="se">\n</span><span class="s1">Intermediate answer: The mother of George Washington was Mary Ball Washington.</span><span class="se">\n</span><span class="s1">Follow up: Who was the father of Mary Ball Washington?</span><span class="se">\n</span><span class="s1">Intermediate answer: The father of Mary Ball Washington was Joseph Ball.</span><span class="se">\n</span><span class="s1">So the final answer is: Joseph Ball</span><span class="se">\n\n</span><span class="s1">Question: Are both the directors of Jaws and Casino Royale from the same country?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who is the director of Jaws?</span><span class="se">\n</span><span class="s1">Intermediate answer: The director of Jaws is Steven Spielberg.</span><span class="se">\n</span><span class="s1">Follow up: Where is Steven Spielberg from?</span><span class="se">\n</span><span class="s1">Intermediate answer: The United States.</span><span class="se">\n</span><span class="s1">Follow up: Who is the director of Casino Royale?</span><span class="se">\n</span><span class="s1">Intermediate answer: The director of Casino Royale is Martin Campbell.</span><span class="se">\n</span><span class="s1">Follow up: Where is Martin Campbell from?</span><span class="se">\n</span><span class="s1">Intermediate answer: New Zealand.</span><span class="se">\n</span><span class="s1">So the final answer is: No</span><span class="se">\n\n</span><span class="s1">Question: What is the zip code of the city where George Washington was born?</span><span class="se">\n</span><span class="s1">Are followup questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Where was George Washington born?&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">IntermediateState</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="s1">&#39;Where was George Washington born?&#39;</span><span class="p">))</span>
-</pre></div>
-
-  </dd>
-</main>
-
-</div>
-
-</div>
-
-</div>
-
 </div>
 
 </div>
@@ -1727,6 +1602,178 @@ SelfAsk().show(
                 </div>
             </clipboard-copy>
         </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the state of the bot.</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">IntermediateState</span><span class="p">:</span>
+    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span>
+</pre></div>
+<div id="cell-4" class="clipboard-copy-txt"># Define the state of the bot.
+@dataclass
+class IntermediateState:
+    s: str</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-5">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">FinalState</span><span class="p">:</span>
+    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span>
+</pre></div>
+<div id="cell-5" class="clipboard-copy-txt">@dataclass
+class FinalState:
+    s: str</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-6">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Out</span><span class="p">:</span>
+    <span class="n">echo</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">FinalState</span> <span class="o">|</span> <span class="n">IntermediateState</span>
+</pre></div>
+<div id="cell-6" class="clipboard-copy-txt">@dataclass
+class Out:
+    echo: str
+    state: FinalState | IntermediateState</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-7">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="n">Out</span><span class="p">]):</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;selfask.pmpt.tpl&quot;</span>
+    <span class="n">stop_template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intermediate answer:&quot;</span>
+
+    <span class="c1"># Parsita parser.</span>
+    <span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">TextParsers</span><span class="p">):</span>
+        <span class="n">follow</span> <span class="o">=</span> <span class="p">(</span><span class="n">lit</span><span class="p">(</span><span class="s2">&quot;Follow up:&quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">reg</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">IntermediateState</span>
+        <span class="n">finish</span> <span class="o">=</span> <span class="p">(</span><span class="n">lit</span><span class="p">(</span><span class="s2">&quot;So the final answer is: &quot;</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">reg</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;.*&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">FinalState</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">follow</span> <span class="o">|</span> <span class="n">finish</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Out</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Out</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span><span class="o">.</span><span class="n">prompt</span> <span class="o">+</span> <span class="n">response</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">or_die</span><span class="p">(),</span>
+        <span class="p">)</span>
+</pre></div>
+<div id="cell-7" class="clipboard-copy-txt">class SelfAsk(TemplatePrompt[Out]):
+    template_file = "selfask.pmpt.tpl"
+    stop_template = "\nIntermediate answer:"
+
+    # Parsita parser.
+    class Parser(TextParsers):
+        follow = (lit("Follow up:") >> reg(r".*")) > IntermediateState
+        finish = (lit("So the final answer is: ") >> reg(r".*")) > FinalState
+        response = follow | finish
+
+    def parse(self, response: str, inp) -> Out:
+        return Out(
+            self.prompt(inp).prompt + response,
+            self.Parser.response.parse(response).or_die(),
+        )</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-8">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">selfask</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">openai</span><span class="p">:</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">google</span><span class="p">:</span> <span class="n">Backend</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">prompt1</span> <span class="o">=</span> <span class="n">SelfAsk</span><span class="p">(</span><span class="n">openai</span><span class="p">)</span>
     <span class="n">prompt2</span> <span class="o">=</span> <span class="n">SimplePrompt</span><span class="p">(</span><span class="n">google</span><span class="p">)</span>
@@ -1741,7 +1788,7 @@ SelfAsk().show(
         <span class="n">suffix</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intermediate answer: &quot;</span> <span class="o">+</span> <span class="n">out2</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">s</span>
 </pre></div>
-<div id="cell-4" class="clipboard-copy-txt">def selfask(inp: str, openai: Backend, google: Backend) -> str:
+<div id="cell-8" class="clipboard-copy-txt">def selfask(inp: str, openai: Backend, google: Backend) -> str:
     prompt1 = SelfAsk(openai)
     prompt2 = SimplePrompt(google)
     suffix = ""
@@ -1768,12 +1815,12 @@ SelfAsk().show(
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-5">
+            <clipboard-copy for="cell-9">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -1787,15 +1834,15 @@ SelfAsk().show(
     <span class="n">result</span> <span class="o">=</span> <span class="n">selfask</span><span class="p">(</span>
         <span class="s2">&quot;What is the zip code of the city where George Washington was born?&quot;</span><span class="p">,</span>
         <span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(),</span>
-        <span class="n">backend</span><span class="o">.</span><span class="n">Google</span><span class="p">()</span>
+        <span class="n">backend</span><span class="o">.</span><span class="n">Google</span><span class="p">(),</span>
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt">with start_chain("selfask") as backend:
+<div id="cell-9" class="clipboard-copy-txt">with start_chain("selfask") as backend:
     result = selfask(
         "What is the zip code of the city where George Washington was born?",
         backend.OpenAI(),
-        backend.Google()
+        backend.Google(),
     )
     print(result)</div>
     
@@ -1831,18 +1878,131 @@ https://serpapi.com/search
 </div>
 
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+            <div class="celltoolbar">
+                
+                <div class="button_container tags_button_container">
+                    <span class="tag-container">
+                        <span class="cell-tag">hide_inp</span>
+                    </span>
+                </div>
+                
+            </div>
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-10">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">SelfAsk</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;What is the zip code of the city where George Washington was born?&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;agent_scratchpad&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;Follow up: Where was George Washington born?&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+<div id="cell-10" class="clipboard-copy-txt">SelfAsk().show(
+    {
+        "input": "What is the zip code of the city where George Washington was born?",
+        "agent_scratchpad": True,
+    },
+    "Follow up: Where was George Washington born?",
+)</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
+ <main class="container">
+
+<h3>SelfAsk</h3>
+
+<dl>
+  <dt>Input:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="s1">&#39;What is the zip code of the city where George Washington was born?&#39;</span><span class="p">,</span> <span class="s1">&#39;agent_scratchpad&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</pre></div>
+
+
+  </dd>
+
+  <dt> Full Prompt: </dt>
+  <dd>
+    <details>
+      <summary>Prompt</summary>
+      <p>Question: Who lived longer, Muhammad Ali or Alan Turing?<br>Are follow up questions needed here: Yes.<br>Follow up: How old was Muhammad Ali when he died?<br>Intermediate answer: Muhammad Ali was 74 years old when he died.<br>Follow up: How old was Alan Turing when he died?<br>Intermediate answer: Alan Turing was 41 years old when he died.<br>So the final answer is: Muhammad Ali<br><br>Question: When was the founder of craigslist born?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the founder of craigslist?<br>Intermediate answer: Craigslist was founded by Craig Newmark.<br>Follow up: When was Craig Newmark born?<br>Intermediate answer: Craig Newmark was born on December 6, 1952.<br>So the final answer is: December 6, 1952<br><br>Question: Who was the maternal grandfather of George Washington?<br>Are follow up questions needed here: Yes.<br>Follow up: Who was the mother of George Washington?<br>Intermediate answer: The mother of George Washington was Mary Ball Washington.<br>Follow up: Who was the father of Mary Ball Washington?<br>Intermediate answer: The father of Mary Ball Washington was Joseph Ball.<br>So the final answer is: Joseph Ball<br><br>Question: Are both the directors of Jaws and Casino Royale from the same country?<br>Are follow up questions needed here: Yes.<br>Follow up: Who is the director of Jaws?<br>Intermediate answer: The director of Jaws is Steven Spielberg.<br>Follow up: Where is Steven Spielberg from?<br>Intermediate answer: The United States.<br>Follow up: Who is the director of Casino Royale?<br>Intermediate answer: The director of Casino Royale is Martin Campbell.<br>Follow up: Where is Martin Campbell from?<br>Intermediate answer: New Zealand.<br>So the final answer is: No<br><br>Question: <div style='color:red'>What is the zip code of the city where George Washington was born?</div><br>Are followup questions needed here: Yes.<br></p>
+    </details>
+  </dd>
+
+  <dt> Response: </dt>
+  <dd>
+    Follow up: Where was George Washington born?
+  </dd>
+
+  <dt>Value:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="n">Out</span><span class="p">(</span><span class="n">echo</span><span class="o">=</span><span class="s1">&#39;Question: Who lived longer, Muhammad Ali or Alan Turing?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: How old was Muhammad Ali when he died?</span><span class="se">\n</span><span class="s1">Intermediate answer: Muhammad Ali was 74 years old when he died.</span><span class="se">\n</span><span class="s1">Follow up: How old was Alan Turing when he died?</span><span class="se">\n</span><span class="s1">Intermediate answer: Alan Turing was 41 years old when he died.</span><span class="se">\n</span><span class="s1">So the final answer is: Muhammad Ali</span><span class="se">\n\n</span><span class="s1">Question: When was the founder of craigslist born?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who was the founder of craigslist?</span><span class="se">\n</span><span class="s1">Intermediate answer: Craigslist was founded by Craig Newmark.</span><span class="se">\n</span><span class="s1">Follow up: When was Craig Newmark born?</span><span class="se">\n</span><span class="s1">Intermediate answer: Craig Newmark was born on December 6, 1952.</span><span class="se">\n</span><span class="s1">So the final answer is: December 6, 1952</span><span class="se">\n\n</span><span class="s1">Question: Who was the maternal grandfather of George Washington?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who was the mother of George Washington?</span><span class="se">\n</span><span class="s1">Intermediate answer: The mother of George Washington was Mary Ball Washington.</span><span class="se">\n</span><span class="s1">Follow up: Who was the father of Mary Ball Washington?</span><span class="se">\n</span><span class="s1">Intermediate answer: The father of Mary Ball Washington was Joseph Ball.</span><span class="se">\n</span><span class="s1">So the final answer is: Joseph Ball</span><span class="se">\n\n</span><span class="s1">Question: Are both the directors of Jaws and Casino Royale from the same country?</span><span class="se">\n</span><span class="s1">Are follow up questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Who is the director of Jaws?</span><span class="se">\n</span><span class="s1">Intermediate answer: The director of Jaws is Steven Spielberg.</span><span class="se">\n</span><span class="s1">Follow up: Where is Steven Spielberg from?</span><span class="se">\n</span><span class="s1">Intermediate answer: The United States.</span><span class="se">\n</span><span class="s1">Follow up: Who is the director of Casino Royale?</span><span class="se">\n</span><span class="s1">Intermediate answer: The director of Casino Royale is Martin Campbell.</span><span class="se">\n</span><span class="s1">Follow up: Where is Martin Campbell from?</span><span class="se">\n</span><span class="s1">Intermediate answer: New Zealand.</span><span class="se">\n</span><span class="s1">So the final answer is: No</span><span class="se">\n\n</span><span class="s1">Question: What is the zip code of the city where George Washington was born?</span><span class="se">\n</span><span class="s1">Are followup questions needed here: Yes.</span><span class="se">\n</span><span class="s1">Follow up: Where was George Washington born?&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">IntermediateState</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="s1">&#39;Where was George Washington born?&#39;</span><span class="p">))</span>
+</pre></div>
+
+  </dd>
+</main>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-6">
+            <clipboard-copy for="cell-11">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -1854,7 +2014,7 @@ https://serpapi.com/search
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;selfask.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt">show_log("selfask.log")</div>
+<div id="cell-11" class="clipboard-copy-txt">show_log("selfask.log")</div>
     
         </div>
     </div>
@@ -1876,15 +2036,15 @@ https://serpapi.com/search
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">ba815774-48e7-4be5-8e11-4a6ebfe0d976</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:56Z</span> ⧖ <span class="ansi-blue-fg">1.513s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:56Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+<pre><span class="ansi-white-intense-fg">6d9ceb62-f274-4548-a15a-5a8652cb4417</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:58Z</span> ⧖ <span class="ansi-blue-fg">1.637s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:58Z</span> ⧖ <span class="ansi-blue-fg">0.004s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
     │   │   └── <span class="ansi-blue-fg">suffix</span>: 
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:56Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:56Z</span> ⧖ <span class="ansi-blue-fg">1.510s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:58Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:58Z</span> ⧖ <span class="ansi-blue-fg">1.630s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -1924,28 +2084,28 @@ https://serpapi.com/search
     │   │   Question: What is the zip code of the city where George Washington was born?⏎
     │   │   Are followup questions needed here: Yes.⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: Follow up: What city was George Washington born in?
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span>
 
-<span class="ansi-white-intense-fg">95842d14-d55a-456f-b9d3-0f025dc58c2b</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.276s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">0e0cda27-ec43-453b-979b-c70492901ef4</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span> ⧖ <span class="ansi-blue-fg">3.609s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: What city was George Washington born in?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.276s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:59Z</span> ⧖ <span class="ansi-blue-fg">3.608s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: What city was George Washington born in?
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: Westmoreland County, VA
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span>
 
-<span class="ansi-white-intense-fg">daa3ddc7-23a6-436b-b136-a710789bb8f5</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">1.566s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+<span class="ansi-white-intense-fg">438586be-90d5-414d-a57b-e2926e570a83</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span> ⧖ <span class="ansi-blue-fg">1.595s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
@@ -1990,8 +2150,8 @@ https://serpapi.com/search
     │   │       Follow up: What city was George Washington born in?⏎
     │   │       Intermediate answer: Westmoreland County, VA⏎
     │   │       
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:57Z</span> ⧖ <span class="ansi-blue-fg">1.563s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:03Z</span> ⧖ <span class="ansi-blue-fg">1.590s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -2071,28 +2231,28 @@ https://serpapi.com/search
     │   │   Follow up: What city was George Washington born in?⏎
     │   │   Intermediate answer: Westmoreland County, VA⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: Follow up: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span>
 
-<span class="ansi-white-intense-fg">d6efa3aa-933e-4cdc-b978-8fc5eee091ac</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span> ⧖ <span class="ansi-blue-fg">7.270s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">def022f5-70f3-4a54-be45-7a0174e94889</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span> ⧖ <span class="ansi-blue-fg">2.982s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:59Z</span> ⧖ <span class="ansi-blue-fg">7.270s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:05Z</span> ⧖ <span class="ansi-blue-fg">2.982s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span>
 
-<span class="ansi-white-intense-fg">5a56fac0-4912-4c35-a6db-af01e4affc5e</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span> ⧖ <span class="ansi-blue-fg">2.154s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+<span class="ansi-white-intense-fg">526573ed-c99c-4081-8340-fb3bf1ac74a7</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span> ⧖ <span class="ansi-blue-fg">1.835s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
@@ -2217,8 +2377,8 @@ https://serpapi.com/search
     │   │       Follow up: What is the zip code of Westmoreland County, VA?⏎
     │   │       Intermediate answer: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...⏎
     │   │       
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:06Z</span> ⧖ <span class="ansi-blue-fg">2.151s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:08Z</span> ⧖ <span class="ansi-blue-fg">1.830s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -2378,15 +2538,15 @@ https://serpapi.com/search
     │   │   Follow up: What is the zip code of Westmoreland County, VA?⏎
     │   │   Intermediate answer: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:08Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:08Z</span> ⧖ <span class="ansi-blue-fg">0.001s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:09Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:09Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: So the final answer is: 22443, 22520, 22469, 22488, 22442, 22524, 22529, 22558
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:08Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:08Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:09Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:09Z</span>
 
-<span class="ansi-white-intense-fg">42fb07ac-6030-4850-96db-b13506555504</span>
-└── <span class="ansi-magenta-fg">selfask</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-24 18:40:55Z</span> ⧖ <span class="ansi-blue-fg">13.150s</span>
-    └── <span class="ansi-magenta-fg">selfask</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-24 18:41:08Z</span>
+<span class="ansi-white-intense-fg">5ddbb517-c454-458b-afde-31ce9af17e3f</span>
+└── <span class="ansi-magenta-fg">selfask</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:57Z</span> ⧖ <span class="ansi-blue-fg">12.056s</span>
+    └── <span class="ansi-magenta-fg">selfask</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:42:09Z</span>
 
 </pre>
 </div>

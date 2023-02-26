@@ -616,7 +616,7 @@
 <ul>
 <li>Code (<code>math.py</code>):</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 
 <span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
@@ -693,9 +693,9 @@ which also manages logging.</p>
 </code></pre></div>
 <p>Prompt <code>SimplePrompt</code> simply passes its input string to the
 language-model and returns its output string.</p>
-<p>We also include <code>JinjaPrompt[Output]</code> which assumes <code>parse</code> uses template from the
+<p>We also include <code>TemplatePrompt[Output]</code> which assumes <code>parse</code> uses template from the
 <a href="https://jinja.palletsprojects.com/en/3.1.x/templates/">Jinja</a> language.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 </code></pre></div>
 <p>Logging is done automatically based on the name of your chain using the <a href="https://eliot.readthedocs.io/en/stable/">eliot</a> logging framework.
@@ -706,16 +706,16 @@ system.</p>
 <h3 id="documents-and-embeddings">Documents and Embeddings<a class="headerlink" href="#documents-and-embeddings" title="Permanent link">&para;</a></h3>
 <p>MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
 the <a href="https://huggingface.co/docs/datasets/index">Hugging Face Datasets</a> library with 
-built in FAISS indexing. For example, if you have a dataset you can run the following code. </p>
+built in FAISS indexing. </p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png" /></p>
+<p>Here is the implementation.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Load and index a dataset</span>
 <span class="n">olympics</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_from_disk</span><span class="p">(</span><span class="s2">&quot;olympics.data&quot;</span><span class="p">)</span>
 <span class="n">olympics</span><span class="o">.</span><span class="n">add_faiss_index</span><span class="p">(</span><span class="s2">&quot;embeddings&quot;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">KNNPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">olympics</span><span class="o">.</span><span class="n">get_nearest_examples</span><span class="p">(</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
-                                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]}</span>
+        <span class="k">return</span> <span class="n">olympics</span><span class="o">.</span><span class="n">get_nearest_examples</span><span class="p">(</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div>
 <p>This creates a K-nearest neighbors (KNN) <code>Prompt</code> that looks up the 
 3 closest documents based on embeddings of the question asked. 
@@ -756,7 +756,7 @@ Async calls need the <a href="https://trio.readthedocs.io/en/stable/">trio</a> l
 One example is <a href="https://parsita.drhagen.com/">parsita</a> a
 cool parser combinator library. This example builds a little
 state machine based on the LLM response with error handling.</p>
-<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">JinjaPrompt</span><span class="p">[</span><span class="n">IntermediateState</span> <span class="o">|</span> <span class="n">FinalState</span><span class="p">]):</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="n">IntermediateState</span> <span class="o">|</span> <span class="n">FinalState</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;selfask.pmpt.tpl&quot;</span>
 
     <span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">TextParsers</span><span class="p">):</span>
