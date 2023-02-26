@@ -334,15 +334,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#advanced-asynchronous-calls" class="md-nav__link">
-    Advanced: Asynchronous Calls
+  <a href="#documents-and-embeddings" class="md-nav__link">
+    Documents and Embeddings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    Advanced
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asynchronous-calls" class="md-nav__link">
+    Asynchronous Calls
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#advanced-parsing" class="md-nav__link">
-    Advanced: Parsing
+  <a href="#parsing" class="md-nav__link">
+    Parsing
   </a>
   
 </li>
@@ -375,6 +395,8 @@
       
       
       
+        
+          
         
           
         
@@ -470,6 +492,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/qa/" class="md-nav__link">
+        Qa
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -520,15 +556,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#advanced-asynchronous-calls" class="md-nav__link">
-    Advanced: Asynchronous Calls
+  <a href="#documents-and-embeddings" class="md-nav__link">
+    Documents and Embeddings
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    Advanced
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#asynchronous-calls" class="md-nav__link">
+    Asynchronous Calls
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#advanced-parsing" class="md-nav__link">
-    Advanced: Parsing
+  <a href="#parsing" class="md-nav__link">
+    Parsing
   </a>
   
 </li>
@@ -592,16 +648,18 @@ Code:
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <p>This library allows us to implement several popular approaches in a few lines of code.</p>
 <ul>
+<li><a href="https://srush.github.io/MiniChain/examples/qa/">Retrieval-Augemented QA</a></li>
 <li><a href="https://srush.github.io/MiniChain/examples/pal/">PAL</a> - <a href="https://arxiv.org/pdf/2211.10435.pdf">(Gao et al 2023)</a></li>
 <li><a href="https://srush.github.io/MiniChain/examples/selfask/">Self-Ask</a> - <a href="https://ofir.io/self-ask.pdf">(Press et al 2022)</a></li>
 <li><a href="https://srush.github.io/MiniChain/examples/bash/">Chain-of-Thought</a> - <a href="https://arxiv.org/abs/2201.11903">(Wei et al 2022)</a></li>
 </ul>
 <p>It supports the current backends.</p>
 <ul>
-<li>OpenAI</li>
+<li>OpenAI (Completions / Embeddings)</li>
 <li>Hugging Face 🤗</li>
 <li>Google Search</li>
 <li>Python</li>
+<li>Manifest-ML (AI21, Cohere, Together)</li>
 <li>Bash</li>
 </ul>
 <h2 id="tutorial">Tutorial<a class="headerlink" href="#tutorial" title="Permanent link">&para;</a></h2>
@@ -645,7 +703,37 @@ You can run the following command to get the full output of your
 system.</p>
 <div class="highlight"><pre><span></span><code><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;mychain.log&quot;</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="advanced-asynchronous-calls">Advanced: Asynchronous Calls<a class="headerlink" href="#advanced-asynchronous-calls" title="Permanent link">&para;</a></h3>
+<h3 id="documents-and-embeddings">Documents and Embeddings<a class="headerlink" href="#documents-and-embeddings" title="Permanent link">&para;</a></h3>
+<p>MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
+the <a href="https://huggingface.co/docs/datasets/index">Hugging Face Datasets</a> library with 
+built in FAISS indexing. For example, if you have a dataset you can run the following code. </p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Load and index a dataset</span>
+<span class="n">olympics</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_from_disk</span><span class="p">(</span><span class="s2">&quot;olympics.data&quot;</span><span class="p">)</span>
+<span class="n">olympics</span><span class="o">.</span><span class="n">add_faiss_index</span><span class="p">(</span><span class="s2">&quot;embeddings&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">KNNPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">olympics</span><span class="o">.</span><span class="n">get_nearest_examples</span><span class="p">(</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+                                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">inp</span><span class="p">,</span> <span class="s2">&quot;docs&quot;</span><span class="p">:</span> <span class="n">res</span><span class="o">.</span><span class="n">examples</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">]}</span>
+</code></pre></div>
+<p>This creates a K-nearest neighbors (KNN) <code>Prompt</code> that looks up the 
+3 closest documents based on embeddings of the question asked. 
+See the full <a href="https://srush.github.io/MiniChain/examples/qa/">Retrieval-Augemented QA</a>
+example. </p>
+<p>We recommend creating these embeddings offline using the batch map functionality of the 
+datasets library. </p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">embed</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">emb</span> <span class="o">=</span> <span class="n">openai</span><span class="o">.</span><span class="n">Embedding</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;content&quot;</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="n">EMBEDDING_MODEL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">emb</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;embedding&#39;</span><span class="p">])</span>
+                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">emb</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]))]}</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">embed</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="s2">&quot;olympics.data&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>There are other ways to do this such as <a href="https://github.com/asg017/sqlite-vss">sqllite</a>
+or <a href="https://weaviate.io/">Weaviate</a>.</p>
+<h2 id="advanced">Advanced<a class="headerlink" href="#advanced" title="Permanent link">&para;</a></h2>
+<h3 id="asynchronous-calls">Asynchronous Calls<a class="headerlink" href="#asynchronous-calls" title="Permanent link">&para;</a></h3>
 <p>Prompt chains make it easier to manage asynchronous execution. Prompt has a method <code>arun</code> which will
 make the language model call asynchronous.
 Async calls need the <a href="https://trio.readthedocs.io/en/stable/">trio</a> library.</p>
@@ -663,7 +751,7 @@ Async calls need the <a href="https://trio.readthedocs.io/en/stable/">trio</a> l
     <span class="n">list_prompt</span> <span class="o">=</span> <span class="n">SummaryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">list_prompt</span><span class="o">.</span><span class="n">arun</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="advanced-parsing">Advanced: Parsing<a class="headerlink" href="#advanced-parsing" title="Permanent link">&para;</a></h3>
+<h3 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h3>
 <p>Minichain lets you use whatever parser you would like.
 One example is <a href="https://parsita.drhagen.com/">parsita</a> a
 cool parser combinator library. This example builds a little
@@ -690,6 +778,11 @@ state machine based on the LLM response with error handling.</p>
     color: red;
 }
 
+.jupyter-wrapper .jp-OutputArea-output pre {
+    font-size: 15px;
+    padding: 15px;
+
+}
 .jupyter-wrapper .jp-CodeCell .jp-Cell-inputWrapper .jp-InputPrompt {
    display: none;
 }
