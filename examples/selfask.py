@@ -2,18 +2,23 @@
 # Adapted from https://github.com/ofirpress/self-ask
 
 from dataclasses import dataclass
+
 from parsita import TextParsers, lit, reg
-from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_chain
+
+from minichain import Backend, SimplePrompt, TemplatePrompt, show_log, start_chain
+
 
 # Define the state of the bot.
 @dataclass
 class IntermediateState:
     s: str
-    
+
+
 @dataclass
 class FinalState:
     s: str
-    
+
+
 @dataclass
 class Out:
     echo: str
@@ -21,7 +26,8 @@ class Out:
 
 
 # Self Ask Prompt
-    
+
+
 class SelfAsk(TemplatePrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"
@@ -37,7 +43,7 @@ class SelfAsk(TemplatePrompt[Out]):
             self.prompt(inp).prompt + response,
             self.Parser.response.parse(response).or_die(),
         )
-    
+
 
 def selfask(inp: str, openai: Backend, google: Backend) -> str:
     prompt1 = SelfAsk(openai)
@@ -71,5 +77,5 @@ SelfAsk().show(
     "Follow up: Where was George Washington born?",
 )
 # -
-    
+
 show_log("selfask.log")

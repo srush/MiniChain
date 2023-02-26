@@ -35,8 +35,7 @@ class HTML:
 
 
 class Prompt(Generic[Input, Output]):
-    """
-    `Prompt` represents a typed function from Input to Output.
+    """`Prompt` represents a typed function from Input to Output.
     It computes its output value by calling an external services, generally
     a large language model (LLM).
 
@@ -47,8 +46,9 @@ class Prompt(Generic[Input, Output]):
     `Output`.
 
 
-    To use the `Prompt` you call `__call__` or `arun` with an LLM backend and the arguments
-    of the form `Input`.
+    To use the `Prompt` you call `__call__` or `arun` with an LLM
+    backend and the arguments of the form `Input`.
+
     """
 
     def __init__(self, backend: Optional[Backend] = None):

@@ -1,7 +1,7 @@
 # Answer a math problem with code.
 # Adapted from Dust [maths-generate-code](https://dust.tt/spolu/a/d12ac33169)
 
-from minichain import TemplatePrompt, SimplePrompt, show_log, start_chain
+from minichain import SimplePrompt, TemplatePrompt, show_log, start_chain
 
 # Prompt that asks LLM for code from math.
 

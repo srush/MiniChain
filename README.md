@@ -126,9 +126,9 @@ show_log("mychain.log")
 
 ### Documents and Embeddings
 
-MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
-the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with 
-built in FAISS indexing. 
+MiniChain is agnostic to how you manage documents and embeddings. We recommend using
+the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with
+built in FAISS indexing.
 
 ![image](https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png)
 
@@ -147,14 +147,14 @@ class KNNPrompt(Prompt):
 
 
 
-This creates a K-nearest neighbors (KNN) `Prompt` that looks up the 
-3 closest documents based on embeddings of the question asked. 
+This creates a K-nearest neighbors (KNN) `Prompt` that looks up the
+3 closest documents based on embeddings of the question asked.
 See the full [Retrieval-Augemented QA](https://srush.github.io/MiniChain/examples/qa/)
-example. 
+example.
 
 
-We recommend creating these embeddings offline using the batch map functionality of the 
-datasets library. 
+We recommend creating these embeddings offline using the batch map functionality of the
+datasets library.
 
 ```python
 def embed(x):

@@ -4,7 +4,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from types import TracebackType
-from typing import TYPE_CHECKING, List, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, List, Optional, Sequence
 
 from eliot import start_action, to_file
 from eliottree import render_tasks, tasks_from_iterable
@@ -118,7 +118,6 @@ class BashProcess(Backend):
         return output
 
 
-
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003") -> None:
 
@@ -134,7 +133,8 @@ class OpenAIBase(Backend):
             max_tokens=256,
             temperature=0,
         )
-    
+
+
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
@@ -160,18 +160,19 @@ class OpenAI(OpenAIBase):
         )
         return str(ans.choices[0].text)
 
+
 class OpenAIEmbed(OpenAIBase):
-    def __init__(self, model = "text-embedding-ada-002"):
+    def __init__(self, model: str = "text-embedding-ada-002") -> None:
         super().__init__(model)
-        
+
     def run(self, request: Request) -> str:
         import openai
 
         ans = openai.Embedding.create(
-            engine = self.model,
+            engine=self.model,
             input=request.prompt,
         )
-        return ans["data"][0]["embedding"]
+        return ans["data"][0]["embedding"]  # type: ignore
 
 
 class HuggingFace(Backend):
@@ -194,13 +195,12 @@ class Manifest(Backend):
         try:
             import manifest
         except ImportError:
-            raise ImportError(
-                "`pip install manifest-ml` to use the Manifest Backend."
-            )
-        assert isinstance(self.client, manifest.Manifest), \
-            "Client must be a `manifest.Manifest` instance."
+            raise ImportError("`pip install manifest-ml` to use the Manifest Backend.")
+        assert isinstance(
+            self.client, manifest.Manifest
+        ), "Client must be a `manifest.Manifest` instance."
 
-        return self.client.run(request.prompt)
+        return self.client.run(request.prompt)  # type: ignore
 
 
 class _MiniChain:
@@ -233,10 +233,10 @@ def start_chain(name: str) -> _MiniChain:
     return _MiniChain(name)
 
 
-def show_log(s: str, o=sys.stderr.write) -> None:
+def show_log(s: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
     render_tasks(
         o,
-        tasks_from_iterable([json.loads(l) for l in open(s)]),
+        tasks_from_iterable([json.loads(line) for line in open(s)]),
         colorize=True,
         human_readable=True,
     )

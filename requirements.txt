@@ -1,4 +1,5 @@
 async-openai
+datasets
 eliot
 eliot-tree
 google-search-results
@@ -7,4 +8,3 @@ jinja2-highlight
 openai
 parsita==1.7.1
 trio
-datasets
