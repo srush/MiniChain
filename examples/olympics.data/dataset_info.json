@@ -1,0 +1,56 @@
+{
+  "builder_name": "csv",
+  "citation": "",
+  "config_name": "default",
+  "dataset_size": 2548363,
+  "description": "",
+  "download_checksums": {
+    "https://cdn.openai.com/API/examples/data/olympics_sections_text.csv": {
+      "num_bytes": 2503410,
+      "checksum": null
+    }
+  },
+  "download_size": 2503410,
+  "features": {
+    "title": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "heading": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "content": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "tokens": {
+      "dtype": "int64",
+      "_type": "Value"
+    },
+    "embeddings": {
+      "feature": {
+        "dtype": "float64",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 5051773,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 2548363,
+      "num_examples": 3964,
+      "dataset_name": "csv"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}

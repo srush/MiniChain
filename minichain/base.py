@@ -60,7 +60,7 @@ class Prompt(Generic[Input, Output]):
         Convert from the `Input` type of the function
         to a request that is sent to the backend.
         """
-        raise NotImplementedError
+        return str(inp)
 
     def parse(self, response: str, inp: Input) -> Output:
         """

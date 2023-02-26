@@ -118,11 +118,9 @@ class BashProcess(Backend):
         return output
 
 
-x = "text-davinci-003"
 
-
-class OpenAI(Backend):
-    def __init__(self, model: str = x) -> None:
+class OpenAIBase(Backend):
+    def __init__(self, model: str = "text-davinci-003") -> None:
 
         import openai
 
@@ -130,13 +128,14 @@ class OpenAI(Backend):
         assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
 
         openai.api_key = self.api_key
-
+        self.model = model
         self.options = dict(
             model=model,
             max_tokens=256,
             temperature=0,
         )
-
+    
+class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
 
@@ -160,6 +159,19 @@ class OpenAI(Backend):
             prompt=request.prompt,
         )
         return str(ans.choices[0].text)
+
+class OpenAIEmbed(OpenAIBase):
+    def __init__(self, model = "text-embedding-ada-002"):
+        super().__init__(model)
+        
+    def run(self, request: Request) -> str:
+        import openai
+
+        ans = openai.Embedding.create(
+            engine = self.model,
+            input=request.prompt,
+        )
+        return ans["data"][0]["embedding"]
 
 
 class HuggingFace(Backend):
@@ -211,6 +223,7 @@ class _MiniChain:
     Mock = Mock
     Google = Google
     OpenAI = OpenAI
+    OpenAIEmbed = OpenAIEmbed
     BashProcess = BashProcess
     Python = Python
     Manifest = Manifest
