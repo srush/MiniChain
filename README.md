@@ -128,7 +128,12 @@ show_log("mychain.log")
 
 MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
 the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with 
-built in FAISS indexing. For example, if you have a dataset you can run the following code. 
+built in FAISS indexing. 
+
+![image](https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png)
+
+
+Here is the implementation.
 
 ```python
 # Load and index a dataset
@@ -141,6 +146,8 @@ class KNNPrompt(Prompt):
                                             np.array(out), 3)
         return {"question": inp, "docs": res.examples["content"]}
 ```
+
+
 
 This creates a K-nearest neighbors (KNN) `Prompt` that looks up the 
 3 closest documents based on embeddings of the question asked. 
