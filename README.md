@@ -142,9 +142,7 @@ olympics.add_faiss_index("embeddings")
 
 class KNNPrompt(Prompt):
     def parse(self, out, inp):
-        res = olympics.get_nearest_examples("embeddings",
-                                            np.array(out), 3)
-        return {"question": inp, "docs": res.examples["content"]}
+        return olympics.get_nearest_examples("embeddings", np.array(out), 3)
 ```
 
 
