@@ -47,16 +47,18 @@ Code:
 
 This library allows us to implement several popular approaches in a few lines of code.
 
+* [Retrieval-Augemented QA](https://srush.github.io/MiniChain/examples/qa/)
 * [PAL](https://srush.github.io/MiniChain/examples/pal/) - [(Gao et al 2023)](https://arxiv.org/pdf/2211.10435.pdf)
 * [Self-Ask](https://srush.github.io/MiniChain/examples/selfask/) - [(Press et al 2022)](https://ofir.io/self-ask.pdf)
 * [Chain-of-Thought](https://srush.github.io/MiniChain/examples/bash/) - [(Wei et al 2022)](https://arxiv.org/abs/2201.11903)
 
 It supports the current backends.
 
-* OpenAI
+* OpenAI (Completions / Embeddings)
 * Hugging Face 🤗
 * Google Search
 * Python
+* Manifest-ML (AI21, Cohere, Together)
 * Bash
 
 ## Tutorial
@@ -121,7 +123,49 @@ system.
 show_log("mychain.log")
 ```
 
-### Advanced: Asynchronous Calls
+
+### Documents and Embeddings
+
+MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
+the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with 
+built in FAISS indexing. For example, if you have a dataset you can run the following code. 
+
+```python
+# Load and index a dataset
+olympics = datasets.load_from_disk("olympics.data")
+olympics.add_faiss_index("embeddings")
+
+class KNNPrompt(Prompt):
+    def parse(self, out, inp):
+        res = olympics.get_nearest_examples("embeddings",
+                                            np.array(out), 3)
+        return {"question": inp, "docs": res.examples["content"]}
+```
+
+This creates a K-nearest neighbors (KNN) `Prompt` that looks up the 
+3 closest documents based on embeddings of the question asked. 
+See the full [Retrieval-Augemented QA](https://srush.github.io/MiniChain/examples/qa/)
+example. 
+
+
+We recommend creating these embeddings offline using the batch map functionality of the 
+datasets library. 
+
+```python
+def embed(x):
+    emb = openai.Embedding.create(input=x["content"], engine=EMBEDDING_MODEL)
+    return {"embeddings": [np.array(emb['data'][i]['embedding'])
+                           for i in range(len(emb["data"]))]}
+x = dataset.map(embed, batch_size=BATCH_SIZE, batched=True)
+x.save_to_disk("olympics.data")
+```
+
+There are other ways to do this such as [sqllite](https://github.com/asg017/sqlite-vss)
+or [Weaviate](https://weaviate.io/).
+
+## Advanced
+
+### Asynchronous Calls
 
 Prompt chains make it easier to manage asynchronous execution. Prompt has a method `arun` which will
 make the language model call asynchronous.
@@ -152,7 +196,7 @@ with start_chain("summary") as backend:
 
 
 
-### Advanced: Parsing
+### Parsing
 
 Minichain lets you use whatever parser you would like.
 One example is [parsita](https://parsita.drhagen.com/) a
