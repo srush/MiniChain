@@ -8,7 +8,7 @@ A tiny library for **large** language models.
 
 Write apps that can easily and efficiently call multiple language models.
 
-* Code (`math.py`):
+* Code ([math.py](https://github.com/srush/MiniChain/blob/main/examples/math.py)):
 
 ```python
 class MathPrompt(TemplatePrompt[str]):
@@ -21,7 +21,7 @@ with start_chain("math") as backend:
     print(result)
 ```
 
-* Template (`math.pmpt.tpl`):
+* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)):
 
 ```
 ...
