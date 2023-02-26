@@ -1,7 +1,7 @@
 # Questions answering with embeddings.
 # Adapted from [OpenAI Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
 
-from minichain import JinjaPrompt, Prompt, start_chain, show_log
+from minichain import TemplatePrompt, Prompt, start_chain, show_log
 import datasets
 import numpy as np
 
@@ -20,16 +20,19 @@ class KNNPrompt(Prompt):
 
 # QA prompt to ask question with examples
 
-class QAPrompt(JinjaPrompt):
+class QAPrompt(TemplatePrompt):
     template_file = "qa.pmpt.tpl"
-QAPrompt().show({"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]},
-                "Joe Bob")
-    
+
+
 with start_chain("qa") as backend:
     question = "Who won the 2020 Summer Olympics men's high jump?"
     prompt =  KNNPrompt(backend.OpenAIEmbed()).chain(QAPrompt(backend.OpenAI()))
     result = prompt(question)
     print(result)
 
-
+# + tags=["hide_inp"]
+QAPrompt().show({"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]},
+                "Joe Bob")
+# -
+    
 show_log("qa.log")

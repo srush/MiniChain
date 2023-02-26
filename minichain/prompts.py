@@ -19,7 +19,7 @@ class SimplePrompt(Prompt[str, str]):
         return out
 
 
-class JinjaPrompt(Prompt[Mapping[str, Any], Output]):
+class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
     """
     A prompt that uses Jinja2 to define a prompt based on a static template.
     """

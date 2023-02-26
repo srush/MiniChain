@@ -11,7 +11,7 @@ Write apps that can easily and efficiently call multiple language models.
 * Code (`math.py`):
 
 ```python
-class MathPrompt(JinjaPrompt[str]):
+class MathPrompt(TemplatePrompt[str]):
     template_file = "math.pmpt.tpl"
 
 with start_chain("math") as backend:
@@ -107,11 +107,11 @@ with start_chain("mychain") as backend:
 Prompt `SimplePrompt` simply passes its input string to the
 language-model and returns its output string.
 
-We also include `JinjaPrompt[Output]` which assumes `parse` uses template from the
+We also include `TemplatePrompt[Output]` which assumes `parse` uses template from the
 [Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language.
 
 ```python
-class MathPrompt(JinjaPrompt[str]):
+class MathPrompt(TemplatePrompt[str]):
     template_file = "math.pmpt.tpl"
 ```
 
@@ -209,7 +209,7 @@ cool parser combinator library. This example builds a little
 state machine based on the LLM response with error handling.
 
 ```python
-class SelfAsk(JinjaPrompt[IntermediateState | FinalState]):
+class SelfAsk(TemplatePrompt[IntermediateState | FinalState]):
     template_file = "selfask.pmpt.tpl"
 
     class Parser(TextParsers):

@@ -2,30 +2,27 @@
 # Adapted from https://github.com/ofirpress/self-ask
 
 from dataclasses import dataclass
-
 from parsita import TextParsers, lit, reg
-
-from minichain import Backend, JinjaPrompt, SimplePrompt, show_log, start_chain
-
+from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_chain
 
 # Define the state of the bot.
 @dataclass
 class IntermediateState:
     s: str
-
-
+    
 @dataclass
 class FinalState:
     s: str
-
-
+    
 @dataclass
 class Out:
     echo: str
     state: FinalState | IntermediateState
 
 
-class SelfAsk(JinjaPrompt[Out]):
+# Self Ask Prompt
+    
+class SelfAsk(TemplatePrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"
 
@@ -40,16 +37,7 @@ class SelfAsk(JinjaPrompt[Out]):
             self.prompt(inp).prompt + response,
             self.Parser.response.parse(response).or_die(),
         )
-
-
-SelfAsk().show(
-    {
-        "input": "What is the zip code of the city where George Washington was born?",
-        "agent_scratchpad": True,
-    },
-    "Follow up: Where was George Washington born?",
-)
-
+    
 
 def selfask(inp: str, openai: Backend, google: Backend) -> str:
     prompt1 = SelfAsk(openai)
@@ -74,5 +62,14 @@ with start_chain("selfask") as backend:
     )
     print(result)
 
-
+# + tags=["hide_inp"]
+SelfAsk().show(
+    {
+        "input": "What is the zip code of the city where George Washington was born?",
+        "agent_scratchpad": True,
+    },
+    "Follow up: Where was George Washington born?",
+)
+# -
+    
 show_log("selfask.log")
