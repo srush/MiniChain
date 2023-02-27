@@ -1,8 +1,9 @@
+from dataclasses import asdict
 from typing import Any, Mapping
 
 import numpy as np
 from jinja2 import Environment, FileSystemLoader, Template
-from dataclasses import dataclass, asdict
+
 from .backend import Request
 from .base import HTML, Input, Output, Prompt
 

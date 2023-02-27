@@ -4,6 +4,7 @@
 # Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja).
 
 import json
+
 import minichain
 
 # Prompt to extract NER tags as json
@@ -15,12 +16,12 @@ class NERPrompt(minichain.TemplatePrompt):
         return json.loads(response)
 
 # Use NER to ask a simple queston.
-    
+
 class TeamPrompt(minichain.Prompt):
     def prompt(self, inp):
         return "Can you describe these basketball teams? " + \
             " ".join([i["E"] for i in inp if i["T"] =="Team"])
-    
+
     def parse(self, response, inp):
         return response
 

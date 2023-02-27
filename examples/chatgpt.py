@@ -5,13 +5,14 @@
 # version of this [blog
 # post](https://www.engraved.blog/building-a-virtual-machine-inside/).
 
+
+import warnings
 from dataclasses import dataclass
 from typing import List, Tuple
-import minichain
 from IPython.display import Markdown, display
+import minichain
 
 # + tags=["hide_inp"]
-import warnings
 warnings.filterwarnings("ignore")
 # -
 
@@ -30,7 +31,7 @@ class State:
         return State(memory + [(self.human_input, response)])
 
 # Chat prompt with memory
-    
+
 class ChatPrompt(minichain.TemplatePrompt):
     template_file = "chatgpt.pmpt.tpl"
     def parse(self, out: str, inp: State) -> State:
@@ -57,7 +58,7 @@ with minichain.start_chain("chatgpt") as backend:
         state = prompt(state)
         display(Markdown(f'**Assistant:** <span>{state.memory[-1][1]}</span>'))
         display(Markdown(f'--------------'))
-        
+
 
 # + tags=["hide_inp"]
 ChatPrompt().show(State([("human 1", "output 1"), ("human 2", "output 2") ], "cd ~"),
