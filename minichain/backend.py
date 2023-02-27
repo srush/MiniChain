@@ -241,7 +241,7 @@ class _MiniChain:
 
     Mock = Mock
     Google = Google
-    
+
     OpenAI = OpenAI
     OpenAIEmbed = OpenAIEmbed
     HuggingFace = HuggingFace

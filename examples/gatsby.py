@@ -29,14 +29,14 @@ class QAPrompt(TemplatePrompt):
 
 with start_chain("gatsby") as backend:
     question = "What did Gatsby do before he met Daisy?"
-    prompt = KNNPrompt(backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")).chain(QAPrompt(backend.OpenAI()))
+    prompt = KNNPrompt(
+        backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")
+    ).chain(QAPrompt(backend.OpenAI()))
     result = prompt(question)
     print(result)
 
 # + tags=["hide_inp"]
-QAPrompt().show(
-    {"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, ""
-)
+QAPrompt().show({"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, "")
 # -
 
 show_log("gatsby.log")
