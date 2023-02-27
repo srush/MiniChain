@@ -55,8 +55,10 @@ Code:
 This library allows us to implement several popular approaches in a few lines of code.
 
 * [Retrieval-Augmented QA](https://srush.github.io/MiniChain/examples/qa/)
-* [PAL](https://srush.github.io/MiniChain/examples/pal/) - [(Gao et al 2023)](https://arxiv.org/pdf/2211.10435.pdf)
-* [Self-Ask](https://srush.github.io/MiniChain/examples/selfask/) - [(Press et al 2022)](https://ofir.io/self-ask.pdf)
+* [Chat with memory](https://srush.github.io/MiniChain/examples/chatgpt/)
+* [Information Extraction](https://srush.github.io/MiniChain/examples/ner/)
+* [Interleaved Code (PAL)](https://srush.github.io/MiniChain/examples/pal/) - [(Gao et al 2022)](https://arxiv.org/pdf/2211.10435.pdf)
+* [Search Augmentation (Self-Ask)](https://srush.github.io/MiniChain/examples/selfask/) - [(Press et al 2022)](https://ofir.io/self-ask.pdf)
 * [Chain-of-Thought](https://srush.github.io/MiniChain/examples/bash/) - [(Wei et al 2022)](https://arxiv.org/abs/2201.11903)
 
 It supports the current backends.
