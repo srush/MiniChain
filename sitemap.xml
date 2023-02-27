@@ -6,6 +6,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://srush.github.io/minichain/api/</loc>
+         <lastmod>2023-02-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://srush.github.io/minichain/examples/bash/</loc>
          <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
