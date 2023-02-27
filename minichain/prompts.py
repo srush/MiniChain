@@ -1,7 +1,7 @@
 from typing import Any, Mapping
 
-from jinja2 import Environment, FileSystemLoader, Template
 import numpy as np
+from jinja2 import Environment, FileSystemLoader, Template
 
 from .backend import Request
 from .base import HTML, Input, Output, Prompt

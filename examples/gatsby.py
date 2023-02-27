@@ -8,35 +8,35 @@ from minichain import EmbeddingPrompt, TemplatePrompt, show_log, start_chain
 
 # Load data with embeddings (computed beforehand)
 
-olympics = datasets.load_from_disk("olympics.data")
-olympics.add_faiss_index("embeddings")
+gatsby = datasets.load_from_disk("gatsby")
+gatsby.add_faiss_index("embeddings")
 
 # Fast KNN retieval prompt
 
 
 class KNNPrompt(EmbeddingPrompt):
     def find(self, out, inp):
-        res = olympics.get_nearest_examples("embeddings", np.array(out), 3)
-        return {"question": inp, "docs": res.examples["content"]}
+        res = gatsby.get_nearest_examples("embeddings", np.array(out), 1)
+        return {"question": inp, "docs": res.examples["passages"]}
 
 
 # QA prompt to ask question with examples
 
 
 class QAPrompt(TemplatePrompt):
-    template_file = "qa.pmpt.tpl"
+    template_file = "gatsby.pmpt.tpl"
 
 
-with start_chain("qa") as backend:
-    question = "Who won the 2020 Summer Olympics men's high jump?"
-    prompt = KNNPrompt(backend.OpenAIEmbed()).chain(QAPrompt(backend.OpenAI()))
+with start_chain("gatsby") as backend:
+    question = "What did Gatsby do before he met Daisy?"
+    prompt = KNNPrompt(backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")).chain(QAPrompt(backend.OpenAI()))
     result = prompt(question)
     print(result)
 
 # + tags=["hide_inp"]
 QAPrompt().show(
-    {"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]}, "Joe Bob"
+    {"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, ""
 )
 # -
 
-show_log("qa.log")
+show_log("gatsby.log")

@@ -140,8 +140,8 @@ Here is the implementation.
 olympics = datasets.load_from_disk("olympics.data")
 olympics.add_faiss_index("embeddings")
 
-class KNNPrompt(Prompt):
-    def parse(self, out, inp):
+class KNNPrompt(EmbeddingPrompt):
+    def find(self, out, inp):
         return olympics.get_nearest_examples("embeddings", np.array(out), 3)
 ```
 

@@ -175,16 +175,35 @@ class OpenAIEmbed(OpenAIBase):
         return ans["data"][0]["embedding"]  # type: ignore
 
 
-class HuggingFace(Backend):
+class HuggingFaceBase(Backend):
     def __init__(self, model: str = "gpt2") -> None:
         self.model = model
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
+
+class HuggingFace(HuggingFaceBase):
     def run(self, request: Request) -> str:
-        import hfapi
 
-        client = hfapi.Client()
-        x = client.text_generation(request.prompt, model=self.model)
-        return x["generated_text"][len(request.prompt) :]  # type: ignore
+        from huggingface_hub.inference_api import InferenceApi
+
+        self.client = InferenceApi(
+            token=self.api_key, repo_id=self.model, task="text-generation"
+        )
+        response = self.client(inputs=request.prompt)
+        return response  # type: ignore
+
+
+class HuggingFaceEmbed(HuggingFaceBase):
+    def run(self, request: Request) -> str:
+
+        from huggingface_hub.inference_api import InferenceApi
+
+        self.client = InferenceApi(
+            token=self.api_key, repo_id=self.model, task="feature-extraction"
+        )
+        response = self.client(inputs=request.prompt)
+        return response  # type: ignore
 
 
 class Manifest(Backend):
@@ -222,8 +241,11 @@ class _MiniChain:
 
     Mock = Mock
     Google = Google
+    
     OpenAI = OpenAI
     OpenAIEmbed = OpenAIEmbed
+    HuggingFace = HuggingFace
+    HuggingFaceEmbed = HuggingFaceEmbed
     BashProcess = BashProcess
     Python = Python
     Manifest = Manifest
