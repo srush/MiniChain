@@ -2,37 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://srush.github.io/minichain/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/bash/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://srush.github.io/minichain/examples/gatsby/</loc>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/math/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/pal/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/qa/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/selfask/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://srush.github.io/minichain/examples/summary/</loc>
-         <lastmod>2023-02-26</lastmod>
+         <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
