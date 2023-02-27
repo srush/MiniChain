@@ -233,7 +233,7 @@ class _MiniChain:
 
     def __exit__(
         self,
-        type: type[BaseException],
+        type: type,
         exception: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
