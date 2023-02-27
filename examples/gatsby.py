@@ -1,5 +1,5 @@
-# Questions answering with embeddings.  Adapted from [OpenAI
-# Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
+# Questions answering with Hugging Face embeddings.
+# Adapted from the [LlamaIndex example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb). 
 
 import datasets
 import numpy as np
