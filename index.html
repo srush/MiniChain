@@ -341,6 +341,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    Memory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#documents-and-embeddings" class="md-nav__link">
     Documents and Embeddings
   </a>
@@ -618,6 +625,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#memory" class="md-nav__link">
+    Memory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#documents-and-embeddings" class="md-nav__link">
     Documents and Embeddings
   </a>
@@ -717,8 +731,10 @@ Code:
 <p>This library allows us to implement several popular approaches in a few lines of code.</p>
 <ul>
 <li><a href="https://srush.github.io/MiniChain/examples/qa/">Retrieval-Augmented QA</a></li>
-<li><a href="https://srush.github.io/MiniChain/examples/pal/">PAL</a> - <a href="https://arxiv.org/pdf/2211.10435.pdf">(Gao et al 2023)</a></li>
-<li><a href="https://srush.github.io/MiniChain/examples/selfask/">Self-Ask</a> - <a href="https://ofir.io/self-ask.pdf">(Press et al 2022)</a></li>
+<li><a href="https://srush.github.io/MiniChain/examples/chatgpt/">Chat with memory</a></li>
+<li><a href="https://srush.github.io/MiniChain/examples/ner/">Information Extraction</a></li>
+<li><a href="https://srush.github.io/MiniChain/examples/pal/">Interleaved Code (PAL)</a> - <a href="https://arxiv.org/pdf/2211.10435.pdf">(Gao et al 2022)</a></li>
+<li><a href="https://srush.github.io/MiniChain/examples/selfask/">Search Augmentation (Self-Ask)</a> - <a href="https://ofir.io/self-ask.pdf">(Press et al 2022)</a></li>
 <li><a href="https://srush.github.io/MiniChain/examples/bash/">Chain-of-Thought</a> - <a href="https://arxiv.org/abs/2201.11903">(Wei et al 2022)</a></li>
 </ul>
 <p>It supports the current backends.</p>
@@ -779,6 +795,21 @@ You can run the following command to get the full output of your
 system.</p>
 <div class="highlight"><pre><span></span><code><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;mychain.log&quot;</span><span class="p">)</span>
 </code></pre></div>
+<h3 id="memory">Memory<a class="headerlink" href="#memory" title="Permanent link">&para;</a></h3>
+<p>MiniChain does not build in an explicit stateful memory class. We recommend implementing it as a queue.</p>
+<p><img alt="image" src="https://user-images.githubusercontent.com/35882/221622653-7b13783e-0439-4d59-8f57-b98b82ab83c0.png" /></p>
+<p>Here is a class you might find useful to keep track of responses.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="n">memory</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="n">human_input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;State&quot;</span><span class="p">:</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MEMORY</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">memory</span> <span class="o">+</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">human_input</span><span class="p">,</span> <span class="n">response</span><span class="p">)])</span>
+</code></pre></div>
+<p>See the full <a href="https://srush.github.io/MiniChain/examples/chatgpt/">Chat</a> example.
+It keeps track of the last two responses that it has seen.</p>
 <h3 id="documents-and-embeddings">Documents and Embeddings<a class="headerlink" href="#documents-and-embeddings" title="Permanent link">&para;</a></h3>
 <p>MiniChain is agnostic to how you manage documents and embeddings. We recommend using
 the <a href="https://huggingface.co/docs/datasets/index">Hugging Face Datasets</a> library with
