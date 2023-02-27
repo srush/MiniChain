@@ -1,5 +1,6 @@
-# Questions answering with Hugging Face embeddings.
-# Adapted from the [LlamaIndex example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb). 
+# Questions answering with Hugging Face embeddings.  Adapted from the
+# [LlamaIndex
+# example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb).
 
 import datasets
 import numpy as np
