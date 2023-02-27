@@ -142,6 +142,27 @@ system.
 ```python
 show_log("mychain.log")
 ```
+### Memory
+
+MiniChain does not build in an explicit stateful memory class. We recommend implementing it as a queue. 
+
+![image](https://user-images.githubusercontent.com/35882/221622653-7b13783e-0439-4d59-8f57-b98b82ab83c0.png)
+
+Here is a class you might find useful to keep track of responses. 
+
+```python
+@dataclass
+class State:
+    memory: List[Tuple[str, str]]
+    human_input: str = ""
+
+    def push(self, response: str) -> "State":
+        memory = self.memory if len(self.memory) < MEMORY else self.memory[1:]
+        return State(memory + [(self.human_input, response)])
+```
+
+See the full [Chat](https://srush.github.io/MiniChain/examples/chatgpt/) example. 
+It keeps track of the last two responses that it has seen. 
 
 
 ### Documents and Embeddings
@@ -164,8 +185,6 @@ class KNNPrompt(EmbeddingPrompt):
     def find(self, out, inp):
         return olympics.get_nearest_examples("embeddings", np.array(out), 3)
 ```
-
-
 
 This creates a K-nearest neighbors (KNN) `Prompt` that looks up the
 3 closest documents based on embeddings of the question asked.
