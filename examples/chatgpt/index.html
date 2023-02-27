@@ -1590,15 +1590,15 @@ post</a>.</p>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">TemplatePrompt</span><span class="p">,</span> <span class="n">start_chain</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">import</span> <span class="nn">minichain</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">display</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from minichain import TemplatePrompt, start_chain
-from dataclasses import dataclass
+<div id="cell-1" class="clipboard-copy-txt">from dataclasses import dataclass
 from typing import List, Tuple
-import minichain</div>
+import minichain
+from IPython.display import Markdown, display</div>
     
         </div>
     </div>
@@ -1607,14 +1607,24 @@ import minichain</div>
 </div>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs   celltag_hide_inp">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs   celltag_hide_inp">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
+        
+            <div class="celltoolbar">
+                
+                <div class="button_container tags_button_container">
+                    <span class="tag-container">
+                        <span class="cell-tag">hide_inp</span>
+                    </span>
+                </div>
+                
+            </div>
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
@@ -1628,15 +1638,11 @@ import minichain</div>
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
-    <span class="n">memory</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
-    <span class="n">human_input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">@dataclass
-class State:
-    memory: List[Tuple[str, str]]
-    human_input: str = ""</div>
+<div id="cell-2" class="clipboard-copy-txt">import warnings
+warnings.filterwarnings("ignore")</div>
     
         </div>
     </div>
@@ -1644,6 +1650,18 @@ class State:
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Generic stateful Memory</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1666,19 +1684,9 @@ class State:
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">MemoryPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">):</span>
-    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;chatgpt.pmpt.tpl&quot;</span>
-    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Assistant:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">memory</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">memory</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="n">inp</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-        <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">memory</span> <span class="o">+</span> <span class="p">[(</span><span class="n">inp</span><span class="o">.</span><span class="n">human_input</span><span class="p">,</span> <span class="n">result</span><span class="p">)])</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">MEMORY</span> <span class="o">=</span> <span class="mi">2</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">class MemoryPrompt(TemplatePrompt):
-    template_file = "chatgpt.pmpt.tpl"
-    def parse(self, out, inp):
-        result = out.split("Assistant:")[-1]
-        memory = inp.memory if len(inp.memory) < 2 else inp.memory[1:]
-        return State(memory + [(inp.human_input, result)])</div>
+<div id="cell-3" class="clipboard-copy-txt">MEMORY = 2</div>
     
         </div>
     </div>
@@ -1708,6 +1716,104 @@ class State:
                 </div>
             </clipboard-copy>
         </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">State</span><span class="p">:</span>
+    <span class="n">memory</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="n">human_input</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;State&quot;</span><span class="p">:</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MEMORY</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">State</span><span class="p">(</span><span class="n">memory</span> <span class="o">+</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">human_input</span><span class="p">,</span> <span class="n">response</span><span class="p">)])</span>
+</pre></div>
+<div id="cell-4" class="clipboard-copy-txt">@dataclass
+class State:
+    memory: List[Tuple[str, str]]
+    human_input: str = ""
+
+    def push(self, response: str) -> "State":
+        memory = self.memory if len(self.memory) < MEMORY else self.memory[1:]
+        return State(memory + [(self.human_input, response)])</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Chat prompt with memory</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-5">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">ChatPrompt</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">TemplatePrompt</span><span class="p">):</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;chatgpt.pmpt.tpl&quot;</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;Assistant:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">inp</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+<div id="cell-5" class="clipboard-copy-txt">class ChatPrompt(minichain.TemplatePrompt):
+    template_file = "chatgpt.pmpt.tpl"
+    def parse(self, out: str, inp: State) -> State:
+        result = out.split("Assistant:")[-1]
+        return inp.push(result)</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[6]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-6">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">fake_human</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ls ~&quot;</span><span class="p">,</span>
@@ -1719,7 +1825,7 @@ class State:
     <span class="s2">&quot;nvidia-smi&quot;</span>
 <span class="p">]</span>
 </pre></div>
-<div id="cell-4" class="clipboard-copy-txt">fake_human = [
+<div id="cell-6" class="clipboard-copy-txt">fake_human = [
     "I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.",
     "ls ~",
     "cd ~",
@@ -1743,12 +1849,12 @@ class State:
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-5">
+            <clipboard-copy for="cell-7">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -1759,22 +1865,24 @@ class State:
             </clipboard-copy>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">minichain</span><span class="o">.</span><span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;chatgpt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="n">MemoryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">ChatPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">State</span><span class="p">([])</span>
     <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">fake_human</span><span class="p">:</span>
         <span class="n">state</span><span class="o">.</span><span class="n">human_input</span> <span class="o">=</span> <span class="n">t</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Human: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;**Human:** &lt;span style=&quot;color: blue&quot;&gt;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">&lt;/span&gt;&#39;</span><span class="p">))</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assistant: </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;**Assistant:** &lt;span&gt;</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">memory</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&lt;/span&gt;&#39;</span><span class="p">))</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--------------&#39;</span><span class="p">))</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt">with minichain.start_chain("chatgpt") as backend:
-    prompt = MemoryPrompt(backend.OpenAI())
+<div id="cell-7" class="clipboard-copy-txt">with minichain.start_chain("chatgpt") as backend:
+    prompt = ChatPrompt(backend.OpenAI())
     state = State([])
     for t in fake_human:
         state.human_input = t
-        print(f"Human: {t}")
+        display(Markdown(f'**Human:** <span style="color: blue">{t}</span>'))
         state = prompt(state)
-        print(f"Assistant: {state.memory[-1][1]}")</div>
+        display(Markdown(f'**Assistant:** <span>{state.memory[-1][1]}</span>'))
+        display(Markdown(f'--------------'))</div>
     
         </div>
     </div>
@@ -1795,23 +1903,12 @@ class State:
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Human: I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.
-</pre>
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.</span></p>
+
 </div>
-</div>
 
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>/home/srush/Projects/MiniChain/venv/lib/python3.10/site-packages/eliot/json.py:22: FutureWarning: In the future `np.bool` will be defined as the corresponding NumPy scalar.
-  if isinstance(o, (numpy.bool, numpy.bool_)):
-</pre>
-</div>
 </div>
 
 <div class="jp-OutputArea-child">
@@ -1820,70 +1917,338 @@ class State:
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>Assistant: 
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span>
 ```
 $ pwd
 /
-```
-Human: ls ~
-Assistant: 
+```</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">ls ~</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span>
 ```
 $ ls ~
 Desktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/
-```
-Human: cd ~
-Assistant:  
+```</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">cd ~</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span> 
 ```
 $ cd ~
 $ pwd
 /home/username
-```
-Human: {Please make a file jokes.txt inside and put some jokes inside}
-Assistant: 
+```</span></p>
 
-```
-$ touch jokes.txt
-$ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt
-$ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt
-$ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt
-```
-Human: echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py
-Assistant: 
+</div>
 
-```
-$ echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">{Please make a file jokes.txt inside and put some jokes inside}</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span></p>
+<p><code>$ touch jokes.txt
+$ echo "Why did the chicken cross the road? To get to the other side!" &gt;&gt; jokes.txt
+$ echo "What did the fish say when it hit the wall? Dam!" &gt;&gt; jokes.txt
+$ echo "Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!" &gt;&gt; jokes.txt</code>&lt;/span&gt;</p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">echo -e "x=lambda y:y*5+3;print('Result:' + str(x(6)))" > run.py && python3 run.py</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span></p>
+<p><code>$ echo -e "x=lambda y:y*5+3;print('Result:' + str(x(6)))" &gt; run.py
 $ python3 run.py
-Result: 33
-```
-Human: echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py
-Assistant: 
+Result: 33</code>&lt;/span&gt;</p>
 
-```
-$ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">echo -e "print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])" > run.py && python3 run.py</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span></p>
+<p><code>$ echo -e "print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])" &gt; run.py
 $ python3 run.py
-[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
-```
-Human: echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh &amp;&amp; echo -e &#34;FROM ubuntu:20.04
-COPY entrypoint.sh entrypoint.sh
-ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile &amp;&amp; docker build . -t my_docker_image &amp;&amp; docker run -t my_docker_image
-Assistant: 
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]</code>&lt;/span&gt;</p>
 
-```
-$ echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh
-$ echo -e &#34;FROM ubuntu:20.04
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">echo -e "echo 'Hello from Docker" > entrypoint.sh && echo -e "FROM ubuntu:20.04
 COPY entrypoint.sh entrypoint.sh
-ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile
+ENTRYPOINT ["/bin/sh","entrypoint.sh"]">Dockerfile && docker build . -t my_docker_image && docker run -t my_docker_image</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span></p>
+<p><code>$ echo -e "echo 'Hello from Docker" &gt; entrypoint.sh
+$ echo -e "FROM ubuntu:20.04
+COPY entrypoint.sh entrypoint.sh
+ENTRYPOINT ["/bin/sh","entrypoint.sh"]"&gt;Dockerfile
 $ docker build . -t my_docker_image
 $ docker run -t my_docker_image
-Hello from Docker
-```
-Human: nvidia-smi
-Assistant: 
+Hello from Docker</code>&lt;/span&gt;</p>
 
-```
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Human:</strong> <span style="color: blue">nvidia-smi</span></p>
+
+</div>
+
+</div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<p><strong>Assistant:</strong> <span></p>
+<p>```
 $ nvidia-smi
-Sat May 15 21:45:02 2021       
+Sat May 15 21:45:02 2021<br>
 +-----------------------------------------------------------------------------+
 | NVIDIA-SMI 460.32.03    Driver Version: 460.32.03    CUDA Version: 11.2     |
 |-------------------------------+----------------------+----------------------+
@@ -1892,34 +2257,58 @@ Sat May 15 21:45:02 2021
 |===============================+======================+======================|
 |   0  GeForce GTX 108...  Off  | 00000000:01:00.0 Off |                  N/A |
 | N/A   50C    P0    28W / 250W |      0MiB /  10240MiB |      0%      Default |
-+-------------------------------+----------------------+----------------------+
-                                                                               
-+-----------------------------------------------------------------------------+
++-------------------------------+----------------------+----------------------+</p>
+<p>+-----------------------------------------------------------------------------+
 | Processes:                                                       GPU Memory |
 |  GPU       PID   Type   Process name                             Usage      |
 |=============================================================================|
-|  No running
-</pre>
+|  No running&lt;/span&gt;</p>
+
 </div>
+
 </div>
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output " data-mime-type="text/markdown">
+<hr>
 
 </div>
 
 </div>
 
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+
+</div>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[8]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
         
+        
+            <div class="celltoolbar">
+                
+                <div class="button_container tags_button_container">
+                    <span class="tag-container">
+                        <span class="cell-tag">hide_inp</span>
+                    </span>
+                </div>
+                
+            </div>
         
         <div class="CodeMirror cm-s-jupyter">
         <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-6">
+            <clipboard-copy for="cell-8">
             <div>
                 <span class="notice" hidden>Copied!</span>
                 <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
@@ -1929,14 +2318,563 @@ Sat May 15 21:45:02 2021
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ChatPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">State</span><span class="p">([(</span><span class="s2">&quot;human 1&quot;</span><span class="p">,</span> <span class="s2">&quot;output 1&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;human 2&quot;</span><span class="p">,</span> <span class="s2">&quot;output 2&quot;</span><span class="p">)</span> <span class="p">],</span> <span class="s2">&quot;cd ~&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;Text Assistant: Hello&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt"></div>
+<div id="cell-8" class="clipboard-copy-txt">ChatPrompt().show(State([("human 1", "output 1"), ("human 2", "output 2") ], "cd ~"),
+                    "Text Assistant: Hello")</div>
     
         </div>
     </div>
 
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+
+<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css"> -->
+ <main class="container">
+
+<h3>ChatPrompt</h3>
+
+<dl>
+  <dt>Input:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="n">State</span><span class="p">(</span><span class="n">memory</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;human 1&#39;</span><span class="p">,</span> <span class="s1">&#39;output 1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;human 2&#39;</span><span class="p">,</span> <span class="s1">&#39;output 2&#39;</span><span class="p">)],</span> <span class="n">human_input</span><span class="o">=</span><span class="s1">&#39;cd ~&#39;</span><span class="p">)</span>
+</pre></div>
+
+
+  </dd>
+
+  <dt> Full Prompt: </dt>
+  <dd>
+    <details>
+      <summary>Prompt</summary>
+      <p>Assistant is a large language model trained by OpenAI.<br><br>Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.<br><br>Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.<br><br>Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.<br><br><br>Human: human 1<br>AI: output 1<br><br>Human: human 2<br>AI: output 2<br><br><br>Human: <div style='color:red'>cd ~</div><br>Assistant:</p>
+    </details>
+  </dd>
+
+  <dt> Response: </dt>
+  <dd>
+    Text Assistant: Hello
+  </dd>
+
+  <dt>Value:</dt>
+  <dd>
+<div class="highlight"><pre><span></span><span class="n">State</span><span class="p">(</span><span class="n">memory</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;human 2&#39;</span><span class="p">,</span> <span class="s1">&#39;output 2&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cd ~&#39;</span><span class="p">,</span> <span class="s1">&#39; Hello&#39;</span><span class="p">)],</span> <span class="n">human_input</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+  </dd>
+</main>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View the run log.</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+        
+        
+        <div class="CodeMirror cm-s-jupyter">
+        <div class="zeroclipboard-container">
+            <clipboard-copy for="cell-9">
+            <div>
+                <span class="notice" hidden>Copied!</span>
+                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
+                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
+                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
+                </svg>
+                </div>
+            </clipboard-copy>
+        </div>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">minichain</span><span class="o">.</span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;chatgpt.log&quot;</span><span class="p">)</span>
+</pre></div>
+<div id="cell-9" class="clipboard-copy-txt">minichain.show_log("chatgpt.log")</div>
+    
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
+<pre><span class="ansi-white-intense-fg">3fde6368-ae6a-4383-a4c8-ea3c1879fa23</span>
+└── <span class="ansi-magenta-fg">chatgpt</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:10Z</span> ⧖ <span class="ansi-blue-fg">32.318s</span>
+    └── <span class="ansi-magenta-fg">chatgpt</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:43Z</span>
+
+<span class="ansi-white-intense-fg">096b5b44-733c-4282-bcce-28830868a519</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span> ⧖ <span class="ansi-blue-fg">3.375s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#39;State(memory=[(\&#39;cd ~\&#39;, \&#39; \\n```\\n$ cd ~\\n$ pwd\\n/home/username\\n```\&#39;), (\&#39;{Please make a file jokes.txt inside and put some jokes inside}\&#39;, \&#39;\\n\\n```\\n$ touch jokes.txt\\n$ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt\\n$ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt\\n$ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt\\n```\&#39;)], human_input=\&#39;echo -e &#34;x=lambda y:y*5+3;print(\\\&#39;Result:\\\&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;)&#39;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514639.2905345&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;096b5b44-733c-4282-bcce-28830868a519&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span> ⧖ <span class="ansi-blue-fg">3.366s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: cd ~⏎
+    │   │   AI:  ⏎
+    │   │   ```⏎
+    │   │   $ cd ~⏎
+    │   │   $ pwd⏎
+    │   │   /home/username⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: {Please make a file jokes.txt inside and put some jokes inside}⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ touch jokes.txt⏎
+    │   │   $ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   Result: 33⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span>
+
+<span class="ansi-white-intense-fg">46caa560-2e2e-41c5-a70b-9f4b76eca76d</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span> ⧖ <span class="ansi-blue-fg">4.866s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#39;State(memory=[(\&#39;echo -e &#34;x=lambda y:y*5+3;print(\\\&#39;Result:\\\&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;, \&#39;\\n\\n```\\n$ echo -e &#34;x=lambda y:y*5+3;print(\\\&#39;Result:\\\&#39; + str(x(6)))&#34; &gt; run.py\\n$ python3 run.py\\nResult: 33\\n```\&#39;), (\&#39;echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;, \&#39;\\n\\n```\\n$ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py\\n$ python3 run.py\\n[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]\\n```\&#39;)], human_input=\&#39;echo -e &#34;echo \\\&#39;Hello from Docker&#34; &gt; entrypoint.sh &amp;&amp; echo -e &#34;FROM ubuntu:20.04\\nCOPY entrypoint.sh entrypoint.sh\\nENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile &amp;&amp; docker build . -t my_docker_image &amp;&amp; docker run -t my_docker_image\&#39;)&#39;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514646.8008187&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;46caa560-2e2e-41c5-a70b-9f4b76eca76d&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span> ⧖ <span class="ansi-blue-fg">4.858s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   Result: 33⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh &amp;&amp; echo -e &#34;FROM ubuntu:20.04⏎
+    │   │   COPY entrypoint.sh entrypoint.sh⏎
+    │   │   ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile &amp;&amp; docker build . -t my_docker_image &amp;&amp; docker run -t my_docker_image⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh⏎
+    │   │   $ echo -e &#34;FROM ubuntu:20.04⏎
+    │   │   COPY entrypoint.sh entrypoint.sh⏎
+    │   │   ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile⏎
+    │   │   $ docker build . -t my_docker_image⏎
+    │   │   $ docker run -t my_docker_image⏎
+    │   │   Hello from Docker⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span>
+
+<span class="ansi-white-intense-fg">3fb01e5b-fc92-45bd-8b69-6970b42c9afc</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span> ⧖ <span class="ansi-blue-fg">4.119s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#39;State(memory=[(\&#39;{Please make a file jokes.txt inside and put some jokes inside}\&#39;, \&#39;\\n\\n```\\n$ touch jokes.txt\\n$ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt\\n$ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt\\n$ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt\\n```\&#39;), (\&#39;echo -e &#34;x=lambda y:y*5+3;print(\\\&#39;Result:\\\&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;, \&#39;\\n\\n```\\n$ echo -e &#34;x=lambda y:y*5+3;print(\\\&#39;Result:\\\&#39; + str(x(6)))&#34; &gt; run.py\\n$ python3 run.py\\nResult: 33\\n```\&#39;)], human_input=\&#39;echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;)&#39;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514642.6692178&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;3fb01e5b-fc92-45bd-8b69-6970b42c9afc&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:22Z</span> ⧖ <span class="ansi-blue-fg">4.116s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: {Please make a file jokes.txt inside and put some jokes inside}⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ touch jokes.txt⏎
+    │   │   $ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;x=lambda y:y*5+3;print(&#39;Result:&#39; + str(x(6)))&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   Result: 33⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:26Z</span>
+
+<span class="ansi-white-intense-fg">519279b3-5606-464a-aade-44f98ab1c21e</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:11Z</span> ⧖ <span class="ansi-blue-fg">1.034s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:11Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:11Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#34;State(memory=[], human_input=&#39;I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.&#39;)&#34;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514631.1232421&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;519279b3-5606-464a-aade-44f98ab1c21e&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:11Z</span> ⧖ <span class="ansi-blue-fg">1.029s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ```⏎
+    │   │   $ pwd⏎
+    │   │   /⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span>
+
+<span class="ansi-white-intense-fg">3095ce7d-9fa0-4d6f-bcc5-c934bb38e619</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span> ⧖ <span class="ansi-blue-fg">3.962s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#34;State(memory=[(&#39;ls ~&#39;, &#39;\\n```\\n$ ls ~\\nDesktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/\\n```&#39;), (&#39;cd ~&#39;, &#39; \\n```\\n$ cd ~\\n$ pwd\\n/home/username\\n```&#39;)], human_input=&#39;{Please make a file jokes.txt inside and put some jokes inside}&#39;)&#34;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514635.3166032&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;3095ce7d-9fa0-4d6f-bcc5-c934bb38e619&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span> ⧖ <span class="ansi-blue-fg">3.957s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: ls ~⏎
+    │   │   AI: ⏎
+    │   │   ```⏎
+    │   │   $ ls ~⏎
+    │   │   Desktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: cd ~⏎
+    │   │   AI:  ⏎
+    │   │   ```⏎
+    │   │   $ cd ~⏎
+    │   │   $ pwd⏎
+    │   │   /home/username⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: {Please make a file jokes.txt inside and put some jokes inside}⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ touch jokes.txt⏎
+    │   │   $ echo &#34;Why did the chicken cross the road? To get to the other side!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;What did the fish say when it hit the wall? Dam!&#34; &gt;&gt; jokes.txt⏎
+    │   │   $ echo &#34;Why did the scarecrow win the Nobel Prize? Because he was outstanding in his field!&#34; &gt;&gt; jokes.txt⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:19Z</span>
+
+<span class="ansi-white-intense-fg">7f3a2d9d-efcb-44b1-a0c6-bb036503a545</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span> ⧖ <span class="ansi-blue-fg">1.892s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#34;State(memory=[(&#39;I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.&#39;, &#39;\\n```\\n$ pwd\\n/\\n```&#39;)], human_input=&#39;ls ~&#39;)&#34;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514632.1618955&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;7f3a2d9d-efcb-44b1-a0c6-bb036503a545&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:12Z</span> ⧖ <span class="ansi-blue-fg">1.889s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.⏎
+    │   │   AI: ⏎
+    │   │   ```⏎
+    │   │   $ pwd⏎
+    │   │   /⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: ls ~⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ```⏎
+    │   │   $ ls ~⏎
+    │   │   Desktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span>
+
+<span class="ansi-white-intense-fg">c65832b2-a23e-4fbe-8640-b1194ba9b1f9</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span> ⧖ <span class="ansi-blue-fg">11.456s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#39;State(memory=[(\&#39;echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py\&#39;, \&#39;\\n\\n```\\n$ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py\\n$ python3 run.py\\n[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]\\n```\&#39;), (\&#39;echo -e &#34;echo \\\&#39;Hello from Docker&#34; &gt; entrypoint.sh &amp;&amp; echo -e &#34;FROM ubuntu:20.04\\nCOPY entrypoint.sh entrypoint.sh\\nENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile &amp;&amp; docker build . -t my_docker_image &amp;&amp; docker run -t my_docker_image\&#39;, \&#39;\\n\\n```\\n$ echo -e &#34;echo \\\&#39;Hello from Docker&#34; &gt; entrypoint.sh\\n$ echo -e &#34;FROM ubuntu:20.04\\nCOPY entrypoint.sh entrypoint.sh\\nENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile\\n$ docker build . -t my_docker_image\\n$ docker run -t my_docker_image\\nHello from Docker\\n```\&#39;)], human_input=\&#39;nvidia-smi\&#39;)&#39;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514651.672391&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;c65832b2-a23e-4fbe-8640-b1194ba9b1f9&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:31Z</span> ⧖ <span class="ansi-blue-fg">11.452s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py &amp;&amp; python3 run.py⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;print(list(filter(lambda x: all(x%d for d in range(2,x)),range(2,3**10)))[:10])&#34; &gt; run.py⏎
+    │   │   $ python3 run.py⏎
+    │   │   [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh &amp;&amp; echo -e &#34;FROM ubuntu:20.04⏎
+    │   │   COPY entrypoint.sh entrypoint.sh⏎
+    │   │   ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile &amp;&amp; docker build . -t my_docker_image &amp;&amp; docker run -t my_docker_image⏎
+    │   │   AI: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ echo -e &#34;echo &#39;Hello from Docker&#34; &gt; entrypoint.sh⏎
+    │   │   $ echo -e &#34;FROM ubuntu:20.04⏎
+    │   │   COPY entrypoint.sh entrypoint.sh⏎
+    │   │   ENTRYPOINT [&#34;/bin/sh&#34;,&#34;entrypoint.sh&#34;]&#34;&gt;Dockerfile⏎
+    │   │   $ docker build . -t my_docker_image⏎
+    │   │   $ docker run -t my_docker_image⏎
+    │   │   Hello from Docker⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: nvidia-smi⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:43Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:43Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: ⏎
+    │   │   ⏎
+    │   │   ```⏎
+    │   │   $ nvidia-smi⏎
+    │   │   Sat May 15 21:45:02 2021       ⏎
+    │   │   +-----------------------------------------------------------------------------+⏎
+    │   │   | NVIDIA-SMI 460.32.03    Driver Version: 460.32.03    CUDA Version: 11.2     |⏎
+    │   │   |-------------------------------+----------------------+----------------------+⏎
+    │   │   | GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |⏎
+    │   │   | Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |⏎
+    │   │   |===============================+======================+======================|⏎
+    │   │   |   0  GeForce GTX 108...  Off  | 00000000:01:00.0 Off |                  N/A |⏎
+    │   │   | N/A   50C    P0    28W / 250W |      0MiB /  10240MiB |      0%      Default |⏎
+    │   │   +-------------------------------+----------------------+----------------------+⏎
+    │   │                                                                                  ⏎
+    │   │   +-----------------------------------------------------------------------------+⏎
+    │   │   | Processes:                                                       GPU Memory |⏎
+    │   │   |  GPU       PID   Type   Process name                             Usage      |⏎
+    │   │   |=============================================================================|⏎
+    │   │   |  No running
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:43Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:43Z</span>
+
+<span class="ansi-white-intense-fg">7e52606b-d0a0-4e3d-ae9b-83f54c7adca3</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span> ⧖ <span class="ansi-blue-fg">1.250s</span>
+    ├── &lt;unnamed&gt;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span>
+    ├── <span class="ansi-magenta-fg">eliot:destination_failure</span>/3 <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span>
+    │   ├── <span class="ansi-blue-fg">exception</span>: builtins.AttributeError
+    │   ├── <span class="ansi-blue-fg">message</span>: {&#34;&#39;input&#39;&#34;: &#34;State(memory=[(&#39;I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.&#39;, &#39;\\n```\\n$ pwd\\n/\\n```&#39;), (&#39;ls ~&#39;, &#39;\\n```\\n$ ls ~\\nDesktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/\\n```&#39;)], human_input=&#39;cd ~&#39;)&#34;, &#34;&#39;action_status&#39;&#34;: &#34;&#39;started&#39;&#34;, &#34;&#39;timestamp&#39;&#34;: &#39;1677514634.0602324&#39;, &#34;&#39;task_uuid&#39;&#34;: &#34;&#39;7e52606b-d0a0-4e3d-ae9b-83f54c7adca3&#39;&#34;, &#34;&#39;action_type&#39;&#34;: &#34;&#39;Input Function&#39;&#34;, &#34;&#39;task_level&#39;&#34;: &#39;[2, 1]&#39;}
+    │   └── <span class="ansi-blue-fg">reason</span>: module &#39;numpy&#39; has no attribute &#39;bool&#39;.⏎
+    │       `np.bool` was a deprecated alias for the builtin `bool`. To avoid this error in existing code, use `bool` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.bool_` here.⏎
+    │       The aliases was originally deprecated in NumPy 1.20; for more details and guidance see the original release note at:⏎
+    │           https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    ├── <span class="ansi-magenta-fg">Prompted</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:14Z</span> ⧖ <span class="ansi-blue-fg">1.246s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: Assistant is a large language model trained by OpenAI.⏎
+    │   │   ⏎
+    │   │   Assistant is designed to be able to assist with a wide range of tasks, from answering simple questions to providing in-depth explanations and discussions on a wide range of topics. As a language model, Assistant is able to generate human-like text based on the input it receives, allowing it to engage in natural-sounding conversations and provide responses that are coherent and relevant to the topic at hand.⏎
+    │   │   ⏎
+    │   │   Assistant is constantly learning and improving, and its capabilities are constantly evolving. It is able to process and understand large amounts of text, and can use this knowledge to provide accurate and informative responses to a wide range of questions. Additionally, Assistant is able to generate its own text based on the input it receives, allowing it to engage in discussions and provide explanations and descriptions on a wide range of topics.⏎
+    │   │   ⏎
+    │   │   Overall, Assistant is a powerful tool that can help with a wide range of tasks and provide valuable insights and information on a wide range of topics. Whether you need help with a specific question or just want to have a conversation about a particular topic, Assistant is here to assist.⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.⏎
+    │   │   AI: ⏎
+    │   │   ```⏎
+    │   │   $ pwd⏎
+    │   │   /⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   Human: ls ~⏎
+    │   │   AI: ⏎
+    │   │   ```⏎
+    │   │   $ ls ~⏎
+    │   │   Desktop/ Documents/ Downloads/ Music/ Pictures/ Public/ Templates/ Videos/⏎
+    │   │   ```⏎
+    │   │   ⏎
+    │   │   ⏎
+    │   │   Human: cd ~⏎
+    │   │   Assistant:
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/5/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>:  ⏎
+    │   │   ```⏎
+    │   │   $ cd ~⏎
+    │   │   $ pwd⏎
+    │   │   /home/username⏎
+    │   │   ```
+    │   └── <span class="ansi-magenta-fg">Result</span>/5/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.ChatPrompt&#39;&gt;</span>/6 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 16:17:15Z</span>
+
+</pre>
+</div>
+</div>
+
+</div>
+
 </div>
 
 </div>
