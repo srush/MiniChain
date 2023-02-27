@@ -23,7 +23,8 @@ class SimplePrompt(Prompt[str, str]):
 
 class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
     """
-    A prompt that uses Jinja2 to define a prompt based on a static template.
+    A prompt that uses Jinja to define a prompt based on a static template.
+    Set `template_file` to the Jinja template file.
     """
 
     IN = Mapping[str, Any]
@@ -69,6 +70,10 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
 
 
 class EmbeddingPrompt(Prompt[Input, Output]):
+    """
+    A prompt that replaces parse with `find` that takes an embedding.
+    """
+
     def parse(self, response: str, inp: Input) -> Output:
         return self.find(response, inp)
 

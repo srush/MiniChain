@@ -92,7 +92,16 @@ plugins:
       include_source: true
       ignore_h1_titles: true
       execute: false
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            heading_level: 2
+            show_root_full_path: false
+            show_root_heading: true
+            show_source: false
+            show_signature: true
+            show_signature_annotations: true
 
 ### Extensions
 markdown_extensions:
@@ -125,7 +134,7 @@ markdown_extensions:
   - markdown.extensions.toc: # same as: - toc
       slugify: !!python/name:pymdownx.slugs.uslugify
       permalink: true
-      toc_depth: 6 # default: 6
+      toc_depth: 4 # default: 6
       #separator: "-"
 
   - markdown_include.include:
@@ -277,13 +286,14 @@ extra_javascript:
 ## @@ Begin NAVIGATION
 nav:
   - Home: index.md
+  - API: api.md
   - Examples:
     - examples/bash.ipynb
-    - examples/chatgpt.ipynb
-    - examples/selfask.ipynb
-    - examples/qa.ipynb
-    - examples/pal.ipynb
-    - examples/ner.ipynb
+    - "ChatGPT": examples/chatgpt.ipynb
+    - "SelfAsk": examples/selfask.ipynb
+    - "QA": examples/qa.ipynb
+    - "PAL": examples/pal.ipynb
+    - "NER": examples/ner.ipynb
     - examples/math.ipynb
     - examples/summary.ipynb
     - examples/gatsby.ipynb
