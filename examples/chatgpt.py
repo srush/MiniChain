@@ -56,7 +56,7 @@ with minichain.start_chain("chatgpt") as backend:
         state.human_input = t
         display(Markdown(f'**Human:** <span style="color: blue">{t}</span>'))
         state = prompt(state)
-        display(Markdown(f'**Assistant:** <span>{state.memory[-1][1]}</span>'))
+        display(Markdown(f'**Assistant:** {state.memory[-1][1]}'))
         display(Markdown(f'--------------'))
 
 

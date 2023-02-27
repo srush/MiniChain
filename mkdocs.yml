@@ -279,15 +279,14 @@ nav:
   - Home: index.md
   - Examples:
     - examples/bash.ipynb
-    - examples/math.ipynb
-    - examples/pal.ipynb
-    - examples/selfask.ipynb
-    - examples/ner.ipynb
-    - examples/summary.ipynb
-    - examples/qa.ipynb
-    - examples/gatsby.ipynb
     - examples/chatgpt.ipynb
-
+    - examples/selfask.ipynb
+    - examples/qa.ipynb
+    - examples/pal.ipynb
+    - examples/ner.ipynb
+    - examples/math.ipynb
+    - examples/summary.ipynb
+    - examples/gatsby.ipynb
 
 
 ## @@ End NAVIGATION
