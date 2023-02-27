@@ -43,6 +43,15 @@ Code:
 > python math.py
 ```
 
+## Why Mini-Chain?
+
+There are several very popular libraries for prompt chaining most
+notably [LangChain](https://langchain.readthedocs.io/en/latest/) and
+[GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
+These library are useful, but they are extremely large and
+complex. MiniChain aims to implement the core prompt chaining
+functionality in a tiny library that you can read.
+
 ## Examples
 
 This library allows us to implement several popular approaches in a few lines of code.
