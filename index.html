@@ -417,6 +417,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_2">
@@ -481,6 +483,20 @@
     <li class="md-nav__item">
       <a href="examples/selfask/" class="md-nav__link">
         Selfask
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/ner/" class="md-nav__link">
+        Ner
       </a>
     </li>
   
@@ -646,18 +662,18 @@
 <ul>
 <li>Code (<a href="https://github.com/srush/MiniChain/blob/main/examples/math.py">math.py</a>):</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="c1"># A prompt from the Jinja template below. </span>
+<div class="highlight"><pre><span></span><code><span class="c1"># A prompt from the Jinja template below.</span>
 <span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 
 <span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="c1"># MathPrompt with OpenAI backend </span>
+    <span class="c1"># MathPrompt with OpenAI backend</span>
     <span class="n">p1</span> <span class="o">=</span> <span class="n">MathPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span>
-    <span class="c1"># A prompt that simply runs Python </span>
+    <span class="c1"># A prompt that simply runs Python</span>
     <span class="n">p2</span> <span class="o">=</span> <span class="n">SimplePrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">Python</span><span class="p">())</span>
     <span class="c1"># Chain them together</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
-    <span class="c1"># Call chain with a question.    </span>
+    <span class="c1"># Call chain with a question.</span>
     <span class="n">question</span> <span class="o">=</span><span class="s2">&quot;&#39;What is the sum of the powers of 3 (3^i) that are smaller than 100?&quot;</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">}))</span>
 </code></pre></div>
@@ -700,7 +716,7 @@ Code:
 </ul>
 <h2 id="why-mini-chain">Why Mini-Chain?<a class="headerlink" href="#why-mini-chain" title="Permanent link">&para;</a></h2>
 <p>There are several very popular libraries for prompt chaining,
-notably: <a href="https://langchain.readthedocs.io/en/latest/">LangChain</a>, 
+notably: <a href="https://langchain.readthedocs.io/en/latest/">LangChain</a>,
 <a href="https://github.com/promptslab/Promptify">Promptify</a>, and
 <a href="https://gpt-index.readthedocs.io/en/latest/reference/prompts.html">GPTIndex</a>.
 These library are useful, but they are extremely large and

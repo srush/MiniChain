@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://srush.github.io/minichain/examples/chatgpt/</loc>
+         <lastmod>2023-02-27</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://srush.github.io/minichain/examples/gatsby/</loc>
          <lastmod>2023-02-27</lastmod>
          <changefreq>daily</changefreq>
