@@ -70,8 +70,9 @@ It supports the current backends.
 
 ## Why Mini-Chain?
 
-There are several very popular libraries for prompt chaining most
-notably [LangChain](https://langchain.readthedocs.io/en/latest/) and
+There are several very popular libraries for prompt chaining,
+notably: [LangChain](https://langchain.readthedocs.io/en/latest/), 
+[Promptify](https://github.com/promptslab/Promptify), and
 [GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
 These library are useful, but they are extremely large and
 complex. MiniChain aims to implement the core prompt chaining
