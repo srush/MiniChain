@@ -4,7 +4,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from types import TracebackType
-from typing import TYPE_CHECKING, List, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, List, Optional, Sequence
 
 from eliot import start_action, to_file
 from eliottree import render_tasks, tasks_from_iterable
@@ -118,7 +118,6 @@ class BashProcess(Backend):
         return output
 
 
-
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003") -> None:
 
@@ -134,7 +133,8 @@ class OpenAIBase(Backend):
             max_tokens=256,
             temperature=0,
         )
-    
+
+
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
@@ -160,30 +160,50 @@ class OpenAI(OpenAIBase):
         )
         return str(ans.choices[0].text)
 
+
 class OpenAIEmbed(OpenAIBase):
-    def __init__(self, model = "text-embedding-ada-002"):
+    def __init__(self, model: str = "text-embedding-ada-002") -> None:
         super().__init__(model)
-        
+
     def run(self, request: Request) -> str:
         import openai
 
         ans = openai.Embedding.create(
-            engine = self.model,
+            engine=self.model,
             input=request.prompt,
         )
-        return ans["data"][0]["embedding"]
+        return ans["data"][0]["embedding"]  # type: ignore
 
 
-class HuggingFace(Backend):
+class HuggingFaceBase(Backend):
     def __init__(self, model: str = "gpt2") -> None:
         self.model = model
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
+
+class HuggingFace(HuggingFaceBase):
     def run(self, request: Request) -> str:
-        import hfapi
 
-        client = hfapi.Client()
-        x = client.text_generation(request.prompt, model=self.model)
-        return x["generated_text"][len(request.prompt) :]  # type: ignore
+        from huggingface_hub.inference_api import InferenceApi
+
+        self.client = InferenceApi(
+            token=self.api_key, repo_id=self.model, task="text-generation"
+        )
+        response = self.client(inputs=request.prompt)
+        return response  # type: ignore
+
+
+class HuggingFaceEmbed(HuggingFaceBase):
+    def run(self, request: Request) -> str:
+
+        from huggingface_hub.inference_api import InferenceApi
+
+        self.client = InferenceApi(
+            token=self.api_key, repo_id=self.model, task="feature-extraction"
+        )
+        response = self.client(inputs=request.prompt)
+        return response  # type: ignore
 
 
 class Manifest(Backend):
@@ -194,13 +214,12 @@ class Manifest(Backend):
         try:
             import manifest
         except ImportError:
-            raise ImportError(
-                "`pip install manifest-ml` to use the Manifest Backend."
-            )
-        assert isinstance(self.client, manifest.Manifest), \
-            "Client must be a `manifest.Manifest` instance."
+            raise ImportError("`pip install manifest-ml` to use the Manifest Backend.")
+        assert isinstance(
+            self.client, manifest.Manifest
+        ), "Client must be a `manifest.Manifest` instance."
 
-        return self.client.run(request.prompt)
+        return self.client.run(request.prompt)  # type: ignore
 
 
 class _MiniChain:
@@ -214,7 +233,7 @@ class _MiniChain:
 
     def __exit__(
         self,
-        type: type[BaseException],
+        type: type,
         exception: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
@@ -222,8 +241,11 @@ class _MiniChain:
 
     Mock = Mock
     Google = Google
+
     OpenAI = OpenAI
     OpenAIEmbed = OpenAIEmbed
+    HuggingFace = HuggingFace
+    HuggingFaceEmbed = HuggingFaceEmbed
     BashProcess = BashProcess
     Python = Python
     Manifest = Manifest
@@ -233,10 +255,10 @@ def start_chain(name: str) -> _MiniChain:
     return _MiniChain(name)
 
 
-def show_log(s: str, o=sys.stderr.write) -> None:
+def show_log(s: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
     render_tasks(
         o,
-        tasks_from_iterable([json.loads(l) for l in open(s)]),
+        tasks_from_iterable([json.loads(line) for line in open(s)]),
         colorize=True,
         human_readable=True,
     )

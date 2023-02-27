@@ -43,6 +43,7 @@ Code:
 > python math.py
 ```
 
+
 ## Examples
 
 This library allows us to implement several popular approaches in a few lines of code.
@@ -60,6 +61,16 @@ It supports the current backends.
 * Python
 * Manifest-ML (AI21, Cohere, Together)
 * Bash
+
+## Why Mini-Chain?
+
+There are several very popular libraries for prompt chaining most
+notably [LangChain](https://langchain.readthedocs.io/en/latest/) and
+[GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
+These library are useful, but they are extremely large and
+complex. MiniChain aims to implement the core prompt chaining
+functionality in a tiny digestable library.
+
 
 ## Tutorial
 
@@ -126,9 +137,9 @@ show_log("mychain.log")
 
 ### Documents and Embeddings
 
-MiniChain is agnostic to how you manage documents and embeddings. We recommend using 
-the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with 
-built in FAISS indexing. 
+MiniChain is agnostic to how you manage documents and embeddings. We recommend using
+the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with
+built in FAISS indexing.
 
 ![image](https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png)
 
@@ -140,21 +151,21 @@ Here is the implementation.
 olympics = datasets.load_from_disk("olympics.data")
 olympics.add_faiss_index("embeddings")
 
-class KNNPrompt(Prompt):
-    def parse(self, out, inp):
+class KNNPrompt(EmbeddingPrompt):
+    def find(self, out, inp):
         return olympics.get_nearest_examples("embeddings", np.array(out), 3)
 ```
 
 
 
-This creates a K-nearest neighbors (KNN) `Prompt` that looks up the 
-3 closest documents based on embeddings of the question asked. 
+This creates a K-nearest neighbors (KNN) `Prompt` that looks up the
+3 closest documents based on embeddings of the question asked.
 See the full [Retrieval-Augemented QA](https://srush.github.io/MiniChain/examples/qa/)
-example. 
+example.
 
 
-We recommend creating these embeddings offline using the batch map functionality of the 
-datasets library. 
+We recommend creating these embeddings offline using the batch map functionality of the
+datasets library.
 
 ```python
 def embed(x):

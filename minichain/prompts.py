@@ -1,9 +1,10 @@
 from typing import Any, Mapping
 
+import numpy as np
 from jinja2 import Environment, FileSystemLoader, Template
 
 from .backend import Request
-from .base import HTML, Output, Prompt
+from .base import HTML, Input, Output, Prompt
 
 
 class SimplePrompt(Prompt[str, str]):
@@ -57,3 +58,15 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
         else:
             stop = None
         return Request(x, stop)
+
+
+class EmbeddingPrompt(Prompt[Input, Output]):
+    def parse(self, response: str, inp: Input) -> Output:
+        return self.find(response, inp)
+
+    def find(self, response: np.ndarray, inp: Input) -> Output:
+        """
+        Convert from the embedding response of the function
+        to the output type.
+        """
+        raise NotImplementedError
