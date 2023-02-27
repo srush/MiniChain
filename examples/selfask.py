@@ -2,20 +2,21 @@
 # Adapted from https://github.com/ofirpress/self-ask
 
 from dataclasses import dataclass
-from parsita import *
-import minichain
 
+from parsita import *
+
+import minichain
 
 # Define the state of the bot.
 
 @dataclass
 class IntermediateState:
     s: str
-    
+
 @dataclass
 class FinalState:
     s: str
-    
+
 @dataclass
 class Out:
     echo: str
@@ -66,7 +67,7 @@ with minichain.start_chain("selfask") as backend:
     print(result)
 
 # View prompt examples.
-    
+
 # + tags=["hide_inp"]
 SelfAsk().show(
     {

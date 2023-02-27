@@ -2,14 +2,15 @@
 # Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja).
 
 
-import minichain
 import json
+
+import minichain
 
 # Prompt to extract NER tags as json
 
 class NERPrompt(minichain.TemplatePrompt):
     template_file = "ner.pmpt.tpl"
-    
+
     def parse(self, response, inp):
         return json.loads(response)
 

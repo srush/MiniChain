@@ -17,7 +17,7 @@ with minichain.start_chain("math") as backend:
     print(result)
 
 # View the prompt
-    
+
 # + tags=["hide_inp"]
 MathPrompt().show({"question": "What is 10 + 12?"}, "10 + 12")
 # -

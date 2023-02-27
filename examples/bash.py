@@ -28,7 +28,7 @@ class BashPrompt(minichain.Prompt):
 
 
 # Generate and run bash command.
-    
+
 with minichain.start_chain("bash") as backend:
     question = (
         '"go up one directory, and then into the minichain directory,'
@@ -39,7 +39,7 @@ with minichain.start_chain("bash") as backend:
     print(result)
 
 # View the prompts.
-    
+
 # + tags=["hide_inp"]
 CLIPrompt().show(
     {"question": "list the files in the directory"}, """```bash\nls\n```"""

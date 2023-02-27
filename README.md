@@ -11,18 +11,18 @@ Write apps that can easily and efficiently call multiple language models.
 * Code ([math.py](https://github.com/srush/MiniChain/blob/main/examples/math.py)):
 
 ```python
-# A prompt from the Jinja template below. 
+# A prompt from the Jinja template below.
 class MathPrompt(TemplatePrompt[str]):
     template_file = "math.pmpt.tpl"
 
 with start_chain("math") as backend:
-    # MathPrompt with OpenAI backend 
+    # MathPrompt with OpenAI backend
     p1 = MathPrompt(backend.OpenAI())
-    # A prompt that simply runs Python 
+    # A prompt that simply runs Python
     p2 = SimplePrompt(backend.Python())
     # Chain them together
     prompt = p1.chain(p2)
-    # Call chain with a question.    
+    # Call chain with a question.
     question ="'What is the sum of the powers of 3 (3^i) that are smaller than 100?"
     print(prompt({"question": question}))
 ```
@@ -71,7 +71,7 @@ It supports the current backends.
 ## Why Mini-Chain?
 
 There are several very popular libraries for prompt chaining,
-notably: [LangChain](https://langchain.readthedocs.io/en/latest/), 
+notably: [LangChain](https://langchain.readthedocs.io/en/latest/),
 [Promptify](https://github.com/promptslab/Promptify), and
 [GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
 These library are useful, but they are extremely large and

@@ -8,7 +8,7 @@ class PalPrompt(minichain.TemplatePrompt):
     template_file = "pal.pmpt.tpl"
 
 # Prompt to run and print python code.
-    
+
 class PyPrompt(minichain.Prompt):
     def prompt(self, inp):
         return inp + "\nprint(solution())"
@@ -17,7 +17,7 @@ class PyPrompt(minichain.Prompt):
         return int(response)
 
 # Chain the prompts.
-    
+
 with minichain.start_chain("pal") as backend:
     question = "Melanie is a door-to-door saleswoman. She sold a third of her ' \
     'vacuum cleaners at the green house, 2 more to the red house, and half of ' \
@@ -28,7 +28,7 @@ with minichain.start_chain("pal") as backend:
     print(result)
 
 # View prompt examples.
-    
+
 # + tags=["hide_inp"]
 PalPrompt().show(
     {"question": "Joe has 10 cars and Bobby has 12. How many do they have together?"},
