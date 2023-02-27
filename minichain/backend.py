@@ -208,6 +208,7 @@ class HuggingFaceEmbed(HuggingFaceBase):
 
 class Manifest(Backend):
     def __init__(self, client: "manifest.Manifest") -> None:
+        "Client from [Manifest-ML](https://github.com/HazyResearch/manifest)."
         self.client = client
 
     def run(self, request: Request) -> str:
@@ -222,12 +223,17 @@ class Manifest(Backend):
         return self.client.run(request.prompt)  # type: ignore
 
 
-class _MiniChain:
+class MiniChain:
+    """
+    MiniChain session object with backends. Make backend by calling
+    `minichain.OpenAI()` with args for `OpenAI` class.
+    """
+
     def __init__(self, name: str):
         to_file(open(f"{name}.log", "w"))
         self.name = name
 
-    def __enter__(self) -> "_MiniChain":
+    def __enter__(self) -> "MiniChain":
         self.action = start_action(action_type=self.name)
         return self
 
@@ -251,14 +257,21 @@ class _MiniChain:
     Manifest = Manifest
 
 
-def start_chain(name: str) -> _MiniChain:
-    return _MiniChain(name)
+def start_chain(name: str) -> MiniChain:
+    """
+    Initialize a chain. Logs to {name}.log. Returns a `MiniChain` that
+    holds LLM backends..
+    """
+    return MiniChain(name)
 
 
-def show_log(s: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
+def show_log(filename: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
+    """
+    Write out the full asynchronous log from file `filename`.
+    """
     render_tasks(
         o,
-        tasks_from_iterable([json.loads(line) for line in open(s)]),
+        tasks_from_iterable([json.loads(line) for line in open(filename)]),
         colorize=True,
         human_readable=True,
     )

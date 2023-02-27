@@ -144,11 +144,11 @@ show_log("mychain.log")
 ```
 ### Memory
 
-MiniChain does not build in an explicit stateful memory class. We recommend implementing it as a queue. 
+MiniChain does not build in an explicit stateful memory class. We recommend implementing it as a queue.
 
 ![image](https://user-images.githubusercontent.com/35882/221622653-7b13783e-0439-4d59-8f57-b98b82ab83c0.png)
 
-Here is a class you might find useful to keep track of responses. 
+Here is a class you might find useful to keep track of responses.
 
 ```python
 @dataclass
@@ -161,8 +161,8 @@ class State:
         return State(memory + [(self.human_input, response)])
 ```
 
-See the full [Chat](https://srush.github.io/MiniChain/examples/chatgpt/) example. 
-It keeps track of the last two responses that it has seen. 
+See the full [Chat](https://srush.github.io/MiniChain/examples/chatgpt/) example.
+It keeps track of the last two responses that it has seen.
 
 
 ### Documents and Embeddings
