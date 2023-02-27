@@ -1495,7 +1495,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Answer a math problem with code.
+<p>Notebook to answer a math problem with code.
 Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-code</a></p>
 
 </div>
@@ -1522,9 +1522,9 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">TemplatePrompt</span><span class="p">,</span> <span class="n">SimplePrompt</span><span class="p">,</span> <span class="n">show_log</span><span class="p">,</span> <span class="n">start_chain</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">minichain</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from minichain import TemplatePrompt, SimplePrompt, show_log, start_chain</div>
+<div id="cell-1" class="clipboard-copy-txt">import minichain</div>
     
         </div>
     </div>
@@ -1566,10 +1566,10 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">MathPrompt</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;math.pmpt.tpl&quot;</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">class MathPrompt(TemplatePrompt[str]):
+<div id="cell-2" class="clipboard-copy-txt">class MathPrompt(minichain.TemplatePrompt[str]):
     template_file = "math.pmpt.tpl"</div>
     
         </div>
@@ -1578,6 +1578,18 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Ask a question and run it as python code.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -1600,15 +1612,15 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">minichain</span><span class="o">.</span><span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;math&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
     <span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;What is the sum of the powers of 3 (3^i) that are smaller than 100?&quot;</span>
-    <span class="n">prompt</span> <span class="o">=</span> <span class="n">MathPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">SimplePrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">Python</span><span class="p">()))</span>
+    <span class="n">prompt</span> <span class="o">=</span> <span class="n">MathPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">SimplePrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">Python</span><span class="p">()))</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">with start_chain("math") as backend:
+<div id="cell-3" class="clipboard-copy-txt">with minichain.start_chain("math") as backend:
     question = "What is the sum of the powers of 3 (3^i) that are smaller than 100?"
-    prompt = MathPrompt(backend.OpenAI()).chain(SimplePrompt(backend.Python()))
+    prompt = MathPrompt(backend.OpenAI()).chain(minichain.SimplePrompt(backend.Python()))
     result = prompt({"question": question})
     print(result)</div>
     
@@ -1642,6 +1654,18 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
 
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View the prompt</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
@@ -1744,6 +1768,18 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
 </div>
 
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View the log</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
@@ -1765,9 +1801,9 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;math.log&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">minichain</span><span class="o">.</span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;math.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt">show_log("math.log")</div>
+<div id="cell-5" class="clipboard-copy-txt">minichain.show_log("math.log")</div>
     
         </div>
     </div>
@@ -1789,13 +1825,13 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">4b9c1af0-ca63-42e1-817f-b2b8bd57a33f</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:15Z</span> ⧖ <span class="ansi-blue-fg">1.942s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:15Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
+<pre><span class="ansi-white-intense-fg">d962c2e7-4475-4094-bd1d-24f450acac26</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:12Z</span> ⧖ <span class="ansi-blue-fg">2.713s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:12Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   └── <span class="ansi-blue-fg">question</span>: What is the sum of the powers of 3 (3^i) that are smaller than 100?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:15Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:15Z</span> ⧖ <span class="ansi-blue-fg">1.939s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:12Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:12Z</span> ⧖ <span class="ansi-blue-fg">2.711s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question:⏎
     │   │   What is 37593 * 67?⏎
     │   │   Code:⏎
@@ -1821,8 +1857,8 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
     │   │   Question:⏎
     │   │   What is the sum of the powers of 3 (3^i) that are smaller than 100?⏎
     │   │   Code:
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: ⏎
     │   │   sum = 0⏎
     │   │   for i in range(0, 100):⏎
@@ -1830,12 +1866,12 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
     │   │       sum += 3**i⏎
     │   │   ⏎
     │   │   print(sum)
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.MathPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
 
-<span class="ansi-white-intense-fg">f8e0b7da-e99e-4452-a9ee-77fcb4ab5e05</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">3ce24477-fa41-4ca1-b11e-f7d253a7c511</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: ⏎
     │   │   sum = 0⏎
     │   │   for i in range(0, 100):⏎
@@ -1843,8 +1879,8 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
     │   │       sum += 3**i⏎
     │   │   ⏎
     │   │   print(sum)
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: ⏎
     │   │   sum = 0⏎
     │   │   for i in range(0, 100):⏎
@@ -1852,16 +1888,16 @@ Adapted from Dust <a href="https://dust.tt/spolu/a/d12ac33169">maths-generate-co
     │   │       sum += 3**i⏎
     │   │   ⏎
     │   │   print(sum)
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: 121⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
 
-<span class="ansi-white-intense-fg">6395208f-d05f-420d-996d-4a43dd00adf7</span>
-└── <span class="ansi-magenta-fg">math</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:14Z</span> ⧖ <span class="ansi-blue-fg">2.420s</span>
-    └── <span class="ansi-magenta-fg">math</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:17Z</span>
+<span class="ansi-white-intense-fg">4d75cc49-ca9f-4512-8ca0-9393732c7d14</span>
+└── <span class="ansi-magenta-fg">math</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:11Z</span> ⧖ <span class="ansi-blue-fg">3.028s</span>
+    └── <span class="ansi-magenta-fg">math</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:14:14Z</span>
 
 </pre>
 </div>

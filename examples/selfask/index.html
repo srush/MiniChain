@@ -1495,7 +1495,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Implementation of the self-ask + Google tool use prompt.
+<p>Notebook implementation of the self-ask + Google tool use prompt.
 Adapted from <a href="https://github.com/ofirpress/self-ask">https://github.com/ofirpress/self-ask</a></p>
 
 </div>
@@ -1523,12 +1523,12 @@ Adapted from <a href="https://github.com/ofirpress/self-ask">https://github.com/
             </clipboard-copy>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">parsita</span> <span class="kn">import</span> <span class="n">TextParsers</span><span class="p">,</span> <span class="n">lit</span><span class="p">,</span> <span class="n">reg</span>
-<span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">TemplatePrompt</span><span class="p">,</span> <span class="n">SimplePrompt</span><span class="p">,</span> <span class="n">show_log</span><span class="p">,</span> <span class="n">start_chain</span>
+<span class="kn">from</span> <span class="nn">parsita</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">minichain</span>
 </pre></div>
 <div id="cell-1" class="clipboard-copy-txt">from dataclasses import dataclass
-from parsita import TextParsers, lit, reg
-from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_chain</div>
+from parsita import *
+import minichain</div>
     
         </div>
     </div>
@@ -1536,6 +1536,18 @@ from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_cha
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Define the state of the bot.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1558,13 +1570,11 @@ from minichain import Backend, TemplatePrompt, SimplePrompt, show_log, start_cha
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Define the state of the bot.</span>
-<span class="nd">@dataclass</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">IntermediateState</span><span class="p">:</span>
     <span class="n">s</span><span class="p">:</span> <span class="nb">str</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt"># Define the state of the bot.
-@dataclass
+<div id="cell-2" class="clipboard-copy-txt">@dataclass
 class IntermediateState:
     s: str</div>
     
@@ -1682,7 +1692,7 @@ class Out:
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="n">Out</span><span class="p">]):</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">SelfAsk</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="n">Out</span><span class="p">]):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;selfask.pmpt.tpl&quot;</span>
     <span class="n">stop_template</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intermediate answer:&quot;</span>
 
@@ -1698,7 +1708,7 @@ class Out:
             <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">response</span><span class="p">)</span><span class="o">.</span><span class="n">or_die</span><span class="p">(),</span>
         <span class="p">)</span>
 </pre></div>
-<div id="cell-5" class="clipboard-copy-txt">class SelfAsk(TemplatePrompt[Out]):
+<div id="cell-5" class="clipboard-copy-txt">class SelfAsk(minichain.TemplatePrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"
 
@@ -1721,6 +1731,18 @@ class Out:
 </div>
 
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Runtime loop</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
@@ -1742,9 +1764,9 @@ class Out:
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">selfask</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">openai</span><span class="p">:</span> <span class="n">Backend</span><span class="p">,</span> <span class="n">google</span><span class="p">:</span> <span class="n">Backend</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">def</span> <span class="nf">selfask</span><span class="p">(</span><span class="n">inp</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">openai</span><span class="p">,</span> <span class="n">google</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">prompt1</span> <span class="o">=</span> <span class="n">SelfAsk</span><span class="p">(</span><span class="n">openai</span><span class="p">)</span>
-    <span class="n">prompt2</span> <span class="o">=</span> <span class="n">SimplePrompt</span><span class="p">(</span><span class="n">google</span><span class="p">)</span>
+    <span class="n">prompt2</span> <span class="o">=</span> <span class="n">minichain</span><span class="o">.</span><span class="n">SimplePrompt</span><span class="p">(</span><span class="n">google</span><span class="p">)</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">prompt1</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">input</span><span class="o">=</span><span class="n">inp</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span> <span class="n">agent_scratchpad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
@@ -1756,9 +1778,9 @@ class Out:
         <span class="n">suffix</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intermediate answer: &quot;</span> <span class="o">+</span> <span class="n">out2</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">s</span>
 </pre></div>
-<div id="cell-6" class="clipboard-copy-txt">def selfask(inp: str, openai: Backend, google: Backend) -> str:
+<div id="cell-6" class="clipboard-copy-txt">def selfask(inp: str, openai, google) -> str:
     prompt1 = SelfAsk(openai)
-    prompt2 = SimplePrompt(google)
+    prompt2 = minichain.SimplePrompt(google)
     suffix = ""
     for i in range(3):
         out = prompt1(dict(input=inp, suffix=suffix, agent_scratchpad=True))
@@ -1798,7 +1820,7 @@ class Out:
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;selfask&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">minichain</span><span class="o">.</span><span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;selfask&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">selfask</span><span class="p">(</span>
         <span class="s2">&quot;What is the zip code of the city where George Washington was born?&quot;</span><span class="p">,</span>
         <span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(),</span>
@@ -1806,7 +1828,7 @@ class Out:
     <span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
-<div id="cell-7" class="clipboard-copy-txt">with start_chain("selfask") as backend:
+<div id="cell-7" class="clipboard-copy-txt">with minichain.start_chain("selfask") as backend:
     result = selfask(
         "What is the zip code of the city where George Washington was born?",
         backend.OpenAI(),
@@ -1845,6 +1867,18 @@ https://serpapi.com/search
 
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View prompt examples.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
@@ -1959,6 +1993,18 @@ https://serpapi.com/search
 </div>
 
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View log.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
@@ -1980,9 +2026,9 @@ https://serpapi.com/search
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;selfask.log&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">minichain</span><span class="o">.</span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;selfask.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-9" class="clipboard-copy-txt">show_log("selfask.log")</div>
+<div id="cell-9" class="clipboard-copy-txt">minichain.show_log("selfask.log")</div>
     
         </div>
     </div>
@@ -2004,15 +2050,15 @@ https://serpapi.com/search
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">2401cda2-9063-46cf-bcc7-0c8f1e1e623a</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:42Z</span> ⧖ <span class="ansi-blue-fg">1.281s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:42Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
+<pre><span class="ansi-white-intense-fg">a1394473-6f63-4eda-a13c-b04d79cc2ad4</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:10Z</span> ⧖ <span class="ansi-blue-fg">1.268s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:10Z</span> ⧖ <span class="ansi-blue-fg">0.004s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
     │   │   └── <span class="ansi-blue-fg">suffix</span>: 
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:42Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:42Z</span> ⧖ <span class="ansi-blue-fg">1.274s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:10Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:10Z</span> ⧖ <span class="ansi-blue-fg">1.258s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -2052,28 +2098,28 @@ https://serpapi.com/search
     │   │   Question: What is the zip code of the city where George Washington was born?⏎
     │   │   Are followup questions needed here: Yes.⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
-    │   ├── <span class="ansi-blue-fg">result</span>: Follow up: Where was George Washington born?
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span> ⧖ <span class="ansi-blue-fg">0.006s</span>
+    │   ├── <span class="ansi-blue-fg">result</span>: Follow up: What city was George Washington born in?
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span>
 
-<span class="ansi-white-intense-fg">4afdb0ea-01bf-4dfc-a83a-3dc978087ed4</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span> ⧖ <span class="ansi-blue-fg">3.583s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    │   ├── <span class="ansi-blue-fg">input</span>: Where was George Washington born?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:43Z</span> ⧖ <span class="ansi-blue-fg">3.583s</span>
-    │   ├── <span class="ansi-blue-fg">prompt</span>: Where was George Washington born?
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">ffe25034-5698-4de3-9cea-dc45d7c5bbbb</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span> ⧖ <span class="ansi-blue-fg">6.168s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   ├── <span class="ansi-blue-fg">input</span>: What city was George Washington born in?
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:11Z</span> ⧖ <span class="ansi-blue-fg">6.167s</span>
+    │   ├── <span class="ansi-blue-fg">prompt</span>: What city was George Washington born in?
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: Westmoreland County, VA
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span>
 
-<span class="ansi-white-intense-fg">d52e0ac0-0347-4e86-bfcb-5fa491556f96</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span> ⧖ <span class="ansi-blue-fg">1.636s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
+<span class="ansi-white-intense-fg">bb2f39a3-d025-4c15-a564-f2c33f48d14f</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span> ⧖ <span class="ansi-blue-fg">1.734s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span> ⧖ <span class="ansi-blue-fg">0.006s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
@@ -2115,11 +2161,11 @@ https://serpapi.com/search
     │   │       ⏎
     │   │       Question: What is the zip code of the city where George Washington was born?⏎
     │   │       Are followup questions needed here: Yes.⏎
-    │   │       Follow up: Where was George Washington born?⏎
+    │   │       Follow up: What city was George Washington born in?⏎
     │   │       Intermediate answer: Westmoreland County, VA⏎
     │   │       
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:47Z</span> ⧖ <span class="ansi-blue-fg">1.632s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:17Z</span> ⧖ <span class="ansi-blue-fg">1.725s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -2196,31 +2242,31 @@ https://serpapi.com/search
     │   │   ⏎
     │   │   Question: What is the zip code of the city where George Washington was born?⏎
     │   │   Are followup questions needed here: Yes.⏎
-    │   │   Follow up: Where was George Washington born?⏎
+    │   │   Follow up: What city was George Washington born in?⏎
     │   │   Intermediate answer: Westmoreland County, VA⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span> ⧖ <span class="ansi-blue-fg">0.002s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: Follow up: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span>
 
-<span class="ansi-white-intense-fg">7d1e85e9-8fb7-448e-a4d6-95d76ddec173</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span> ⧖ <span class="ansi-blue-fg">0.404s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">a350a6f0-d210-474f-bc35-30326fba706d</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span> ⧖ <span class="ansi-blue-fg">6.291s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:48Z</span> ⧖ <span class="ansi-blue-fg">0.404s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:19Z</span> ⧖ <span class="ansi-blue-fg">6.290s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: What is the zip code of Westmoreland County, VA?
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;minichain.prompts.SimplePrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span>
 
-<span class="ansi-white-intense-fg">d0cfafd0-ed5f-4f61-92f8-a0657a68768b</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span> ⧖ <span class="ansi-blue-fg">1.779s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span> ⧖ <span class="ansi-blue-fg">0.004s</span>
+<span class="ansi-white-intense-fg">76cb4bce-847c-4867-ad34-804cbf25324f</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span> ⧖ <span class="ansi-blue-fg">2.419s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span> ⧖ <span class="ansi-blue-fg">0.006s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
     │   │   ├── <span class="ansi-blue-fg">agent_scratchpad</span>: True
     │   │   ├── <span class="ansi-blue-fg">input</span>: What is the zip code of the city where George Washington was born?
@@ -2262,7 +2308,7 @@ https://serpapi.com/search
     │   │       ⏎
     │   │       Question: What is the zip code of the city where George Washington was born?⏎
     │   │       Are followup questions needed here: Yes.⏎
-    │   │       Follow up: Where was George Washington born?⏎
+    │   │       Follow up: What city was George Washington born in?⏎
     │   │       Intermediate answer: Westmoreland County, VA⏎
     │   │       Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │       Are follow up questions needed here: Yes.⏎
@@ -2340,13 +2386,13 @@ https://serpapi.com/search
     │   │       ⏎
     │   │       Question: What is the zip code of the city where George Washington was born?⏎
     │   │       Are followup questions needed here: Yes.⏎
-    │   │       Follow up: Where was George Washington born?⏎
+    │   │       Follow up: What city was George Washington born in?⏎
     │   │       Intermediate answer: Westmoreland County, VA⏎
     │   │       Follow up: What is the zip code of Westmoreland County, VA?⏎
     │   │       Intermediate answer: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...⏎
     │   │       
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:49Z</span> ⧖ <span class="ansi-blue-fg">1.770s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:25Z</span> ⧖ <span class="ansi-blue-fg">2.407s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
     │   │   Follow up: How old was Muhammad Ali when he died?⏎
@@ -2423,7 +2469,7 @@ https://serpapi.com/search
     │   │   ⏎
     │   │   Question: What is the zip code of the city where George Washington was born?⏎
     │   │   Are followup questions needed here: Yes.⏎
-    │   │   Follow up: Where was George Washington born?⏎
+    │   │   Follow up: What city was George Washington born in?⏎
     │   │   Intermediate answer: Westmoreland County, VA⏎
     │   │   Question: Who lived longer, Muhammad Ali or Alan Turing?⏎
     │   │   Are follow up questions needed here: Yes.⏎
@@ -2501,20 +2547,20 @@ https://serpapi.com/search
     │   │   ⏎
     │   │   Question: What is the zip code of the city where George Washington was born?⏎
     │   │   Are followup questions needed here: Yes.⏎
-    │   │   Follow up: Where was George Washington born?⏎
+    │   │   Follow up: What city was George Washington born in?⏎
     │   │   Intermediate answer: Westmoreland County, VA⏎
     │   │   Follow up: What is the zip code of Westmoreland County, VA?⏎
     │   │   Intermediate answer: ZIP Codes in Westmoreland County VA · 22443 · 22520 · 22469 · 22488 · 22442 · 22524 · 22529 · 22558 ...⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:50Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:50Z</span> ⧖ <span class="ansi-blue-fg">0.004s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:28Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:28Z</span> ⧖ <span class="ansi-blue-fg">0.006s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: So the final answer is: 22443, 22520, 22469, 22488, 22442, 22524, 22529, 22558
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:50Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:50Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:28Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.SelfAsk&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:28Z</span>
 
-<span class="ansi-white-intense-fg">ffacc3a2-e72f-49f0-8adb-a1a8a63d0381</span>
-└── <span class="ansi-magenta-fg">selfask</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:41Z</span> ⧖ <span class="ansi-blue-fg">9.083s</span>
-    └── <span class="ansi-magenta-fg">selfask</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:46:50Z</span>
+<span class="ansi-white-intense-fg">17a9eb4a-7068-479d-a6f5-3204940ce3f6</span>
+└── <span class="ansi-magenta-fg">selfask</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:10Z</span> ⧖ <span class="ansi-blue-fg">18.204s</span>
+    └── <span class="ansi-magenta-fg">selfask</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:18:28Z</span>
 
 </pre>
 </div>

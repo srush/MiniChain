@@ -1521,9 +1521,9 @@ Licensed under the Apache License, Version 2.0.
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span> <span class="nn">minichain</span> <span class="kn">import</span> <span class="n">TemplatePrompt</span><span class="p">,</span> <span class="n">Prompt</span><span class="p">,</span> <span class="n">show_log</span><span class="p">,</span> <span class="n">start_chain</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span> <span class="nn">minichain</span>
 </pre></div>
-<div id="cell-1" class="clipboard-copy-txt">from minichain import TemplatePrompt, Prompt, show_log, start_chain</div>
+<div id="cell-1" class="clipboard-copy-txt">import minichain</div>
     
         </div>
     </div>
@@ -1531,6 +1531,18 @@ Licensed under the Apache License, Version 2.0.
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>PAL Prompt</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1553,10 +1565,10 @@ Licensed under the Apache License, Version 2.0.
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">PalPrompt</span><span class="p">(</span><span class="n">TemplatePrompt</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">PalPrompt</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">TemplatePrompt</span><span class="p">):</span>
     <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;pal.pmpt.tpl&quot;</span>
 </pre></div>
-<div id="cell-2" class="clipboard-copy-txt">class PalPrompt(TemplatePrompt[str]):
+<div id="cell-2" class="clipboard-copy-txt">class PalPrompt(minichain.TemplatePrompt):
     template_file = "pal.pmpt.tpl"</div>
     
         </div>
@@ -1565,6 +1577,18 @@ Licensed under the Apache License, Version 2.0.
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Prompt to run and print python code.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
@@ -1587,14 +1611,14 @@ Licensed under the Apache License, Version 2.0.
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">PyPrompt</span><span class="p">(</span><span class="n">Prompt</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]):</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">class</span> <span class="nc">PyPrompt</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">Prompt</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">inp</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">print(solution())&quot;</span>
 
     <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">inp</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
-<div id="cell-3" class="clipboard-copy-txt">class PyPrompt(Prompt[str, int]):
+<div id="cell-3" class="clipboard-copy-txt">class PyPrompt(minichain.Prompt):
     def prompt(self, inp):
         return inp + "\nprint(solution())"
 
@@ -1607,6 +1631,18 @@ Licensed under the Apache License, Version 2.0.
 </div>
 </div>
 
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Chain the prompts.</p>
+
+</div>
+</div>
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
@@ -1629,14 +1665,20 @@ Licensed under the Apache License, Version 2.0.
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;pal&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
-    <span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?&quot;</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">minichain</span><span class="o">.</span><span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;pal&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
+    <span class="n">question</span> <span class="o">=</span> <span class="s2">&quot;Melanie is a door-to-door saleswoman. She sold a third of her &#39; </span><span class="se">\</span>
+<span class="s2">    &#39;vacuum cleaners at the green house, 2 more to the red house, and half of &#39; </span><span class="se">\</span>
+<span class="s2">    &#39;what was left at the orange house. If Melanie has 5 vacuum cleaners left, &#39; </span><span class="se">\</span>
+<span class="s2">    &#39;how many did she start with?&#39;&quot;</span>
     <span class="n">prompt</span> <span class="o">=</span> <span class="n">PalPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">PyPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">Python</span><span class="p">()))</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">prompt</span><span class="p">({</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">})</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </pre></div>
-<div id="cell-4" class="clipboard-copy-txt">with start_chain("pal") as backend:
-    question = "Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?"
+<div id="cell-4" class="clipboard-copy-txt">with minichain.start_chain("pal") as backend:
+    question = "Melanie is a door-to-door saleswoman. She sold a third of her ' \
+    'vacuum cleaners at the green house, 2 more to the red house, and half of ' \
+    'what was left at the orange house. If Melanie has 5 vacuum cleaners left, ' \
+    'how many did she start with?'"
     prompt = PalPrompt(backend.OpenAI()).chain(PyPrompt(backend.Python()))
     result = prompt({"question": question})
     print(result)</div>
@@ -1671,6 +1713,18 @@ Licensed under the Apache License, Version 2.0.
 </div>
 
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View prompt examples.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell    celltag_hide_inp">
 <div class="jp-Cell-inputWrapper">
@@ -1703,16 +1757,12 @@ Licensed under the Apache License, Version 2.0.
             </clipboard-copy>
         </div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">PalPrompt</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;Joe has 10 cars and Bobby has 12 cars. How many do they have together?&quot;</span>
-    <span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;Joe has 10 cars and Bobby has 12. How many do they have together?&quot;</span><span class="p">},</span>
     <span class="s2">&quot;def solution():</span><span class="se">\n\t</span><span class="s2">return 10 + 12&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 <div id="cell-5" class="clipboard-copy-txt">PalPrompt().show(
-    {
-        "question": "Joe has 10 cars and Bobby has 12 cars. How many do they have together?"
-    },
+    {"question": "Joe has 10 cars and Bobby has 12. How many do they have together?"},
     "def solution():\n\treturn 10 + 12",
 )</div>
     
@@ -1746,7 +1796,7 @@ Licensed under the Apache License, Version 2.0.
 <dl>
   <dt>Input:</dt>
   <dd>
-<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;Joe has 10 cars and Bobby has 12 cars. How many do they have together?&#39;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;question&#39;</span><span class="p">:</span> <span class="s1">&#39;Joe has 10 cars and Bobby has 12. How many do they have together?&#39;</span><span class="p">}</span>
 </pre></div>
 
 
@@ -1756,7 +1806,7 @@ Licensed under the Apache License, Version 2.0.
   <dd>
     <details>
       <summary>Prompt</summary>
-      <p>Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?<br><br># solution in Python:<br><br><br>def solution():<br>    """Olivia has $23. She bought five bagels for $3 each. How much money does she have left?"""<br>    money_initial = 23<br>    bagels = 5<br>    bagel_cost = 3<br>    money_spent = bagels * bagel_cost<br>    money_left = money_initial - money_spent<br>    result = money_left<br>    return result<br><br><br><br><br><br>Q: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?<br><br># solution in Python:<br><br><br>def solution():<br>    """Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?"""<br>    golf_balls_initial = 58<br>    golf_balls_lost_tuesday = 23<br>    golf_balls_lost_wednesday = 2<br>    golf_balls_left = golf_balls_initial - golf_balls_lost_tuesday - golf_balls_lost_wednesday<br>    result = golf_balls_left<br>    return result<br><br><br><br><br><br>Q: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?<br><br># solution in Python:<br><br><br>def solution():<br>    """There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?"""<br>    computers_initial = 9<br>    computers_per_day = 5<br>    num_days = 4  # 4 days between monday and thursday<br>    computers_added = computers_per_day * num_days<br>    computers_total = computers_initial + computers_added<br>    result = computers_total<br>    return result<br><br><br><br><br><br>Q: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?<br><br># solution in Python:<br><br><br>def solution():<br>    """Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?"""<br>    toys_initial = 5<br>    mom_toys = 2<br>    dad_toys = 2<br>    total_received = mom_toys + dad_toys<br>    total_toys = toys_initial + total_received<br>    result = total_toys<br>    return result<br><br><br><br><br><br>Q: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?<br><br># solution in Python:<br><br><br>def solution():<br>    """Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?"""<br>    jason_lollipops_initial = 20<br>    jason_lollipops_after = 12<br>    denny_lollipops = jason_lollipops_initial - jason_lollipops_after<br>    result = denny_lollipops<br>    return result<br><br><br><br><br><br>Q: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?<br><br># solution in Python:<br><br><br>def solution():<br>    """Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?"""<br>    leah_chocolates = 32<br>    sister_chocolates = 42<br>    total_chocolates = leah_chocolates + sister_chocolates<br>    chocolates_eaten = 35<br>    chocolates_left = total_chocolates - chocolates_eaten<br>    result = chocolates_left<br>    return result<br><br><br><br><br><br>Q: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?<br><br># solution in Python:<br><br><br>def solution():<br>    """If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?"""<br>    cars_initial = 3<br>    cars_arrived = 2<br>    total_cars = cars_initial + cars_arrived<br>    result = total_cars<br>    return result<br><br><br><br><br><br>Q: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?<br><br># solution in Python:<br><br><br>def solution():<br>    """There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?"""<br>    trees_initial = 15<br>    trees_after = 21<br>    trees_added = trees_after - trees_initial<br>    result = trees_added<br>    return result<br><br><br><br><br><br>Q: <div style='color:red'>Joe has 10 cars and Bobby has 12 cars. How many do they have together?</div><br><br># solution in Python:</p>
+      <p>Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?<br><br># solution in Python:<br><br><br>def solution():<br>    """Olivia has $23. She bought five bagels for $3 each. How much money does she have left?"""<br>    money_initial = 23<br>    bagels = 5<br>    bagel_cost = 3<br>    money_spent = bagels * bagel_cost<br>    money_left = money_initial - money_spent<br>    result = money_left<br>    return result<br><br><br><br><br><br>Q: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?<br><br># solution in Python:<br><br><br>def solution():<br>    """Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?"""<br>    golf_balls_initial = 58<br>    golf_balls_lost_tuesday = 23<br>    golf_balls_lost_wednesday = 2<br>    golf_balls_left = golf_balls_initial - golf_balls_lost_tuesday - golf_balls_lost_wednesday<br>    result = golf_balls_left<br>    return result<br><br><br><br><br><br>Q: There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?<br><br># solution in Python:<br><br><br>def solution():<br>    """There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?"""<br>    computers_initial = 9<br>    computers_per_day = 5<br>    num_days = 4  # 4 days between monday and thursday<br>    computers_added = computers_per_day * num_days<br>    computers_total = computers_initial + computers_added<br>    result = computers_total<br>    return result<br><br><br><br><br><br>Q: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?<br><br># solution in Python:<br><br><br>def solution():<br>    """Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?"""<br>    toys_initial = 5<br>    mom_toys = 2<br>    dad_toys = 2<br>    total_received = mom_toys + dad_toys<br>    total_toys = toys_initial + total_received<br>    result = total_toys<br>    return result<br><br><br><br><br><br>Q: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?<br><br># solution in Python:<br><br><br>def solution():<br>    """Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?"""<br>    jason_lollipops_initial = 20<br>    jason_lollipops_after = 12<br>    denny_lollipops = jason_lollipops_initial - jason_lollipops_after<br>    result = denny_lollipops<br>    return result<br><br><br><br><br><br>Q: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?<br><br># solution in Python:<br><br><br>def solution():<br>    """Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?"""<br>    leah_chocolates = 32<br>    sister_chocolates = 42<br>    total_chocolates = leah_chocolates + sister_chocolates<br>    chocolates_eaten = 35<br>    chocolates_left = total_chocolates - chocolates_eaten<br>    result = chocolates_left<br>    return result<br><br><br><br><br><br>Q: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?<br><br># solution in Python:<br><br><br>def solution():<br>    """If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?"""<br>    cars_initial = 3<br>    cars_arrived = 2<br>    total_cars = cars_initial + cars_arrived<br>    result = total_cars<br>    return result<br><br><br><br><br><br>Q: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?<br><br># solution in Python:<br><br><br>def solution():<br>    """There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?"""<br>    trees_initial = 15<br>    trees_after = 21<br>    trees_added = trees_after - trees_initial<br>    result = trees_added<br>    return result<br><br><br><br><br><br>Q: <div style='color:red'>Joe has 10 cars and Bobby has 12. How many do they have together?</div><br><br># solution in Python:</p>
     </details>
   </dd>
 
@@ -1885,6 +1935,18 @@ Licensed under the Apache License, Version 2.0.
 </div>
 
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>View the log.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
@@ -1906,9 +1968,9 @@ Licensed under the Apache License, Version 2.0.
                 </div>
             </clipboard-copy>
         </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;pal.log&quot;</span><span class="p">)</span>
+            <div class="highlight-ipynb hl-python"><pre><span></span><span class="n">minichain</span><span class="o">.</span><span class="n">show_log</span><span class="p">(</span><span class="s2">&quot;pal.log&quot;</span><span class="p">)</span>
 </pre></div>
-<div id="cell-7" class="clipboard-copy-txt">show_log("pal.log")</div>
+<div id="cell-7" class="clipboard-copy-txt">minichain.show_log("pal.log")</div>
     
         </div>
     </div>
@@ -1930,13 +1992,13 @@ Licensed under the Apache License, Version 2.0.
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre><span class="ansi-white-intense-fg">0a751e7a-9315-4012-bff1-7209886055c5</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PalPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:31Z</span> ⧖ <span class="ansi-blue-fg">9.246s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:31Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
+<pre><span class="ansi-white-intense-fg">28b775fd-0862-4c8f-aada-b6158be3b664</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PalPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:44Z</span> ⧖ <span class="ansi-blue-fg">10.739s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:44Z</span> ⧖ <span class="ansi-blue-fg">0.003s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: 
-    │   │   └── <span class="ansi-blue-fg">question</span>: Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:31Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:31Z</span> ⧖ <span class="ansi-blue-fg">9.242s</span>
+    │   │   └── <span class="ansi-blue-fg">question</span>: Melanie is a door-to-door saleswoman. She sold a third of her &#39;     &#39;vacuum cleaners at the green house, 2 more to the red house, and half of &#39;     &#39;what was left at the orange house. If Melanie has 5 vacuum cleaners left, &#39;     &#39;how many did she start with?&#39;
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:44Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:44Z</span> ⧖ <span class="ansi-blue-fg">10.736s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?⏎
     │   │   ⏎
     │   │   # solution in Python:⏎
@@ -2082,11 +2144,11 @@ Licensed under the Apache License, Version 2.0.
     │   │   ⏎
     │   │   ⏎
     │   │   ⏎
-    │   │   Q: Melanie is a door-to-door saleswoman. She sold a third of her vacuum cleaners at the green house, 2 more to the red house, and half of what was left at the orange house. If Melanie has 5 vacuum cleaners left, how many did she start with?⏎
+    │   │   Q: Melanie is a door-to-door saleswoman. She sold a third of her &#39;     &#39;vacuum cleaners at the green house, 2 more to the red house, and half of &#39;     &#39;what was left at the orange house. If Melanie has 5 vacuum cleaners left, &#39;     &#39;how many did she start with?&#39;⏎
     │   │   ⏎
     │   │   # solution in Python:
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: ⏎
     │   │   ⏎
     │   │   ⏎
@@ -2096,15 +2158,15 @@ Licensed under the Apache License, Version 2.0.
     │   │       vacuum_cleaners_sold_green = vacuum_cleaners_left // 3⏎
     │   │       vacuum_cleaners_sold_red = 2⏎
     │   │       vacuum_cleaners_sold_orange = (vacuum_cleaners_left - vacuum_cleaners_sold_green - vacuum_cleaners_sold_red) // 2⏎
-    │   │       vacuum_cleaners_total = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
-    │   │       result = vacuum_cleaners_total⏎
+    │   │       vacuum_cleaners_initial = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
+    │   │       result = vacuum_cleaners_initial⏎
     │   │       return result
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PalPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PalPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
 
-<span class="ansi-white-intense-fg">b74daa24-0f36-4c19-80d9-6f7fa913e566</span>
-└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PyPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
-    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+<span class="ansi-white-intense-fg">f2a0c10a-9d37-45b0-af51-bc18b0da6877</span>
+└── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PyPrompt&#39;&gt;</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    ├── <span class="ansi-magenta-fg">Input Function</span>/2/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">input</span>: ⏎
     │   │   ⏎
     │   │   ⏎
@@ -2114,11 +2176,11 @@ Licensed under the Apache License, Version 2.0.
     │   │       vacuum_cleaners_sold_green = vacuum_cleaners_left // 3⏎
     │   │       vacuum_cleaners_sold_red = 2⏎
     │   │       vacuum_cleaners_sold_orange = (vacuum_cleaners_left - vacuum_cleaners_sold_green - vacuum_cleaners_sold_red) // 2⏎
-    │   │       vacuum_cleaners_total = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
-    │   │       result = vacuum_cleaners_total⏎
+    │   │       vacuum_cleaners_initial = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
+    │   │       result = vacuum_cleaners_initial⏎
     │   │       return result
-    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
-    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Input Function</span>/2/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
+    ├── <span class="ansi-magenta-fg">Prompted</span>/3/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">prompt</span>: ⏎
     │   │   ⏎
     │   │   ⏎
@@ -2128,20 +2190,20 @@ Licensed under the Apache License, Version 2.0.
     │   │       vacuum_cleaners_sold_green = vacuum_cleaners_left // 3⏎
     │   │       vacuum_cleaners_sold_red = 2⏎
     │   │       vacuum_cleaners_sold_orange = (vacuum_cleaners_left - vacuum_cleaners_sold_green - vacuum_cleaners_sold_red) // 2⏎
-    │   │       vacuum_cleaners_total = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
-    │   │       result = vacuum_cleaners_total⏎
+    │   │       vacuum_cleaners_initial = vacuum_cleaners_left + vacuum_cleaners_sold_green + vacuum_cleaners_sold_red + vacuum_cleaners_sold_orange⏎
+    │   │       result = vacuum_cleaners_initial⏎
     │   │       return result⏎
     │   │   print(solution())
-    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
-    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
+    │   └── <span class="ansi-magenta-fg">Prompted</span>/3/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
+    ├── <span class="ansi-magenta-fg">Result</span>/4/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span> ⧖ <span class="ansi-blue-fg">0.000s</span>
     │   ├── <span class="ansi-blue-fg">result</span>: 9⏎
     │   │   
-    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
-    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PyPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
+    │   └── <span class="ansi-magenta-fg">Result</span>/4/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
+    └── <span class="ansi-magenta-fg">&lt;class &#39;__main__.PyPrompt&#39;&gt;</span>/5 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
 
-<span class="ansi-white-intense-fg">2a6119ee-d610-4dcc-bd58-f0fd4fc2ec24</span>
-└── <span class="ansi-magenta-fg">pal</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:30Z</span> ⧖ <span class="ansi-blue-fg">9.674s</span>
-    └── <span class="ansi-magenta-fg">pal</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-26 01:41:40Z</span>
+<span class="ansi-white-intense-fg">18cad0c1-8de2-4459-af6c-fd8426cdacad</span>
+└── <span class="ansi-magenta-fg">pal</span>/1 ⇒ <span class="ansi-green-fg">started</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:43Z</span> ⧖ <span class="ansi-blue-fg">11.063s</span>
+    └── <span class="ansi-magenta-fg">pal</span>/2 ⇒ <span class="ansi-green-fg">succeeded</span> <span class="ansi-white-intense-fg">2023-02-27 14:15:54Z</span>
 
 </pre>
 </div>
