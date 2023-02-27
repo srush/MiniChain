@@ -1,23 +1,21 @@
-# Implementation of the self-ask + Google tool use prompt.
+# Notebook implementation of the self-ask + Google tool use prompt.
 # Adapted from https://github.com/ofirpress/self-ask
 
 from dataclasses import dataclass
 
-from parsita import TextParsers, lit, reg
+from parsita import *
 
-from minichain import Backend, SimplePrompt, TemplatePrompt, show_log, start_chain
-
+import minichain
 
 # Define the state of the bot.
+
 @dataclass
 class IntermediateState:
     s: str
 
-
 @dataclass
 class FinalState:
     s: str
-
 
 @dataclass
 class Out:
@@ -27,8 +25,7 @@ class Out:
 
 # Self Ask Prompt
 
-
-class SelfAsk(TemplatePrompt[Out]):
+class SelfAsk(minichain.TemplatePrompt[Out]):
     template_file = "selfask.pmpt.tpl"
     stop_template = "\nIntermediate answer:"
 
@@ -44,10 +41,11 @@ class SelfAsk(TemplatePrompt[Out]):
             self.Parser.response.parse(response).or_die(),
         )
 
+# Runtime loop
 
-def selfask(inp: str, openai: Backend, google: Backend) -> str:
+def selfask(inp: str, openai, google) -> str:
     prompt1 = SelfAsk(openai)
-    prompt2 = SimplePrompt(google)
+    prompt2 = minichain.SimplePrompt(google)
     suffix = ""
     for i in range(3):
         out = prompt1(dict(input=inp, suffix=suffix, agent_scratchpad=True))
@@ -60,13 +58,15 @@ def selfask(inp: str, openai: Backend, google: Backend) -> str:
     return out.state.s
 
 
-with start_chain("selfask") as backend:
+with minichain.start_chain("selfask") as backend:
     result = selfask(
         "What is the zip code of the city where George Washington was born?",
         backend.OpenAI(),
         backend.Google(),
     )
     print(result)
+
+# View prompt examples.
 
 # + tags=["hide_inp"]
 SelfAsk().show(
@@ -78,4 +78,6 @@ SelfAsk().show(
 )
 # -
 
-show_log("selfask.log")
+# View log.
+
+minichain.show_log("selfask.log")

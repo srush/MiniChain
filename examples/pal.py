@@ -1,21 +1,24 @@
 # Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf).
 
-from minichain import Prompt, TemplatePrompt, show_log, start_chain
+import minichain
 
+# PAL Prompt
 
-class PalPrompt(TemplatePrompt):
+class PalPrompt(minichain.TemplatePrompt):
     template_file = "pal.pmpt.tpl"
 
+# Prompt to run and print python code.
 
-class PyPrompt(Prompt):
+class PyPrompt(minichain.Prompt):
     def prompt(self, inp):
         return inp + "\nprint(solution())"
 
     def parse(self, response, inp):
         return int(response)
 
+# Chain the prompts.
 
-with start_chain("pal") as backend:
+with minichain.start_chain("pal") as backend:
     question = "Melanie is a door-to-door saleswoman. She sold a third of her ' \
     'vacuum cleaners at the green house, 2 more to the red house, and half of ' \
     'what was left at the orange house. If Melanie has 5 vacuum cleaners left, ' \
@@ -24,6 +27,7 @@ with start_chain("pal") as backend:
     result = prompt({"question": question})
     print(result)
 
+# View prompt examples.
 
 # + tags=["hide_inp"]
 PalPrompt().show(
@@ -36,4 +40,6 @@ PalPrompt().show(
 PyPrompt().show("def solution():\n\treturn 10 + 12", "22")
 # -
 
-show_log("pal.log")
+# View the log.
+
+minichain.show_log("pal.log")

@@ -11,14 +11,20 @@ Write apps that can easily and efficiently call multiple language models.
 * Code ([math.py](https://github.com/srush/MiniChain/blob/main/examples/math.py)):
 
 ```python
+# A prompt from the Jinja template below.
 class MathPrompt(TemplatePrompt[str]):
     template_file = "math.pmpt.tpl"
 
 with start_chain("math") as backend:
-    prompt = MathPrompt(backend.OpenAI()).chain(SimplePrompt(backend.Python()))
+    # MathPrompt with OpenAI backend
+    p1 = MathPrompt(backend.OpenAI())
+    # A prompt that simply runs Python
+    p2 = SimplePrompt(backend.Python())
+    # Chain them together
+    prompt = p1.chain(p2)
+    # Call chain with a question.
     question ="'What is the sum of the powers of 3 (3^i) that are smaller than 100?"
-    result = prompt({"question": question})
-    print(result)
+    print(prompt({"question": question}))
 ```
 
 * Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)):
@@ -35,7 +41,7 @@ Question:
 Code:
 ```
 
-* Execution:
+* Install and Execute:
 
 ```bash
 > pip install git+https://github.com/srush/MiniChain/
@@ -64,8 +70,9 @@ It supports the current backends.
 
 ## Why Mini-Chain?
 
-There are several very popular libraries for prompt chaining most
-notably [LangChain](https://langchain.readthedocs.io/en/latest/) and
+There are several very popular libraries for prompt chaining,
+notably: [LangChain](https://langchain.readthedocs.io/en/latest/),
+[Promptify](https://github.com/promptslab/Promptify), and
 [GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
 These library are useful, but they are extremely large and
 complex. MiniChain aims to implement the core prompt chaining

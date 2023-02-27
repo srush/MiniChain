@@ -32,6 +32,7 @@ repos:
   rev: 5.12.0
   hooks:
   - id: isort
+    exclude: ^(docs/)|(project/)|(assignments/)|(project/interface/)|(examples/)
 
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: v0.971
@@ -45,7 +46,7 @@ repos:
   rev: 22.6.0
   hooks:
   - id: black
-
+    exclude: ^(docs/)|(project/)|(assignments/)|(project/interface/)|(examples/)
 # Flake8 also supports pre-commit natively (same author)
 - repo: https://github.com/PyCQA/flake8
   rev: 5.0.4
@@ -53,7 +54,7 @@ repos:
   - id: flake8
     additional_dependencies:
     - pep8-naming
-    exclude: ^(docs/)|(assignments/)|(project/interface/)
+    exclude: ^(docs/)|(assignments/)|(project/interface/)|(examples/)
 
 # Doc linters
 - repo: https://github.com/terrencepreilly/darglint
