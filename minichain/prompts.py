@@ -2,7 +2,7 @@ from typing import Any, Mapping
 
 import numpy as np
 from jinja2 import Environment, FileSystemLoader, Template
-
+from dataclasses import dataclass, asdict
 from .backend import Request
 from .base import HTML, Input, Output, Prompt
 
@@ -33,6 +33,9 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
 
     def render_prompt_html(self, inp: Mapping[str, Any], prompt: str) -> HTML:
         n = {}
+        if not isinstance(inp, dict):
+            inp = asdict(inp)
+
         for k, v in inp.items():
             if isinstance(v, str):
                 n[k] = f"<div style='color:red'>{v}</div>"
@@ -52,7 +55,11 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
             tmp = self.template  # type: ignore
         else:
             tmp = Template(self.prompt_template)
-        x = tmp.render(**kwargs)
+        if isinstance(kwargs, dict):
+            x = tmp.render(**kwargs)
+        else:
+            x = tmp.render(**asdict(kwargs))
+
         if self.stop_template:
             stop = [Template(self.stop_template).render(**kwargs)]
         else:

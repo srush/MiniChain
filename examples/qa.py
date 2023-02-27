@@ -1,15 +1,18 @@
+# # QA
+
 # Questions answering with embeddings.  Adapted from [OpenAI
 # Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
 
 import datasets
 import numpy as np
-
 from minichain import EmbeddingPrompt, TemplatePrompt, show_log, start_chain
 
-# Load data with embeddings (computed beforehand)
+# We use Hugging Face Datasets as the database by assigning
+# a FAISS index.
 
 olympics = datasets.load_from_disk("olympics.data")
 olympics.add_faiss_index("embeddings")
+
 
 # Fast KNN retieval prompt
 
