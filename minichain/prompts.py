@@ -1,7 +1,7 @@
 import json
 from dataclasses import asdict, fields, is_dataclass
 from enum import Enum
-from typing import Any, Dict, List, Mapping, get_args, get_origin
+from typing import Any, Dict, List, Mapping, Type, get_args, get_origin
 
 import numpy as np
 from jinja2 import (
@@ -99,7 +99,7 @@ class EmbeddingPrompt(Prompt[Input, Output]):
         raise NotImplementedError
 
 
-def enum(x: type[Enum]) -> Dict[str, int]:
+def enum(x: Type[Enum]) -> Dict[str, int]:
     d = {e.name: e.value for e in x}
     return d
 
@@ -118,8 +118,9 @@ def walk(x: Any) -> Any:
 class TypedTemplatePrompt(TemplatePrompt[Output]):
     """
     Prompt that is automatically generated to produce a
-    list of objects of of the dataclass `Out`. 
+    list of objects of of the dataclass `Out`.
     """
+
     Out = None
 
     def prompt(self, inp: TemplatePrompt.IN) -> Request:

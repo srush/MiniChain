@@ -240,9 +240,9 @@ with start_chain("summary") as backend:
 
 ### Typed Prompt
 
-MiniChain can automatically generate a prompt header for you that aims to ensure the 
+MiniChain can automatically generate a prompt header for you that aims to ensure the
 output follows a given typed specification. For example, if you run the following code
-MiniChain will produce prompt that returns a list of `Color` objects. 
+MiniChain will produce prompt that returns a list of `Color` objects.
 
 ```python
 class ColorType(Enum):
@@ -285,7 +285,7 @@ You need to classify in to the following types for key: "object":⏎
 String
 
 
-    
+
 You need to classify in to the following types for key: "explanation":
 
 String
@@ -295,7 +295,7 @@ String
 Make sure every output is exactly seen in the document. Find as many as you can.
 ```
 
-This will then be converted to an object automatically for you. 
+This will then be converted to an object automatically for you.
 
 
 ### Parsing

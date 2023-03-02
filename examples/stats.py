@@ -12,19 +12,19 @@ class StatType(Enum):
     POINTS = 1
     REBOUNDS = 2
     ASSISTS = 3
-    
+
 @dataclass
 class Stat:
     value: int
     stat: StatType
-    
+
 @dataclass
 class Player:
     player: str
     stats: List[Stat]
 # -
 
-    
+
 # Code
 
 class ExtractionPrompt(minichain.TypedTemplatePrompt):
