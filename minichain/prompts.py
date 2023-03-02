@@ -1,21 +1,26 @@
-from dataclasses import asdict
-from typing import Any, Mapping, List
-from enum import Enum
-from typing import get_origin, get_args
-import numpy as np
-from jinja2 import Environment, FileSystemLoader, Template, PackageLoader, select_autoescape
-
 import json
+from dataclasses import asdict, fields, is_dataclass
+from enum import Enum
+from typing import Any, Dict, List, Mapping, get_args, get_origin
+
+import numpy as np
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    PackageLoader,
+    Template,
+    select_autoescape,
+)
 
 from .backend import Request
 from .base import HTML, Input, Output, Prompt
-
 
 env = Environment(
     loader=PackageLoader("minichain"),
     autoescape=select_autoescape(),
     extensions=["jinja2_highlight.HighlightExtension"],
 )
+
 
 class SimplePrompt(Prompt[str, str]):
     """
@@ -93,16 +98,13 @@ class EmbeddingPrompt(Prompt[Input, Output]):
         """
         raise NotImplementedError
 
-from dataclasses import fields, dataclass, is_dataclass
-from enum import Enum
 
-def enum(x):
+def enum(x: type[Enum]) -> Dict[str, int]:
     d = {e.name: e.value for e in x}
-    # d["__enum__"] = True
     return d
-    
-            
-def walk(x):
+
+
+def walk(x: Any) -> Any:
     if issubclass(x if get_origin(x) is None else get_origin(x), List):
         return {"_t_": "list", "t": walk(get_args(x)[0])}
     if issubclass(x, Enum):
@@ -112,19 +114,22 @@ def walk(x):
         return {y.name: walk(y.type) for y in fields(x)}
     return x.__name__
 
-    
+
 class TypedTemplatePrompt(TemplatePrompt[Output]):
-    Output = None
-    def prompt(self, inp):
+    """
+    Prompt that is automatically generated to produce a
+    list of objects of of the dataclass `Out`. 
+    """
+    Out = None
+
+    def prompt(self, inp: TemplatePrompt.IN) -> Request:
         inp = dict(inp)
         tmp = env.get_template("type_prompt.pmpt.tpl")
-        d = walk(self.Output)
+        d = walk(self.Out)
         print(d)
         inp["typ"] = tmp.render({"typ": d})
-        
+
         return super().prompt(inp)
 
-    def parse(self, out, inp):
-        print(out)
-        print(json.loads(out))
-        return [self.Output(**j) for j in json.loads(out)]
+    def parse(self, out: str, inp: TemplatePrompt.IN) -> Output:
+        return [self.Out(**j) for j in json.loads(out)]  # type: ignore

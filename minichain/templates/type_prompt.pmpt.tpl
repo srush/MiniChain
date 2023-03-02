@@ -9,7 +9,7 @@ You need to classify in to the following types for key: "{{key}}":
 {% elif val == "int" %}Int {% else %}
 {% if val.get("_t_") == "list" %}{{describe(val["t"])}}
 {% else %}
-{% for k, v in val.items() %}{{k}} 
+{% for k, v in val.items() %}{{k}}
 {% endfor %}
 
 Only select from the above list, or "Other".
@@ -26,4 +26,4 @@ Only select from the above list, or "Other".
 
 
 
-Make sure every output is exactly seen in the document. Find as many as you can. 
+Make sure every output is exactly seen in the document. Find as many as you can.

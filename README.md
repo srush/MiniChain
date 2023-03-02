@@ -238,6 +238,64 @@ with start_chain("summary") as backend:
     out = trio.run(list_prompt.arun, documents)
 ```
 
+### Typed Prompt
+
+MiniChain can automatically generate a prompt header for you that aims to ensure the 
+output follows a given typed specification. For example, if you run the following code
+MiniChain will produce prompt that returns a list of `Color` objects. 
+
+```python
+class ColorType(Enum):
+    RED = 1
+    GREEN = 2
+    BLUE = 3
+
+@dataclass
+class Color:
+    color: ColorType
+    object: str
+    explanation: str
+
+
+class ColorPrompt(minichain.TypedTemplatePrompt):
+    template_file = "color.pmpt.tpl"
+    Out = Color
+```
+
+Specifically it will provide your template with a string `typ` that you can use. For this example the string will be of the following form:
+
+
+```
+You are a highly intelligent and accurate information extraction system. You take passage as input and your task is to find parts of the passage to answer questions.
+
+You need to output a list of JSON encoded values
+
+You need to classify in to the following types for key: "color":
+
+RED
+GREEN
+BLUE
+
+
+Only select from the above list, or "Other".⏎
+
+
+You need to classify in to the following types for key: "object":⏎
+
+String
+
+
+    
+You need to classify in to the following types for key: "explanation":
+
+String
+
+[{ "color" : "color" ,  "object" : "object" ,  "explanation" : "explanation"}, ...]
+
+Make sure every output is exactly seen in the document. Find as many as you can.
+```
+
+This will then be converted to an object automatically for you. 
 
 
 ### Parsing

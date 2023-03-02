@@ -26,10 +26,11 @@ class Backend:
     async def arun(self, request: Request) -> str:
         return self.run(request)
 
+
 class Id(Backend):
     def run(self, request: Request) -> str:
-        return self.request.prompt
-    
+        return request.prompt
+
 
 class Mock(Backend):
     def __init__(self, answers: List[str] = []):
@@ -166,7 +167,7 @@ class OpenAI(OpenAIBase):
 
 
 class OpenAIEmbed(OpenAIBase):
-    def __init__(self, model: str = "text-embedding-ada-002", **kwargs) -> None:
+    def __init__(self, model: str = "text-embedding-ada-002", **kwargs: Any) -> None:
         super().__init__(model, **kwargs)
 
     def run(self, request: Request) -> str:
