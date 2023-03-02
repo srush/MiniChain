@@ -9,4 +9,4 @@ from .backend import (
     start_chain,
 )
 from .base import Input, Output, Prompt
-from .prompts import EmbeddingPrompt, SimplePrompt, TemplatePrompt
+from .prompts import EmbeddingPrompt, SimplePrompt, TemplatePrompt, TypedTemplatePrompt

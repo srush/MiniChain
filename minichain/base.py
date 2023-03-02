@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Generic, List, Optional, Sequence, TypeVar, Union
+from typing import Any, Generic, List, Optional, Sequence, TypeVar, Union
 
 import trio
 from eliot import start_action
@@ -51,8 +51,9 @@ class Prompt(Generic[Input, Output]):
 
     """
 
-    def __init__(self, backend: Optional[Backend] = None):
+    def __init__(self, backend: Optional[Backend] = None, data: Any = None):
         self.backend = backend
+        self.data = data
 
     # START: Overloaded by the user prompts
     def prompt(self, inp: Input) -> Union[Request, str]:
