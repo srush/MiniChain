@@ -1,12 +1,21 @@
 from dataclasses import asdict
-from typing import Any, Mapping
-
+from typing import Any, Mapping, List
+from enum import Enum
+from typing import get_origin, get_args
 import numpy as np
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader, Template, PackageLoader, select_autoescape
+
+import json
 
 from .backend import Request
 from .base import HTML, Input, Output, Prompt
 
+
+env = Environment(
+    loader=PackageLoader("minichain"),
+    autoescape=select_autoescape(),
+    extensions=["jinja2_highlight.HighlightExtension"],
+)
 
 class SimplePrompt(Prompt[str, str]):
     """
@@ -83,3 +92,39 @@ class EmbeddingPrompt(Prompt[Input, Output]):
         to the output type.
         """
         raise NotImplementedError
+
+from dataclasses import fields, dataclass, is_dataclass
+from enum import Enum
+
+def enum(x):
+    d = {e.name: e.value for e in x}
+    # d["__enum__"] = True
+    return d
+    
+            
+def walk(x):
+    if issubclass(x if get_origin(x) is None else get_origin(x), List):
+        return {"_t_": "list", "t": walk(get_args(x)[0])}
+    if issubclass(x, Enum):
+        return enum(x)
+
+    if is_dataclass(x):
+        return {y.name: walk(y.type) for y in fields(x)}
+    return x.__name__
+
+    
+class TypedTemplatePrompt(TemplatePrompt[Output]):
+    Output = None
+    def prompt(self, inp):
+        inp = dict(inp)
+        tmp = env.get_template("type_prompt.pmpt.tpl")
+        d = walk(self.Output)
+        print(d)
+        inp["typ"] = tmp.render({"typ": d})
+        
+        return super().prompt(inp)
+
+    def parse(self, out, inp):
+        print(out)
+        print(json.loads(out))
+        return [self.Output(**j) for j in json.loads(out)]

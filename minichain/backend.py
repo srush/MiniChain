@@ -26,6 +26,10 @@ class Backend:
     async def arun(self, request: Request) -> str:
         return self.run(request)
 
+class Id(Backend):
+    def run(self, request: Request) -> str:
+        return self.request.prompt
+    
 
 class Mock(Backend):
     def __init__(self, answers: List[str] = []):
@@ -119,7 +123,7 @@ class BashProcess(Backend):
 
 
 class OpenAIBase(Backend):
-    def __init__(self, model: str = "text-davinci-003") -> None:
+    def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
 
         import openai
 
@@ -130,7 +134,7 @@ class OpenAIBase(Backend):
         self.model = model
         self.options = dict(
             model=model,
-            max_tokens=256,
+            max_tokens=max_tokens,
             temperature=0,
         )
 
@@ -162,8 +166,8 @@ class OpenAI(OpenAIBase):
 
 
 class OpenAIEmbed(OpenAIBase):
-    def __init__(self, model: str = "text-embedding-ada-002") -> None:
-        super().__init__(model)
+    def __init__(self, model: str = "text-embedding-ada-002", **kwargs) -> None:
+        super().__init__(model, **kwargs)
 
     def run(self, request: Request) -> str:
         import openai
@@ -255,6 +259,7 @@ class MiniChain:
     BashProcess = BashProcess
     Python = Python
     Manifest = Manifest
+    Id = Id
 
 
 def start_chain(name: str) -> MiniChain:
