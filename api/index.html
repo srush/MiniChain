@@ -466,6 +466,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#minichain.TypedTemplatePrompt" class="md-nav__link">
+    TypedTemplatePrompt
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -581,6 +588,8 @@
         
           
         
+          
+        
       
       
         <label class="md-nav__link" for="__nav_3">
@@ -673,6 +682,20 @@
     <li class="md-nav__item">
       <a href="../examples/ner/" class="md-nav__link">
         NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/stats/" class="md-nav__link">
+        Object Prompts
       </a>
     </li>
   
@@ -876,6 +899,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#minichain.TypedTemplatePrompt" class="md-nav__link">
+    TypedTemplatePrompt
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1013,7 +1043,7 @@ backend and the arguments of the form <code>Input</code>.</p>
 
 
 <h3 id="minichain.base.Prompt.__init__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Backend</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Backend</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#minichain.base.Prompt.__init__" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -1285,7 +1315,48 @@ to the output type.</p>
   </div>
 
 </div><p><img alt="image" src="https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png" /></p>
-<h2 id="backends">Backends<a class="headerlink" href="#backends" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="minichain.TypedTemplatePrompt" class="doc doc-heading">
+        <code>TypedTemplatePrompt</code>
+
+
+<a href="#minichain.TypedTemplatePrompt" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="minichain.prompts.TemplatePrompt" href="#minichain.TemplatePrompt">TemplatePrompt</a>[<span title="minichain.base.Output">Output</span>]</code></p>
+
+  
+      <p>Prompt that is automatically generated to produce a
+list of objects of of the dataclass <code>Out</code>.</p>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div><h2 id="backends">Backends<a class="headerlink" href="#backends" title="Permanent link">&para;</a></h2>
 
 
 <div class="doc doc-object doc-class">
@@ -1332,7 +1403,7 @@ to the output type.</p>
 
 
 <h3 id="minichain.OpenAIBase" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">OpenAIBase</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;text-davinci-003&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="highlight language-python"><span class="n">OpenAIBase</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;text-davinci-003&#39;</span><span class="p">,</span> <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
 <a href="#minichain.OpenAIBase" class="headerlink" title="Permanent link">&para;</a></h3>
 

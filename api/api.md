@@ -48,6 +48,12 @@ toc_depth: 3
 
 ![image](https://user-images.githubusercontent.com/35882/221387303-e3dd8456-a0f0-4a70-a1bb-657fe2240862.png)
 
+
+::: minichain.TypedTemplatePrompt
+    options:
+        members: [find]
+        heading_level: 3
+
 ## Backends
 
 ::: minichain.MiniChain

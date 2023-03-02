@@ -1,0 +1,3 @@
+{{typ | safe}}
+
+{{passage}}

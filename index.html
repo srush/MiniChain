@@ -387,6 +387,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#typed-prompt" class="md-nav__link">
+    Typed Prompt
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#parsing" class="md-nav__link">
     Parsing
   </a>
@@ -436,6 +443,8 @@
       
       
       
+        
+          
         
           
         
@@ -547,6 +556,20 @@
     <li class="md-nav__item">
       <a href="examples/ner/" class="md-nav__link">
         NER
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="examples/stats/" class="md-nav__link">
+        Object Prompts
       </a>
     </li>
   
@@ -681,6 +704,13 @@
           <li class="md-nav__item">
   <a href="#asynchronous-calls" class="md-nav__link">
     Asynchronous Calls
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typed-prompt" class="md-nav__link">
+    Typed Prompt
   </a>
   
 </li>
@@ -885,6 +915,56 @@ Async calls need the <a href="https://trio.readthedocs.io/en/stable/">trio</a> l
     <span class="n">list_prompt</span> <span class="o">=</span> <span class="n">SummaryPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">())</span><span class="o">.</span><span class="n">map</span><span class="p">()</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">list_prompt</span><span class="o">.</span><span class="n">arun</span><span class="p">,</span> <span class="n">documents</span><span class="p">)</span>
 </code></pre></div>
+<h3 id="typed-prompt">Typed Prompt<a class="headerlink" href="#typed-prompt" title="Permanent link">&para;</a></h3>
+<p>MiniChain can automatically generate a prompt header for you that aims to ensure the 
+output follows a given typed specification. For example, if you run the following code
+MiniChain will produce prompt that returns a list of <code>Color</code> objects. </p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ColorType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">RED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">GREEN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">BLUE</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Color</span><span class="p">:</span>
+    <span class="n">color</span><span class="p">:</span> <span class="n">ColorType</span>
+    <span class="nb">object</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">explanation</span><span class="p">:</span> <span class="nb">str</span>
+
+
+<span class="k">class</span> <span class="nc">ColorPrompt</span><span class="p">(</span><span class="n">minichain</span><span class="o">.</span><span class="n">TypedTemplatePrompt</span><span class="p">):</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="s2">&quot;color.pmpt.tpl&quot;</span>
+    <span class="n">Out</span> <span class="o">=</span> <span class="n">Color</span>
+</code></pre></div>
+<p>Specifically it will provide your template with a string <code>typ</code> that you can use. For this example the string will be of the following form:</p>
+<div class="highlight"><pre><span></span><code>You are a highly intelligent and accurate information extraction system. You take passage as input and your task is to find parts of the passage to answer questions.
+
+You need to output a list of JSON encoded values
+
+You need to classify in to the following types for key: &quot;color&quot;:
+
+RED
+GREEN
+BLUE
+
+
+Only select from the above list, or &quot;Other&quot;.⏎
+
+
+You need to classify in to the following types for key: &quot;object&quot;:⏎
+
+String
+
+
+
+You need to classify in to the following types for key: &quot;explanation&quot;:
+
+String
+
+[{ &quot;color&quot; : &quot;color&quot; ,  &quot;object&quot; : &quot;object&quot; ,  &quot;explanation&quot; : &quot;explanation&quot;}, ...]
+
+Make sure every output is exactly seen in the document. Find as many as you can.
+</code></pre></div>
+<p>This will then be converted to an object automatically for you. </p>
 <h3 id="parsing">Parsing<a class="headerlink" href="#parsing" title="Permanent link">&para;</a></h3>
 <p>Minichain lets you use whatever parser you would like.
 One example is <a href="https://parsita.drhagen.com/">parsita</a> a
