@@ -35,7 +35,8 @@ class ExtractionPrompt(minichain.TypedTemplatePrompt):
 with minichain.start_chain("stats") as backend:
     p = ExtractionPrompt(backend.OpenAI(max_tokens=512))
     article = open("sixers.txt").read()
-    print(p({"passage": article}))
+    for player in p({"passage": article}):
+        print(player)
 
 ExtractionPrompt().show({"passage": "Harden had 10 rebounds."},
                         '[{"player": "Harden", "stats": {"value": 10, "stat": 2}}]')

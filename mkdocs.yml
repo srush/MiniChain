@@ -294,7 +294,7 @@ nav:
     - "QA": examples/qa.ipynb
     - "PAL": examples/pal.ipynb
     - "NER": examples/ner.ipynb
-    - "Object Prompts": examples/stats.ipynb
+    - "Typed Prompts": examples/stats.ipynb
     - examples/math.ipynb
     - examples/summary.ipynb
     - examples/gatsby.ipynb

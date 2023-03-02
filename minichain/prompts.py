@@ -126,7 +126,6 @@ class TypedTemplatePrompt(TemplatePrompt[Output]):
         inp = dict(inp)
         tmp = env.get_template("type_prompt.pmpt.tpl")
         d = walk(self.Out)
-        print(d)
         inp["typ"] = tmp.render({"typ": d})
 
         return super().prompt(inp)
