@@ -19,7 +19,7 @@
     
     
       
-        <title>Object Prompts - Mini-Chain</title>
+        <title>Typed Prompts - Mini-Chain</title>
       
     
     
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Object Prompts
+              Typed Prompts
             
           </span>
         </div>
@@ -462,7 +462,7 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Object Prompts
+        Typed Prompts
       </a>
       
     </li>
@@ -532,7 +532,7 @@
 
                 
 
-  <h1>Object Prompts</h1>
+  <h1>Typed Prompts</h1>
 
 <script>
 (function (global, factory) {
@@ -1755,12 +1755,14 @@ class Player:
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="k">with</span> <span class="n">minichain</span><span class="o">.</span><span class="n">start_chain</span><span class="p">(</span><span class="s2">&quot;stats&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">backend</span><span class="p">:</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">ExtractionPrompt</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">OpenAI</span><span class="p">(</span><span class="n">max_tokens</span><span class="o">=</span><span class="mi">512</span><span class="p">))</span>
     <span class="n">article</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;sixers.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">({</span><span class="s2">&quot;passage&quot;</span><span class="p">:</span> <span class="n">article</span><span class="p">}))</span>
+    <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="n">p</span><span class="p">({</span><span class="s2">&quot;passage&quot;</span><span class="p">:</span> <span class="n">article</span><span class="p">}):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">player</span><span class="p">)</span>
 </pre></div>
 <div id="cell-4" class="clipboard-copy-txt">with minichain.start_chain("stats") as backend:
     p = ExtractionPrompt(backend.OpenAI(max_tokens=512))
     article = open("sixers.txt").read()
-    print(p({"passage": article}))</div>
+    for player in p({"passage": article}):
+        print(player)</div>
     
         </div>
     </div>
@@ -1782,8 +1784,10 @@ class Player:
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;player&#39;: &#39;str&#39;, &#39;stats&#39;: {&#39;_t_&#39;: &#39;list&#39;, &#39;t&#39;: {&#39;value&#39;: &#39;int&#39;, &#39;stat&#39;: {&#39;POINTS&#39;: 1, &#39;REBOUNDS&#39;: 2, &#39;ASSISTS&#39;: 3}}}}
-[Player(player=&#39;Joel Embiid&#39;, stats=[{&#39;value&#39;: &#39;35&#39;, &#39;stat&#39;: &#39;POINTS&#39;}, {&#39;value&#39;: &#39;8&#39;, &#39;stat&#39;: &#39;REBOUNDS&#39;}]), Player(player=&#39;James Harden&#39;, stats=[{&#39;value&#39;: &#39;29&#39;, &#39;stat&#39;: &#39;POINTS&#39;}, {&#39;value&#39;: &#39;13&#39;, &#39;stat&#39;: &#39;ASSISTS&#39;}]), Player(player=&#39;Georges Niang&#39;, stats=[{&#39;value&#39;: &#39;16&#39;, &#39;stat&#39;: &#39;POINTS&#39;}]), Player(player=&#39;Julius Randle&#39;, stats=[{&#39;value&#39;: &#39;35&#39;, &#39;stat&#39;: &#39;POINTS&#39;}])]
+<pre>Player(player=&#39;Joel Embiid&#39;, stats=[{&#39;value&#39;: 35, &#39;stat&#39;: &#39;POINTS&#39;}, {&#39;value&#39;: 8, &#39;stat&#39;: &#39;REBOUNDS&#39;}])
+Player(player=&#39;James Harden&#39;, stats=[{&#39;value&#39;: 29, &#39;stat&#39;: &#39;POINTS&#39;}, {&#39;value&#39;: 13, &#39;stat&#39;: &#39;ASSISTS&#39;}])
+Player(player=&#39;Georges Niang&#39;, stats=[{&#39;value&#39;: 16, &#39;stat&#39;: &#39;POINTS&#39;}])
+Player(player=&#39;Julius Randle&#39;, stats=[{&#39;value&#39;: 35, &#39;stat&#39;: &#39;POINTS&#39;}])
 </pre>
 </div>
 </div>
@@ -1832,19 +1836,6 @@ class Player:
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-
-
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;player&#39;: &#39;str&#39;, &#39;stats&#39;: {&#39;_t_&#39;: &#39;list&#39;, &#39;t&#39;: {&#39;value&#39;: &#39;int&#39;, &#39;stat&#39;: {&#39;POINTS&#39;: 1, &#39;REBOUNDS&#39;: 2, &#39;ASSISTS&#39;: 3}}}}
-{&#39;player&#39;: &#39;str&#39;, &#39;stats&#39;: {&#39;_t_&#39;: &#39;list&#39;, &#39;t&#39;: {&#39;value&#39;: &#39;int&#39;, &#39;stat&#39;: {&#39;POINTS&#39;: 1, &#39;REBOUNDS&#39;: 2, &#39;ASSISTS&#39;: 3}}}}
-</pre>
-</div>
-</div>
 
 <div class="jp-OutputArea-child">
 
