@@ -31,26 +31,32 @@ class BashPrompt(minichain.Prompt):
 
 with minichain.start_chain("bash") as backend:
     question = (
-        '"go up one directory, and then into the minichain directory,'
-        'and list the files in the directory"'
+
     )
     prompt = CLIPrompt(backend.OpenAI()).chain(BashPrompt(backend.BashProcess()))
-    result = prompt({"question": question})
-    print(result)
 
+
+prompt.to_gradio(fields =["question"],
+                 examples=['Go up one directory, and then into the minichain directory,'
+                           'and list the files in the directory'],
+                 out_type="markdown"
+                 
+).launch()
+
+    
 # View the prompts.
 
 # + tags=["hide_inp"]
-CLIPrompt().show(
-    {"question": "list the files in the directory"}, """```bash\nls\n```"""
-)
-# -
+# CLIPrompt().show(
+#     {"question": "list the files in the directory"}, """```bash\nls\n```"""
+# )
+# # -
 
 
-# + tags=["hide_inp"]
-BashPrompt().show(["ls", "cat file.txt"], "hello")
-# -
+# # + tags=["hide_inp"]
+# BashPrompt().show(["ls", "cat file.txt"], "hello")
+# # -
 
-# View the run log.
+# # View the run log.
 
-minichain.show_log("bash.log")
+# minichain.show_log("bash.log")

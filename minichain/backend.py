@@ -38,9 +38,8 @@ class Mock(Backend):
         self.answers = answers
 
     def run(self, request: Request) -> str:
+        return self.answers[self.i % len(self.answers)]
         self.i += 1
-        return self.answers[self.i - 1]
-
 
 class Google(Backend):
     def __init__(self) -> None:
@@ -88,10 +87,13 @@ class Python(Backend):
         """Run commands and return final output."""
         from contextlib import redirect_stdout
         from io import StringIO
-
+        p = request.prompt.strip()
+        if p.startswith("```"):
+            p = "\n".join(p.strip().split("\n")[1:-1])
+        
         f = StringIO()
         with redirect_stdout(f):
-            exec(request.prompt)
+            exec(p)
         s = f.getvalue()
         return s
 
@@ -126,12 +128,6 @@ class BashProcess(Backend):
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
 
-        import openai
-
-        self.api_key = os.environ.get("OPENAI_KEY")
-        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
-
-        openai.api_key = self.api_key
         self.model = model
         self.options = dict(
             model=model,
@@ -143,6 +139,9 @@ class OpenAIBase(Backend):
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
+        self.api_key = os.environ.get("OPENAI_KEY")
+        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        openai.api_key = self.api_key
 
         ans = openai.Completion.create(
             **self.options,
@@ -153,7 +152,7 @@ class OpenAI(OpenAIBase):
 
     async def arun(self, request: Request) -> str:
         import async_openai
-
+        self.api_key = os.environ.get("OPENAI_KEY")
         async_openai.OpenAI.configure(
             api_key=self.api_key,
             debug_enabled=False,
@@ -172,6 +171,9 @@ class OpenAIEmbed(OpenAIBase):
 
     def run(self, request: Request) -> str:
         import openai
+        self.api_key = os.environ.get("OPENAI_KEY")
+        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        openai.api_key = self.api_key
 
         ans = openai.Embedding.create(
             engine=self.model,
@@ -183,14 +185,13 @@ class OpenAIEmbed(OpenAIBase):
 class HuggingFaceBase(Backend):
     def __init__(self, model: str = "gpt2") -> None:
         self.model = model
-        self.api_key = os.environ.get("HF_KEY")
-        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
-
 
 class HuggingFace(HuggingFaceBase):
     def run(self, request: Request) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="text-generation"
@@ -203,6 +204,8 @@ class HuggingFaceEmbed(HuggingFaceBase):
     def run(self, request: Request) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="feature-extraction"

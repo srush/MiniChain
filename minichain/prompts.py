@@ -47,6 +47,10 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
     prompt_template = ""
     stop_template = ""
 
+    def to_dict(self, inp):
+        return inp
+        
+    
     def render_prompt_html(self, inp: Mapping[str, Any], prompt: str) -> HTML:
         n = {}
         if not isinstance(inp, dict):
@@ -62,7 +66,8 @@ class TemplatePrompt(Prompt[Mapping[str, Any], Output]):
     def parse(self, result: str, inp: Mapping[str, Any]) -> Output:
         return str(result)  # type: ignore
 
-    def prompt(self, kwargs: Mapping[str, Any]) -> Request:
+    def prompt(self, inp: Input) -> Request:
+        kwargs = self.to_dict(inp)
         if self.template_file:
             tmp = Environment(loader=FileSystemLoader(".")).get_template(
                 name=self.template_file

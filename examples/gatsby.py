@@ -14,12 +14,13 @@ gatsby.add_faiss_index("embeddings")
 
 # Fast KNN retieval prompt
 
-
 class KNNPrompt(EmbeddingPrompt):
+    def prompt(self, inp):
+        return inp["query"]
+    
     def find(self, out, inp):
         res = gatsby.get_nearest_examples("embeddings", np.array(out), 1)
-        return {"question": inp, "docs": res.examples["passages"]}
-
+        return {"question": inp["query"], "docs": res.examples["passages"]}
 
 # QA prompt to ask question with examples
 
@@ -29,15 +30,21 @@ class QAPrompt(TemplatePrompt):
 
 
 with start_chain("gatsby") as backend:
-    question = "What did Gatsby do before he met Daisy?"
+    # question = "What did Gatsby do before he met Daisy?"
     prompt = KNNPrompt(
         backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")
     ).chain(QAPrompt(backend.OpenAI()))
-    result = prompt(question)
-    print(result)
+    # result = prompt(question)
+    # print(result)
+
+
+prompt.to_gradio(fields=["query"],
+                 examples=["What did Gatsby do before he met Daisy?"]).launch()
+
+
 
 # + tags=["hide_inp"]
-QAPrompt().show({"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, "")
-# -
+# QAPrompt().show({"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, "")
+# # -
 
-show_log("gatsby.log")
+# show_log("gatsby.log")

@@ -28,30 +28,37 @@ class TeamPrompt(minichain.Prompt):
 # Run the system.
 
 with minichain.start_chain("ner") as backend:
-    p1 = NERPrompt(backend.OpenAI())
-    p2 = TeamPrompt(backend.OpenAI())
-    prompt = p1.chain(p2)
-    results = prompt(
-        {"text_input": "An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.",
-         "labels" : ["Team", "Date"],
-         "domain": "Sports"
-         }
-    )
-    print(results)
+    ner_prompt = NERPrompt(backend.OpenAI())
+    team_prompt = TeamPrompt(backend.OpenAI())
+    prompt = ner_prompt.chain(team_prompt)
+    # results = prompt(
+    #     {"text_input": "An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.",
+    #      "labels" : ["Team", "Date"],
+    #      "domain": "Sports"
+    #      }
+    # )
+    # print(results)
 
+ner_prompt.set_display_options(markdown=True)
+team_prompt.set_display_options(markdown=True)    
+
+prompt.to_gradio(fields =["text_input", "labels", "domain"],
+                 examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]]).launch()
+
+    
 # View prompt examples.
 
 # + tags=["hide_inp"]
-NERPrompt().show(
-    {
-        "input": "I went to New York",
-        "domain": "Travel",
-        "labels": ["City"]
-    },
-    '[{"T": "City", "E": "New York"}]',
-)
-# -
+# NERPrompt().show(
+#     {
+#         "input": "I went to New York",
+#         "domain": "Travel",
+#         "labels": ["City"]
+#     },
+#     '[{"T": "City", "E": "New York"}]',
+# )
+# # -
 
-# View log.
+# # View log.
 
-minichain.show_log("ner.log")
+# minichain.show_log("ner.log")
