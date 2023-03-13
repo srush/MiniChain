@@ -33,6 +33,10 @@ class HTML:
 
 # Main Class
 
+@dataclass
+class Fail:
+    message: Optional[str]
+
 
 class Prompt(Generic[Input, Output]):
     """`Prompt` represents a typed function from Input to Output.
@@ -63,13 +67,13 @@ class Prompt(Generic[Input, Output]):
         """
         return str(inp)
 
-    def parse(self, response: str, inp: Input) -> Output:
+    def parse(self, response: str, inp: Input) -> Union[Output, Fail]:
         """
         Convert from the string response of the function
         to the output type.
         """
         raise NotImplementedError
-
+    
     # END: Overloaded by the user prompts
 
     def _prompt(self, inp: Input) -> Request:
@@ -130,18 +134,29 @@ class Prompt(Generic[Input, Output]):
         "Create a prompt the works on lists of inputs"
         return MapPrompt(self)
 
-
+    def search(self, inp: List[Input], strategy: str = "dfs") -> Output2:
+        pass
+    
 class ChainedPrompt(Prompt[Input, Output2]):
     def __init__(
         self, prompt1: Prompt[Input, Output], prompt2: Prompt[Output, Output2]
     ):
         self.prompt1 = prompt1
         self.prompt2 = prompt2
-
+        
     def __call__(self, inp: Input) -> Output2:
         out = self.prompt1(inp)
         return self.prompt2(out)
 
+    def search(self, inp: List[Input], strategy: str = "dfs") -> Output2:
+        for i in inp:
+            out = self.prompt1.search(i)
+            if isinstance(out, Failure): continue
+            for o in out:
+                x = self.prompt2.search(o)
+                if isinstance(x, Failure): continue
+                yield x
+    
     async def arun(self, inp: Input) -> Output2:
         out = await self.prompt1.arun(inp)
         return await self.prompt2.arun(out)

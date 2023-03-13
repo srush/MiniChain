@@ -23,6 +23,9 @@ class Backend:
     def run(self, request: Request) -> str:
         raise NotImplementedError
 
+    def batch_run(self, request: List[Request]) -> List[str]:
+        return [self.run(r) for r in request]
+    
     async def arun(self, request: Request) -> str:
         return self.run(request)
 
@@ -139,6 +142,17 @@ class OpenAIBase(Backend):
             temperature=0,
         )
 
+
+class ChatGPT(OpenAIBase):
+    def run(self, request: Request) -> str:
+        import openai
+
+        ans = openai.Chat.create(
+            **self.options,
+            stop=request.stop,
+            prompt=request.prompt,
+        )
+        return str(ans["choices"][0]["text"])
 
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
