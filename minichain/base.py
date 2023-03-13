@@ -179,6 +179,13 @@ class Prompt(Generic[Input, Output]):
         block = self.to_gradio_block()
         with gr.Blocks(css="#clean div.form {border: 0px} #response {border: 0px; background: #ffeec6} #prompt {border: 0px;background: aliceblue} #json {border: 0px} #result {border: 0px; background: #c5e0e5} #inner {padding: 20px} #inner textarea {border: 0px}") as demo:
 
+            key_names = {}
+            with gr.Accordion(label="API Keys", open=False): 
+                key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key")
+                key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key")
+                key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="SERP Key")
+
+            
             # with gr.Box(elem_id="clean"):
             if True:
                 inputs = []
@@ -202,11 +209,6 @@ class Prompt(Generic[Input, Output]):
                 else:
                     output = gr.Markdown(elem_id="inner")
             
-            key_names = {}
-            with gr.Accordion(label="API Keys", open=False): 
-                key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key")
-                key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key")
-                key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="SERP Key")
             inputs += key_names.values()
             
             def run(data):
