@@ -1,10 +1,11 @@
 # + tags=["hide_inp"]
 
 desc = """
-# Bash 
+### Bash Command Suggestion
 
-Notebook to generate and run a bash command. Adapted from LangChain
-[BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
+Chain that ask for a command-line question and then runs the bash command. [[Code](https://github.com/srush/MiniChain/blob/main/examples/bash.py)]
+
+(Adapted from LangChain [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html))
 """
 # -
 
@@ -43,7 +44,8 @@ with minichain.start_chain("bash") as backend:
 
 gradio = prompt.to_gradio(fields =["question"],
                  examples=['Go up one directory, and then into the minichain directory,'
-                           'and list the files in the directory'],
+                           'and list the files in the directory',
+                           "Please write a bash script that prints 'Hello World' to the console."],
                           out_type="markdown",
                           description=desc)                 
 

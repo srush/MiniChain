@@ -1,9 +1,10 @@
 # + tags=["hide_inp"]
 desc = """
-# Book QA
+### Book QA
 
-Questions answering with Hugging Face embeddings.  Adapted from the [LlamaIndex
- example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb).
+Chain that does question answering with Hugging Face embeddings. [[Code](https://github.com/srush/MiniChain/blob/main/examples/gatsby.py)]
+
+(Adapted from the [LlamaIndex example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb).)
 """
 # -
 
@@ -44,7 +45,8 @@ with start_chain("gatsby") as backend:
 
 
 gradio = prompt.to_gradio(fields=["query"],
-                          examples=["What did Gatsby do before he met Daisy?"],
+                          examples=["What did Gatsby do before he met Daisy?",
+                                    "What did the narrator do after getting back to Chicago?"],
                           keys={"HF_KEY"},
                           description=desc)
 if __name__ == "__main__":

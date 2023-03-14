@@ -1,8 +1,10 @@
 # + tags=["hide_inp"]
 desc = """
-# QA
+### Question Answering with Retrieval
 
-Questions answering with embeddings.  Adapted from [OpenAI Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
+Chain that answers questions with embeedding based retrieval. [[Code](https://github.com/srush/MiniChain/blob/main/examples/qa.py)]
+
+(Adapted from [OpenAI Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).)
 """
 # -
 
@@ -37,10 +39,14 @@ class QAPrompt(TemplatePrompt):
 with start_chain("qa") as backend:
     prompt = KNNPrompt(backend.OpenAIEmbed()).chain(QAPrompt(backend.OpenAI()))
     
-question = "Who won the 2020 Summer Olympics men's high jump?"
+questions = ["Who won the 2020 Summer Olympics men's high jump?",
+             "Why was the 2020 Summer Olympics originally postponed?",
+             "In the 2020 Summer Olympics, how many gold medals did the country which won the most medals win?",
+             "What is the total number of medals won by France?",
+             "What is the tallest mountain in the world?"]
 
 gradio = prompt.to_gradio(fields=["query"],
-                          examples=[question],
+                          examples=questions,
                           description=desc)
 if __name__ == "__main__":
     gradio.launch()

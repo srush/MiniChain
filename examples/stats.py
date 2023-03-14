@@ -1,8 +1,10 @@
 
 desc = """
-# Typed Extraction
+### Typed Extraction
 
-Information extraction from a typed data specification.
+Information extraction that is automatically generated from a typed specification. [[Code](https://github.com/srush/MiniChain/blob/main/examples/stats.py)]
+
+(Novel to MiniChain)
 """
 
 import minichain
@@ -47,7 +49,7 @@ article = open("sixers.txt").read()
 gradio = prompt.to_gradio(fields =["passage"],
                           examples=[article],
                           out_type="json",
-                          desc
+                          description=desc
 )
 if __name__ == "__main__":
     gradio.launch()

@@ -1,7 +1,9 @@
 desc = """
-# PAL
+### Prompt-aided Language Models
 
-Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf).
+Chain for answering complex problems by code generation and execution. [[Code](https://github.com/srush/MiniChain/blob/main/examples/pal.py)]
+
+(Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf)).
 """
 
 import minichain

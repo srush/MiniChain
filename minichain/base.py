@@ -185,23 +185,24 @@ class Prompt(Generic[Input, Output]):
 
             key_names = {}
             with gr.Accordion(label="API Keys", elem_id="json", open=False):
-                gr.Markdown("""
-                * [OpenAI Key](https://platform.openai.com/account/api-keys)
-                """)
 
                 if "OPENAI_KEY" in keys:
-                    key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key", elem_id="json")
+                    key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key", elem_id="json", type="password")
+                    gr.Markdown("""
+                    * [OpenAI Key](https://platform.openai.com/account/api-keys)
+                    """)
+
                 if "HF_KEY" in keys:
                     gr.Markdown("""
                     * [Hugging Face Key](https://huggingface.co/settings/tokens)
                     """)
 
-                    key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key", elem_id="inner")
+                    key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key", elem_id="inner", type="password")
                 if "SERP_KEY" in keys:
                     gr.Markdown("""
                     * [Search Key](https://serpapi.com/users/sign_in)
                     """)
-                    key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="Search Key", elem_id="inner")
+                    key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="Search Key", elem_id="inner", type="password")
 
             gr.Markdown(description)
             

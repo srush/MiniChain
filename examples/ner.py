@@ -1,10 +1,11 @@
 # + tags=["hide_inp"]
 
 desc = """
-# NER
+### Named Entity Recognition
 
-Notebook implementation of named entity recognition.
-Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja).
+Chain that does named entity recognition with arbitrary labels. [[Code](https://github.com/srush/MiniChain/blob/main/examples/ner.py)]
+
+(Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja)).
 """
 # -
 
