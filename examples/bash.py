@@ -1,6 +1,12 @@
-# Notebook to generate and run a bash command.
-# Adapted from LangChain
-# [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
+# + tags=["hide_inp"]
+
+desc = """
+# Bash 
+
+Notebook to generate and run a bash command. Adapted from LangChain
+[BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html)
+"""
+# -
 
 import minichain
 
@@ -38,9 +44,9 @@ with minichain.start_chain("bash") as backend:
 gradio = prompt.to_gradio(fields =["question"],
                  examples=['Go up one directory, and then into the minichain directory,'
                            'and list the files in the directory'],
-                 out_type="markdown"
-                 
-)
+                          out_type="markdown",
+                          description=desc)                 
+
 if __name__ == "__main__":
     gradio.launch()
 

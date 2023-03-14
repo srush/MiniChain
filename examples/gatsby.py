@@ -1,6 +1,11 @@
-# Questions answering with Hugging Face embeddings.  Adapted from the
-# [LlamaIndex
-# example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb).
+# + tags=["hide_inp"]
+desc = """
+# Book QA
+
+Questions answering with Hugging Face embeddings.  Adapted from the [LlamaIndex
+ example](https://github.com/jerryjliu/gpt_index/blob/main/examples/gatsby/TestGatsby.ipynb).
+"""
+# -
 
 import datasets
 import numpy as np
@@ -40,7 +45,8 @@ with start_chain("gatsby") as backend:
 
 gradio = prompt.to_gradio(fields=["query"],
                           examples=["What did Gatsby do before he met Daisy?"],
-                          keys={"HF_KEY"})
+                          keys={"HF_KEY"},
+                          description=desc)
 if __name__ == "__main__":
     gradio.launch()
 

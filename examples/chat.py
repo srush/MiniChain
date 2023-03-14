@@ -1,3 +1,13 @@
+# + tags=["hide_inp"]
+
+desc = """
+# ChatGPT
+
+"ChatGPT" like examples.  Adapted from
+[LangChain](https://langchain.readthedocs.io/en/latest/modules/memory/examples/chatgpt_clone.html)'s
+version of this [blog post](https://www.engraved.blog/building-a-virtual-machine-inside/).
+"""
+# -
 
 
 import warnings
@@ -55,7 +65,8 @@ examples = [
 gradio = prompt.to_gradio(fields= ["human_input"],
                           initial_state= state,
                           examples=examples,
-                          out_type="json"
+                          out_type="json",
+                          description=desc
 )
 if __name__ == "__main__":
     gradio.launch()

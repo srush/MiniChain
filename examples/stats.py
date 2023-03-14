@@ -1,4 +1,9 @@
-# Information extraction from a typed data specification.
+
+desc = """
+# Typed Extraction
+
+Information extraction from a typed data specification.
+"""
 
 import minichain
 from dataclasses import dataclass
@@ -40,8 +45,9 @@ with minichain.start_chain("stats") as backend:
 
 article = open("sixers.txt").read()
 gradio = prompt.to_gradio(fields =["passage"],
-                 examples=[article],
-                 out_type="json"
+                          examples=[article],
+                          out_type="json",
+                          desc
 )
 if __name__ == "__main__":
     gradio.launch()

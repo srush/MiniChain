@@ -1,4 +1,8 @@
-# Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf).
+desc = """
+# PAL
+
+Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf).
+"""
 
 import minichain
 
@@ -28,7 +32,8 @@ question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
     "how many did she start with?"
     
 gradio = prompt.to_gradio(fields =["question"],
-                 examples=[question])
+                          examples=[question],
+                          description=desc)
 if __name__ == "__main__":
     gradio.launch()
 

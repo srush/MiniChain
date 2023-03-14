@@ -1,7 +1,10 @@
-# # QA
+# + tags=["hide_inp"]
+desc = """
+# QA
 
-# Questions answering with embeddings.  Adapted from [OpenAI
-# Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
+Questions answering with embeddings.  Adapted from [OpenAI Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).
+"""
+# -
 
 import datasets
 import numpy as np
@@ -37,7 +40,8 @@ with start_chain("qa") as backend:
 question = "Who won the 2020 Summer Olympics men's high jump?"
 
 gradio = prompt.to_gradio(fields=["query"],
-                          examples=[question])
+                          examples=[question],
+                          description=desc)
 if __name__ == "__main__":
     gradio.launch()
 

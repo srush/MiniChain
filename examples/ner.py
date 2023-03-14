@@ -1,7 +1,12 @@
-# # NER
+# + tags=["hide_inp"]
 
-# Notebook implementation of named entity recognition.
-# Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja).
+desc = """
+# NER
+
+Notebook implementation of named entity recognition.
+Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja).
+"""
+# -
 
 import json
 
@@ -40,7 +45,8 @@ with minichain.start_chain("ner") as backend:
     # print(results)
 
 gradio = prompt.to_gradio(fields =["text_input", "labels", "domain"],
-                 examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]])
+                          examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]],
+                          description=desc)
 
     
 if __name__ == "__main__":
