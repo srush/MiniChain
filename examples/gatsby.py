@@ -38,8 +38,11 @@ with start_chain("gatsby") as backend:
     # print(result)
 
 
-prompt.to_gradio(fields=["query"],
-                 examples=["What did Gatsby do before he met Daisy?"]).launch()
+gradio = prompt.to_gradio(fields=["query"],
+                          examples=["What did Gatsby do before he met Daisy?"],
+                          keys={"HF_KEY"})
+if __name__ == "__main__":
+    gradio.launch()
 
 
 

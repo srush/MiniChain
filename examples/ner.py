@@ -39,11 +39,12 @@ with minichain.start_chain("ner") as backend:
     # )
     # print(results)
 
-ner_prompt.set_display_options(markdown=True)
-team_prompt.set_display_options(markdown=True)    
+gradio = prompt.to_gradio(fields =["text_input", "labels", "domain"],
+                 examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]])
 
-prompt.to_gradio(fields =["text_input", "labels", "domain"],
-                 examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]]).launch()
+    
+if __name__ == "__main__":
+    gradio.launch()
 
     
 # View prompt examples.

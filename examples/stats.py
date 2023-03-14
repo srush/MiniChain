@@ -33,14 +33,23 @@ class ExtractionPrompt(minichain.TypedTemplatePrompt):
 
 
 with minichain.start_chain("stats") as backend:
-    p = ExtractionPrompt(backend.OpenAI(max_tokens=512))
-    article = open("sixers.txt").read()
-    for player in p({"passage": article}):
-        print(player)
+    prompt = ExtractionPrompt(backend.OpenAI(max_tokens=512))
 
-ExtractionPrompt().show({"passage": "Harden had 10 rebounds."},
-                        '[{"player": "Harden", "stats": {"value": 10, "stat": 2}}]')
+    # for player in p({"passage": article}):
+    #     print(player)
 
-# View the run log.
+article = open("sixers.txt").read()
+gradio = prompt.to_gradio(fields =["passage"],
+                 examples=[article],
+                 out_type="json"
+)
+if __name__ == "__main__":
+    gradio.launch()
 
-minichain.show_log("bash.log")
+    
+# ExtractionPrompt().show({"passage": "Harden had 10 rebounds."},
+#                         '[{"player": "Harden", "stats": {"value": 10, "stat": 2}}]')
+
+# # View the run log.
+
+# minichain.show_log("bash.log")

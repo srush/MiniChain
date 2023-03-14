@@ -32,15 +32,21 @@ class QAPrompt(TemplatePrompt):
 
 
 with start_chain("qa") as backend:
-    question = "Who won the 2020 Summer Olympics men's high jump?"
     prompt = KNNPrompt(backend.OpenAIEmbed()).chain(QAPrompt(backend.OpenAI()))
-    result = prompt(question)
-    print(result)
+    
+question = "Who won the 2020 Summer Olympics men's high jump?"
 
-# + tags=["hide_inp"]
-QAPrompt().show(
-    {"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]}, "Joe Bob"
-)
-# -
+gradio = prompt.to_gradio(fields=["query"],
+                          examples=[question])
+if __name__ == "__main__":
+    gradio.launch()
 
-show_log("qa.log")
+
+
+# # + tags=["hide_inp"]
+# QAPrompt().show(
+#     {"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]}, "Joe Bob"
+# )
+# # -
+
+# show_log("qa.log")

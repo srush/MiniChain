@@ -35,13 +35,15 @@ with minichain.start_chain("bash") as backend:
     )
     prompt = CLIPrompt(backend.OpenAI()).chain(BashPrompt(backend.BashProcess()))
 
-
-prompt.to_gradio(fields =["question"],
+gradio = prompt.to_gradio(fields =["question"],
                  examples=['Go up one directory, and then into the minichain directory,'
                            'and list the files in the directory'],
                  out_type="markdown"
                  
-).launch()
+)
+if __name__ == "__main__":
+    gradio.launch()
+
 
     
 # View the prompts.

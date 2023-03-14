@@ -174,21 +174,38 @@ class Prompt(Generic[Input, Output]):
         return [input, prompt, result, json]
         
     
-    def to_gradio(self, examples=[], fields=[], out_type="markdown"):
+    def to_gradio(self, examples=[], fields=[],
+                  initial_state=None,
+                  out_type="markdown", keys={"OPENAI_KEY"}):
         import gradio as gr
         block = self.to_gradio_block()
         with gr.Blocks(css="#clean div.form {border: 0px} #response {border: 0px; background: #ffeec6} #prompt {border: 0px;background: aliceblue} #json {border: 0px} #result {border: 0px; background: #c5e0e5} #inner {padding: 20px} #inner textarea {border: 0px}") as demo:
+            state = gr.State(initial_state)
 
             key_names = {}
-            with gr.Accordion(label="API Keys", open=False): 
-                key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key")
-                key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key")
-                key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="SERP Key")
+            with gr.Accordion(label="API Keys", elem_id="json", open=False):
+                gr.Markdown("""
+                * [OpenAI Key](https://platform.openai.com/account/api-keys)
+                """)
+
+                if "OPENAI_KEY" in keys:
+                    key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key", elem_id="json")
+                if "HF_KEY" in keys:
+                    gr.Markdown("""
+                    * [Hugging Face Key](https://huggingface.co/settings/tokens)
+                    """)
+
+                    key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key", elem_id="inner")
+                if "SERP_KEY" in keys:
+                    gr.Markdown("""
+                    * [Search Key](https://serpapi.com/users/sign_in)
+                    """)
+                    key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="Search Key", elem_id="inner")
 
             
             # with gr.Box(elem_id="clean"):
             if True:
-                inputs = []
+                inputs = [state]
                 
                 input_names = {}
                 for f in fields:
@@ -213,10 +230,17 @@ class Prompt(Generic[Input, Output]):
             
             def run(data):
                 for k, v in key_names.items():
-                    if v != "":
+                    if data[v] is not None and data[v] != "":
                         os.environ[k] = data[v]
+
+                if initial_state is not None:
+                    prompt_inputs = data[state]
+                    for k, v in input_names.items():
+                        setattr(prompt_inputs, k, data[v])
+                else:
+                    prompt_inputs = {k: data[v] for k, v in input_names.items()}
                     
-                ls = self.run_verbose({k: data[v] for k, v in input_names.items()})
+                ls = self.run_verbose(prompt_inputs)
                 def format(s):
                     if isinstance(s, str):
                         return {"string": s}
@@ -224,12 +248,17 @@ class Prompt(Generic[Input, Output]):
                 def mark(s):
                     return s# f"```text\n{s}\n```"
 
-                return [x 
+                ret = [x 
                         for (input, request, result, output) in ls
                         for x in [format(input), mark(request.prompt), mark(result), format(output)]]  + [ls[-1][-1]]
+                if initial_state is not None:
+                    ret += [ls[-1][-1]]
+                return ret
                 
 
             outputs = outputs + [output]
+            if initial_state is not None:
+                outputs += [state]
             # input.submit(run, inputs=set(inputs), outputs=outputs)
             query_btn.click(run, inputs=set(inputs), outputs=outputs)            
 

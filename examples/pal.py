@@ -27,8 +27,10 @@ question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
     "what was left at the orange house. If Melanie has 5 vacuum cleaners left, " \
     "how many did she start with?"
     
-prompt.to_gradio(fields =["question"],
-                 examples=[question]).launch()
+gradio = prompt.to_gradio(fields =["question"],
+                 examples=[question])
+if __name__ == "__main__":
+    gradio.launch()
 
 # View prompt examples.
 
