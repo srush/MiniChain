@@ -10,14 +10,16 @@ desc = """
 
 
 import warnings
-from dataclasses import dataclass
-from typing import List, Tuple
-import minichain
 
 # + tags=["hide_inp"]
 warnings.filterwarnings("ignore")
 # -
 
+# $
+
+from dataclasses import dataclass
+from typing import List, Tuple
+import minichain
 
 # Generic stateful Memory
 
@@ -49,6 +51,7 @@ with minichain.start_chain("chat") as backend:
     prompt = ChatPrompt(backend.OpenAI())
     state = State([])
 
+# $
     
 examples = [
     "I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.",
@@ -65,7 +68,10 @@ gradio = prompt.to_gradio(fields= ["human_input"],
                           initial_state= state,
                           examples=examples,
                           out_type="json",
-                          description=desc
+                          description=desc,
+                          code=open("chat.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("chat.pmpt.tpl")]
+                                
 )
 if __name__ == "__main__":
     gradio.launch()

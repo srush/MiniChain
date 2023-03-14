@@ -7,6 +7,8 @@ Information extraction that is automatically generated from a typed specificatio
 (Novel to MiniChain)
 """
 
+# $
+
 import minichain
 from dataclasses import dataclass
 from typing import List
@@ -42,14 +44,16 @@ class ExtractionPrompt(minichain.TypedTemplatePrompt):
 with minichain.start_chain("stats") as backend:
     prompt = ExtractionPrompt(backend.OpenAI(max_tokens=512))
 
-    # for player in p({"passage": article}):
-    #     print(player)
+# $
+
 
 article = open("sixers.txt").read()
 gradio = prompt.to_gradio(fields =["passage"],
                           examples=[article],
                           out_type="json",
-                          description=desc
+                          description=desc,
+                          code=open("stats.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("stats.pmpt.tpl")]
 )
 if __name__ == "__main__":
     gradio.launch()

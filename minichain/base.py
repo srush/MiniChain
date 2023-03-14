@@ -177,7 +177,9 @@ class Prompt(Generic[Input, Output]):
     def to_gradio(self, examples=[], fields=[],
                   initial_state=None,
                   out_type="markdown", keys={"OPENAI_KEY"},
-                  description=""):
+                  description="",
+                  code="",
+                  templates=[]):
         import gradio as gr
         block = self.to_gradio_block()
         with gr.Blocks(css="#clean div.form {border: 0px} #response {border: 0px; background: #ffeec6} #prompt {border: 0px;background: aliceblue} #json {border: 0px} #result {border: 0px; background: #c5e0e5} #inner {padding: 20px} #inner textarea {border: 0px}") as demo:
@@ -267,7 +269,13 @@ class Prompt(Generic[Input, Output]):
 
             # with gr.Row():
             #     key = gr.Textbox(label="OpenAI Key")
-           
+
+            gr.Code(code, language="python", elem_id="inner")
+
+            for tmp in templates:
+                gr.Markdown(f"<center>{tmp.name}</center>")
+                gr.Code(tmp.read(), elem_id="inner")
+            
         return demo
 
         

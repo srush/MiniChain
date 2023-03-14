@@ -9,8 +9,9 @@ Chain that does named entity recognition with arbitrary labels. [[Code](https://
 """
 # -
 
-import json
+# $
 
+import json
 import minichain
 
 # Prompt to extract NER tags as json
@@ -37,17 +38,15 @@ with minichain.start_chain("ner") as backend:
     ner_prompt = NERPrompt(backend.OpenAI())
     team_prompt = TeamPrompt(backend.OpenAI())
     prompt = ner_prompt.chain(team_prompt)
-    # results = prompt(
-    #     {"text_input": "An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.",
-    #      "labels" : ["Team", "Date"],
-    #      "domain": "Sports"
-    #      }
-    # )
-    # print(results)
 
+# $
+    
 gradio = prompt.to_gradio(fields =["text_input", "labels", "domain"],
                           examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]],
-                          description=desc)
+                          description=desc,
+                          code=open("ner.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("ner.pmpt.tpl")]
+                          )
 
     
 if __name__ == "__main__":

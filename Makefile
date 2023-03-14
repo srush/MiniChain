@@ -4,3 +4,7 @@ OUTPUTS = $(patsubst %.py,%.ipynb,$(INPUTS))
 
 examples/%.ipynb : examples/%.py
 	jupytext --execute --to notebook $<
+
+
+examples/%.md : examples/%.py
+	jupytext --to markdown $<

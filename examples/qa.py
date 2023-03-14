@@ -8,9 +8,10 @@ Chain that answers questions with embeedding based retrieval. [[Code](https://gi
 """
 # -
 
+# $
+
 import datasets
 import numpy as np
-
 from minichain import EmbeddingPrompt, TemplatePrompt, show_log, start_chain
 
 # We use Hugging Face Datasets as the database by assigning
@@ -31,13 +32,15 @@ class KNNPrompt(EmbeddingPrompt):
 
 # QA prompt to ask question with examples
 
-
 class QAPrompt(TemplatePrompt):
     template_file = "qa.pmpt.tpl"
 
 
 with start_chain("qa") as backend:
     prompt = KNNPrompt(backend.OpenAIEmbed()).chain(QAPrompt(backend.OpenAI()))
+
+# $
+
     
 questions = ["Who won the 2020 Summer Olympics men's high jump?",
              "Why was the 2020 Summer Olympics originally postponed?",
@@ -47,7 +50,10 @@ questions = ["Who won the 2020 Summer Olympics men's high jump?",
 
 gradio = prompt.to_gradio(fields=["query"],
                           examples=questions,
-                          description=desc)
+                          description=desc,
+                          code=open("qa.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("qa.pmpt.tpl")]
+                          )
 if __name__ == "__main__":
     gradio.launch()
 

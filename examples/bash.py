@@ -9,6 +9,8 @@ Chain that ask for a command-line question and then runs the bash command. [[Cod
 """
 # -
 
+# $
+
 import minichain
 
 # Prompt that asks LLM to produce a bash command.
@@ -42,12 +44,17 @@ with minichain.start_chain("bash") as backend:
     )
     prompt = CLIPrompt(backend.OpenAI()).chain(BashPrompt(backend.BashProcess()))
 
+# $
+    
 gradio = prompt.to_gradio(fields =["question"],
                  examples=['Go up one directory, and then into the minichain directory,'
                            'and list the files in the directory',
                            "Please write a bash script that prints 'Hello World' to the console."],
                           out_type="markdown",
-                          description=desc)                 
+                          description=desc,
+                          code=open("bash.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("bash.pmpt.tpl")]                          
+                          )
 
 if __name__ == "__main__":
     gradio.launch()

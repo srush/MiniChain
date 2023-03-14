@@ -8,6 +8,8 @@ Chain that does question answering with Hugging Face embeddings. [[Code](https:/
 """
 # -
 
+# $
+
 import datasets
 import numpy as np
 
@@ -36,19 +38,22 @@ class QAPrompt(TemplatePrompt):
 
 
 with start_chain("gatsby") as backend:
-    # question = "What did Gatsby do before he met Daisy?"
     prompt = KNNPrompt(
         backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")
     ).chain(QAPrompt(backend.OpenAI()))
-    # result = prompt(question)
-    # print(result)
+
+# $
+
 
 
 gradio = prompt.to_gradio(fields=["query"],
                           examples=["What did Gatsby do before he met Daisy?",
                                     "What did the narrator do after getting back to Chicago?"],
                           keys={"HF_KEY"},
-                          description=desc)
+                          description=desc,
+                          code=open("gatsby.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("gatsby.pmpt.tpl")]
+                          )
 if __name__ == "__main__":
     gradio.launch()
 

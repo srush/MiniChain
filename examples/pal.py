@@ -6,6 +6,8 @@ Chain for answering complex problems by code generation and execution. [[Code](h
 (Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf)).
 """
 
+# $
+
 import minichain
 
 # PAL Prompt
@@ -26,8 +28,9 @@ class PyPrompt(minichain.Prompt):
 
 with minichain.start_chain("pal") as backend:
     prompt = PalPrompt(backend.OpenAI()).chain(PyPrompt(backend.Python()))
-    # result = prompt({"question": question})
-
+    
+# $
+    
 question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
     "vacuum cleaners at the green house, 2 more to the red house, and half of " \
     "what was left at the orange house. If Melanie has 5 vacuum cleaners left, " \
@@ -35,7 +38,10 @@ question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
     
 gradio = prompt.to_gradio(fields =["question"],
                           examples=[question],
-                          description=desc)
+                          description=desc,
+                          code=open("pal.py", "r").read().split("$")[1].strip().strip("#").strip(),
+                          templates=[open("pal.pmpt.tpl")]
+                          )
 if __name__ == "__main__":
     gradio.launch()
 
