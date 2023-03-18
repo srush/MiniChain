@@ -126,8 +126,10 @@ class BashProcess(Backend):
 
 
 class OpenAIBase(Backend):
-    def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
-
+    def __init__(self,
+                 model: str = "text-davinci-003",
+                 max_tokens: int = 256
+                 ) -> None:
         self.model = model
         self.options = dict(
             model=model,
@@ -139,8 +141,13 @@ class OpenAIBase(Backend):
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
-        self.api_key = os.environ.get("OPENAI_KEY")
-        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        import manifest
+        # self.api_key = os.environ.get("OPENAI_KEY")
+        # assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
+        manifest = manifest.Manifest(client_name = "openai",
+                                     cache_name = "sqlite",
+                                     cache_connection = f"mycache.{}",
+                                     max_tokens=self.options["max_tokens"])
         openai.api_key = self.api_key
 
         ans = openai.Completion.create(
@@ -254,8 +261,7 @@ class MiniChain:
         self.action.finish()
 
     Mock = Mock
-    Google = Google
-
+    Google = Google        
     OpenAI = OpenAI
     OpenAIEmbed = OpenAIEmbed
     HuggingFace = HuggingFace

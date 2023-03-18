@@ -5,6 +5,8 @@ desc = """
 "ChatGPT" like example for multi-turn chat with state. [[Code](https://github.com/srush/MiniChain/blob/main/examples/chat.py)]
 
 (Adapted from [LangChain](https://langchain.readthedocs.io/en/latest/modules/memory/examples/chatgpt_clone.html)'s version of this [blog post](https://www.engraved.blog/building-a-virtual-machine-inside/).)
+
+Recommended use: input examples in order one at a time. 
 """
 # -
 
