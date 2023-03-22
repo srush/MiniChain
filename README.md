@@ -4,7 +4,7 @@ A tiny library for coding with **large** language models. Check out the [MiniCha
 
 ## Coding
 
-* Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)):
+* Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)): Annotate Python functions that call language models.
 
 ```python
 @prompt(OpenAI(), template_file="math.pmpt.tpl")
@@ -22,8 +22,8 @@ def math_demo(question):
     return python(math_prompt(question))
 ```
 
-* Interactive visualization
-<img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="80%">
+* Interactive visualization: MiniChain builds a graph (think like PyTorch) of all the calls you make
+<img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="50%">
 
 
 ```python
@@ -35,7 +35,7 @@ show(math_demo,
 ```
 
 
-* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)):
+* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)): Prompts are separated from code. 
 
 ```
 ...
