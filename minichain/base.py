@@ -1,12 +1,19 @@
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, is_dataclass, fields
 from itertools import count
 from typing import Any, Callable, Generic, List, Optional, Tuple, TypeVar, Union, Type, get_args, get_origin, Dict
 from enum import Enum
 from eliot import start_action
-from jinja2 import Environment, FileSystemLoader, Template
+from jinja2 import Environment, FileSystemLoader, Template, PackageLoader,  select_autoescape
+
 
 from .backend import Backend, MinichainContext, Request
+
+env = Environment(
+    loader=PackageLoader("minichain"),
+    autoescape=select_autoescape(),
+    extensions=["jinja2_highlight.HighlightExtension"],
+)
 
 
 def _prompt(r: Union[str, Request]) -> Request:
@@ -37,7 +44,6 @@ def walk(x: Any) -> Any:
     return x.__name__
 
 def type_to_prompt(Out) -> str:
-    inp = dict(inp)
     tmp = env.get_template("type_prompt.pmpt.tpl")
     d = walk(Out)
     return tmp.render({"typ": d})

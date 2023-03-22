@@ -1,10 +1,10 @@
-# Mini-Chain
+# Mini-Chain - A HuggingFace experiment.
 
-A tiny library for **large** language models.
+A tiny library for **large** language models. 
 
 [[MiniChain Zoo](https://srush-minichain.hf.space/)] [[Documentation and Examples](https://srush.github.io/MiniChain)]
 
-<center><img width="20%" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/><img width='10%' style='display:inline;padding: 5px' src='https://avatars.githubusercontent.com/u/25720743?s=200&v=4'></center>
+<center><img width="30%" src="https://user-images.githubusercontent.com/35882/227017900-0cacdfb7-37e2-47b1-9347-a233810d3544.png"></center>
 
 ![srush_A_Chain-Chomp_painted_yellow_smiling_like_the_huggingface_50d7e2fb-4814-4478-aa7b-c6f51fe82b6e](https://user-images.githubusercontent.com/35882/227017900-0cacdfb7-37e2-47b1-9347-a233810d3544.png)
 

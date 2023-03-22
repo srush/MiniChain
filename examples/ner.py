@@ -14,7 +14,7 @@ Chain that does named entity recognition with arbitrary labels. [[Code](https://
 from minichain import prompt, show, OpenAI
 
 @prompt(OpenAI(), template_file = "ner.pmpt.tpl", parser="json")
-def ner_extract(model, **kwargs):
+def ner_extract(model, kwargs):
     return model(kwargs)
 
 @prompt(OpenAI())

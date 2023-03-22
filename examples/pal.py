@@ -16,7 +16,7 @@ def pal_prompt(model, question):
 
 @prompt(Python())
 def python(model, inp):
-    return int(model(inp + "\nprint(solution())"))
+    return float(model(inp + "\nprint(solution())"))
 
 def pal(question):
     return python(pal_prompt(question))
@@ -32,6 +32,7 @@ gradio = show(pal,
               examples=[question],
               subprompts=[pal_prompt, python],
               description=desc,
+              out_type="json",
               code=open("pal.py", "r").read().split("$")[1].strip().strip("#").strip(),
               )
 
