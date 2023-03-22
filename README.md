@@ -4,17 +4,15 @@ A tiny library for **large** language models.
 
 [[MiniChain Zoo](https://srush-minichain.hf.space/) [Documentation and Examples](https://srush.github.io/MiniChain)]
 
-<center><img width="300px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
+<center><img width="40%" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
 
 Write [apps](https://srush-minichain.hf.space/) that integrate large language models directly into code.
 
-* Installation and Execution:
 
 ```bash
-> pip install git+https://github.com/srush/MiniChain/
-> export OPENAI_API_KEY="sk-***"
+pip install git+https://github.com/srush/MiniChain/
+export OPENAI_API_KEY="sk-***"
 ```
-
 
 * Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)):
 
@@ -34,7 +32,7 @@ def math_demo(question):
     return python(math_prompt(question))
 ```
 
-<img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="300px">
+<img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="80%">
 
 
 * Interactive visualization
