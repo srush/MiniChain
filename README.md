@@ -2,9 +2,11 @@
 
 A tiny library for **large** language models. 
 
-[MiniChain Zoo](https://srush-minichain.hf.space/)
+A Hugging Face experiment for coding with large language models. 
 
-Write apps that integrate large language models directly into code.
+Check out the [MiniChain Zoo](https://srush-minichain.hf.space/) to get started.
+
+## Coding
 
 ```bash
 pip install git+https://github.com/srush/MiniChain/
