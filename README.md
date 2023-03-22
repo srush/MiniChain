@@ -2,9 +2,9 @@
 
 A tiny library for **large** language models.
 
-[[MiniChain Zoo](https://srush-minichain.hf.space/) [Documentation and Examples](https://srush.github.io/MiniChain)]
+[[MiniChain Zoo](https://srush-minichain.hf.space/)] [[Documentation and Examples](https://srush.github.io/MiniChain)]
 
-<center><img width="40%" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
+<center><img width="20%" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
 
 Write [apps](https://srush-minichain.hf.space/) that integrate large language models directly into code.
 
@@ -32,10 +32,9 @@ def math_demo(question):
     return python(math_prompt(question))
 ```
 
+* Interactive visualization
 <img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="80%">
 
-
-* Interactive visualization
 
 ```python
 show(math_demo,
