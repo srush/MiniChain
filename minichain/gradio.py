@@ -173,7 +173,7 @@ def show(prompt: Prompt[Any, Any, Any],
          fields: List[str] = [],
          initial_state: Any = None,
          out_type: str="markdown",
-         keys: set[str]={"OPENAI_API_KEY"},
+         keys: Set[str]={"OPENAI_API_KEY"},
          description: str="",
          code: str="",
          templates: List[str]=[]) -> gr.Blocks:
