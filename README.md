@@ -2,15 +2,9 @@
 
 A tiny library for **large** language models. 
 
-[[MiniChain Zoo](https://srush-minichain.hf.space/)] [[Documentation and Examples](https://srush.github.io/MiniChain)]
+[MiniChain Zoo](https://srush-minichain.hf.space/)
 
-<center><img width="30%" src="https://user-images.githubusercontent.com/35882/227017900-0cacdfb7-37e2-47b1-9347-a233810d3544.png"></center>
-
-![srush_A_Chain-Chomp_painted_yellow_smiling_like_the_huggingface_50d7e2fb-4814-4478-aa7b-c6f51fe82b6e](https://user-images.githubusercontent.com/35882/227017900-0cacdfb7-37e2-47b1-9347-a233810d3544.png)
-
-
-Write [apps](https://srush-minichain.hf.space/) that integrate large language models directly into code.
-
+Write apps that integrate large language models directly into code.
 
 ```bash
 pip install git+https://github.com/srush/MiniChain/
