@@ -1,0 +1,21 @@
+import gradio as gr
+from chat import gradio as chat
+from ner import gradio as ner
+from math_demo import gradio as math_demo
+from bash import gradio as bash
+from pal import gradio as pal
+from gatsby import gradio as gatsby
+from qa import gradio as qa
+from stats import gradio as stats
+
+css = "#clean div.form {border: 0px} #response {border: 0px; background: #ffeec6} #prompt {border: 0px;background: aliceblue} #json {border: 0px} #result {border: 0px; background: #c5e0e5} #inner {padding: 20px} #inner textarea {border: 0px} .tabs div.tabitem {border: 0px}"
+
+with gr.Blocks(css=css) as demo:
+    gr.HTML("<center> <img width='10%' style='display:inline; padding: 5px' src='https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png'> <h1 style='display:inline'> Mini-Chain </h1> <img width='10%' style='display:inline;padding: 5px' src='https://avatars.githubusercontent.com/u/25720743?s=200&v=4'> </center><br><center><a href='https://github.com/srush/minichain'>[code]</a>  <a href='https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png'>[docs]</a></center>")
+
+    gr.TabbedInterface([math_demo, qa,  chat, gatsby,  ner, bash, pal, stats],
+                       ["Math", "QA", "Chat", "Book", "NER", "Bash", "PAL", "Stats"],
+                       css = css)
+
+demo.launch()
+

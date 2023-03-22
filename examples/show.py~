@@ -1,3 +1,0 @@
-import json, sys
-from eliottree import tasks_from_iterable, render_tasks
-render_tasks(sys.stdout.write, tasks_from_iterable([json.parse(l) for l in open("bash")]), colorize=True)

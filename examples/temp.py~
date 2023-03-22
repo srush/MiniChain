@@ -1,6 +1,0 @@
-from dataclasses import fields, dataclass
-
-@dataclass
-class B:
-    a: int
-    b: str

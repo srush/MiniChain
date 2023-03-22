@@ -1,6 +1,0 @@
-
-@chain
-def story(bot):
-    out = bot(outline)
-    character = bot(characters)
-    return character

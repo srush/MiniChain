@@ -14,4 +14,4 @@ cp -r target/* myNewDirectory
 
 That is the format. Begin!
 
-Question: {{question}}
+Question: "{{question}}"

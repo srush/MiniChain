@@ -1,0 +1,8 @@
+
+import minichain
+with minichain.start_chain("test") as backend:
+    p1 = minichain.Prompt(backend.Mock(["hello"]))
+    p2 = minichain.Prompt(backend.Mock(["goodbye"]))
+    prompt = p1.chain(p2)
+
+minichain.show(prompt)
