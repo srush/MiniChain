@@ -41,14 +41,15 @@ class Mock(Backend):
 
 class Google(Backend):
     def __init__(self) -> None:
+        pass
+
+    def run(self, request: Request) -> str:
+        from serpapi import GoogleSearch
         serpapi_key = os.environ.get("SERP_KEY")
         assert (
             serpapi_key
         ), "Need a SERP_KEY. Get one here https://serpapi.com/users/welcome"
         self.serpapi_key = serpapi_key
-
-    def run(self, request: Request) -> str:
-        from serpapi import GoogleSearch
 
         params = {
             "api_key": self.serpapi_key,
@@ -281,7 +282,8 @@ class MiniChain:
         MinichainContext.prompt_store = {}
         MinichainContext.prompt_count = {}
         MinichainContext.name = ""
-
+        
+        
 
 def start_chain(name: str) -> MiniChain:
     """
