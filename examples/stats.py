@@ -9,7 +9,7 @@ Information extraction that is automatically generated from a typed specificatio
 
 # $
 
-import minichain
+from minichain import prompt, show, type_to_prompt, OpenAI
 from dataclasses import dataclass
 from typing import List
 from enum import Enum
@@ -34,31 +34,25 @@ class Player:
 # -
 
 
-# Code
-
-class ExtractionPrompt(minichain.TypedTemplatePrompt):
-    template_file = "stats.pmpt.tpl"
-    Out = Player
-
-
-with minichain.start_chain("stats") as backend:
-    prompt = ExtractionPrompt(backend.OpenAI(max_tokens=512))
+@prompt(OpenAI(), template_file="stats.pmpt.tpl", parser="json")
+def stats(model, passage):
+    out = model(dict(passage=passage, typ=type_to_prompt(Player)))
+    return [Player(**j) for j in out]  
 
 # $
 
-
 article = open("sixers.txt").read()
-gradio = prompt.to_gradio(fields =["passage"],
-                          examples=[article],
-                          out_type="json",
-                          description=desc,
-                          code=open("stats.py", "r").read().split("$")[1].strip().strip("#").strip(),
-                          templates=[open("stats.pmpt.tpl")]
+gradio = show(lambda passage: stats(passage),
+              examples=[article],
+              subprompts=[stats],
+              out_type="json",
+              description=desc,
+              code=open("stats.py", "r").read().split("$")[1].strip().strip("#").strip(),
 )
 if __name__ == "__main__":
     gradio.launch()
 
-    
+
 # ExtractionPrompt().show({"passage": "Harden had 10 rebounds."},
 #                         '[{"player": "Harden", "stats": {"value": 10, "stat": 2}}]')
 

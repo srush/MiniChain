@@ -11,48 +11,37 @@ Chain that does named entity recognition with arbitrary labels. [[Code](https://
 
 # $
 
-import json
-import minichain
+from minichain import prompt, show, OpenAI
 
-# Prompt to extract NER tags as json
+@prompt(OpenAI(), template_file = "ner.pmpt.tpl", parser="json")
+def ner_extract(model, **kwargs):
+    return model(kwargs)
 
-class NERPrompt(minichain.TemplatePrompt):
-    template_file = "ner.pmpt.tpl"
+@prompt(OpenAI())
+def team_describe(model, inp):
+    query = "Can you describe these basketball teams? " + \
+        " ".join([i["E"] for i in inp if i["T"] =="Team"])
+    return model(query)
 
-    def parse(self, response, inp):
-        return json.loads(response)
 
-# Use NER to ask a simple queston.
+def ner(text_input, labels, domain):
+    extract = ner_extract(dict(text_input=text_input, labels=labels, domain=domain))
+    return team_describe(extract)
 
-class TeamPrompt(minichain.Prompt):
-    def prompt(self, inp):
-        return "Can you describe these basketball teams? " + \
-            " ".join([i["E"] for i in inp if i["T"] =="Team"])
-
-    def parse(self, response, inp):
-        return response
-
-# Run the system.
-
-with minichain.start_chain("ner") as backend:
-    ner_prompt = NERPrompt(backend.OpenAI())
-    team_prompt = TeamPrompt(backend.OpenAI())
-    prompt = ner_prompt.chain(team_prompt)
 
 # $
-    
-gradio = prompt.to_gradio(fields =["text_input", "labels", "domain"],
-                          examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]],
-                          description=desc,
-                          code=open("ner.py", "r").read().split("$")[1].strip().strip("#").strip(),
-                          templates=[open("ner.pmpt.tpl")]
-                          )
 
-    
+gradio = show(ner,
+              examples=[["An NBA playoff pairing a year ago, the 76ers (39-20) meet the Miami Heat (32-29) for the first time this season on Monday night at home.", "Team, Date", "Sports"]],
+              description=desc,
+              subprompts=[ner_extract, team_describe],
+              code=open("ner.py", "r").read().split("$")[1].strip().strip("#").strip(),
+              )
+
 if __name__ == "__main__":
     gradio.launch()
 
-    
+
 # View prompt examples.
 
 # + tags=["hide_inp"]

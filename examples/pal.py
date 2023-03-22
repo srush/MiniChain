@@ -8,56 +8,32 @@ Chain for answering complex problems by code generation and execution. [[Code](h
 
 # $
 
-import minichain
+from minichain import prompt, show, OpenAI, Python
 
-# PAL Prompt
+@prompt(OpenAI(), template_file="pal.pmpt.tpl")
+def pal_prompt(model, question):
+    return model(dict(question=question))
 
-class PalPrompt(minichain.TemplatePrompt):
-    template_file = "pal.pmpt.tpl"
+@prompt(Python())
+def python(model, inp):
+    return int(model(inp + "\nprint(solution())"))
 
-# Prompt to run and print python code.
+def pal(question):
+    return python(pal_prompt(question))
 
-class PyPrompt(minichain.Prompt):
-    def prompt(self, inp):
-        return inp + "\nprint(solution())"
-
-    def parse(self, response, inp):
-        return int(response)
-
-# Chain the prompts.
-
-with minichain.start_chain("pal") as backend:
-    prompt = PalPrompt(backend.OpenAI()).chain(PyPrompt(backend.Python()))
-    
 # $
-    
+
 question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
     "vacuum cleaners at the green house, 2 more to the red house, and half of " \
     "what was left at the orange house. If Melanie has 5 vacuum cleaners left, " \
     "how many did she start with?"
-    
-gradio = prompt.to_gradio(fields =["question"],
-                          examples=[question],
-                          description=desc,
-                          code=open("pal.py", "r").read().split("$")[1].strip().strip("#").strip(),
-                          templates=[open("pal.pmpt.tpl")]
-                          )
+
+gradio = show(pal,
+              examples=[question],
+              subprompts=[pal_prompt, python],
+              description=desc,
+              code=open("pal.py", "r").read().split("$")[1].strip().strip("#").strip(),
+              )
+
 if __name__ == "__main__":
     gradio.launch()
-
-# View prompt examples.
-
-# # + tags=["hide_inp"]
-# PalPrompt().show(
-#     {"question": "Joe has 10 cars and Bobby has 12. How many do they have together?"},
-#     "def solution():\n\treturn 10 + 12",
-# )
-# # -
-
-# # + tags=["hide_inp"]
-# PyPrompt().show("def solution():\n\treturn 10 + 12", "22")
-# # -
-
-# # View the log.
-
-# minichain.show_log("pal.log")

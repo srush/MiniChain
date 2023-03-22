@@ -2,26 +2,19 @@
 desc = """
 ### Chat
 
-"ChatGPT" like example for multi-turn chat with state. [[Code](https://github.com/srush/MiniChain/blob/main/examples/chat.py)]
+A chat-like example for multi-turn chat with state. [[Code](https://github.com/srush/MiniChain/blob/main/examples/chat.py)]
 
 (Adapted from [LangChain](https://langchain.readthedocs.io/en/latest/modules/memory/examples/chatgpt_clone.html)'s version of this [blog post](https://www.engraved.blog/building-a-virtual-machine-inside/).)
 
-Recommended use: input examples in order one at a time. 
 """
 # -
 
 
-import warnings
-
-# + tags=["hide_inp"]
-warnings.filterwarnings("ignore")
-# -
-
 # $
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import List, Tuple
-import minichain
+from minichain import OpenAI, prompt, show
 
 # Generic stateful Memory
 
@@ -38,25 +31,15 @@ class State:
 
 # Chat prompt with memory
 
-class ChatPrompt(minichain.TemplatePrompt):
-    template_file = "chatgpt.pmpt.tpl"
-    def parse(self, out: str, inp: State) -> State:
-        result = out.split("Assistant:")[-1]
-        return inp.push(result)
-
-# class Human(minichain.Prompt):
-#     def parse(self, out: str, inp: State) -> State:
-#         return inp.human_input = out
-    
-
-with minichain.start_chain("chat") as backend:
-    prompt = ChatPrompt(backend.OpenAI())
-    state = State([])
+@prompt(OpenAI(), template_file="chat.pmpt.tpl")
+def chat_prompt(model, state: State) -> State:
+    out = model(state)
+    result = out.split("Assistant:")[-1]
+    return state.push(result)
 
 # $
-    
+
 examples = [
-    "I want you to act as a Linux terminal. I will type commands and you will reply with what the terminal should show. I want you to only reply with the terminal output inside one unique code block, and nothing else. Do not write explanations. Do not type commands unless I instruct you to do so. When I need to tell you something in English I will do so by putting text inside curly brackets {like this}. My first command is pwd.",
     "ls ~",
     "cd ~",
     "{Please make a file jokes.txt inside and put some jokes inside}",
@@ -66,19 +49,15 @@ examples = [
     "nvidia-smi"
 ]
 
-gradio = prompt.to_gradio(fields= ["human_input"],
-                          initial_state= state,
-                          examples=examples,
-                          out_type="json",
-                          description=desc,
-                          code=open("chat.py", "r").read().split("$")[1].strip().strip("#").strip(),
-                          templates=[open("chat.pmpt.tpl")]
-                                
+gradio = show(lambda command, state: chat_prompt(replace(state, human_input=command)),
+              initial_state=State([]),
+              subprompts=[chat_prompt],
+              examples=examples,
+              out_type="json",
+              description=desc,
+              code=open("chat.py", "r").read().split("$")[1].strip().strip("#").strip(),
 )
 if __name__ == "__main__":
     gradio.launch()
 
-# for i in range(len(fake_human)):
-#     human.chain(prompt)
 
-    

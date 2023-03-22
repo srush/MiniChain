@@ -1,332 +1,154 @@
-from dataclasses import dataclass
-from typing import Any, Generic, List, Optional, Sequence, TypeVar, Union, Tuple
-
-import os
-import trio
+import json
+from dataclasses import asdict, dataclass
+from itertools import count
+from typing import Any, Callable, Generic, List, Optional, Tuple, TypeVar, Union, Type, get_args, get_origin, Dict
+from enum import Enum
 from eliot import start_action
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, FileSystemLoader, Template
 
-from .backend import Backend, Request
+from .backend import Backend, MinichainContext, Request
 
-# Type Variables.
+
+def _prompt(r: Union[str, Request]) -> Request:
+    if isinstance(r, str):
+        return Request(r)
+    else:
+        return r
+
 
 Input = TypeVar("Input")
-Input2 = TypeVar("Input2")
 Output = TypeVar("Output")
-Output2 = TypeVar("Output2")
+FnOutput = TypeVar("FnOutput")
 
 
-# Code for visualization.
-env = Environment(
-    loader=PackageLoader("minichain"),
-    autoescape=select_autoescape(),
-    extensions=["jinja2_highlight.HighlightExtension"],
-)
+def enum(x: Type[Enum]) -> Dict[str, int]:
+    d = {e.name: e.value for e in x}
+    return d
 
+
+def walk(x: Any) -> Any:
+    if issubclass(x if get_origin(x) is None else get_origin(x), List):
+        return {"_t_": "list", "t": walk(get_args(x)[0])}
+    if issubclass(x, Enum):
+        return enum(x)
+
+    if is_dataclass(x):
+        return {y.name: walk(y.type) for y in fields(x)}
+    return x.__name__
+
+def type_to_prompt(Out) -> str:
+    inp = dict(inp)
+    tmp = env.get_template("type_prompt.pmpt.tpl")
+    d = walk(Out)
+    return tmp.render({"typ": d})
+
+def simple(model, **kwargs):  # type: ignore
+    return model(kwargs)
 
 @dataclass
-class HTML:
-    html: str
+class Chain:
+    data: Any
 
-    def _repr_html_(self) -> str:
-        return self.html
+class Prompt(Generic[Input, Output, FnOutput]):
+    counter = count()
 
-@dataclass
-class DisplayOptions:
-    markdown: bool = True
-    
-
-# Main Class
-
-
-class Prompt(Generic[Input, Output]):
-    """`Prompt` represents a typed function from Input to Output.
-    It computes its output value by calling an external services, generally
-    a large language model (LLM).
-
-    To define a new prompt, you need to inherit from this class and
-    define the function `prompt` which takes a argument of type
-    `Input` and produces a string to be sent to the LLM, and the
-    function `parse` which takes a string and produces a value of type
-    `Output`.
-
-
-    To use the `Prompt` you call `__call__` or `arun` with an LLM
-    backend and the arguments of the form `Input`.
-
-    """
-
-    def __init__(self, backend: Optional[Backend] = None,
-                 data: Any = None,
-                 display_options: DisplayOptions = DisplayOptions()
+    def __init__(
+        self,
+        backend: Backend,
+        parser: Union[str, Callable[[str], Output]],
+        template_file: Optional[str],
+        template: Optional[str],
+        stop_template: Optional[str],
+        fn: Callable[[Callable[[Input], Output]], FnOutput] = simple,
     ):
-        self.backend = backend
-        self.data = data
+        self.backend: Backend = backend
+        self.parser: Union[str, Callable[[str], Output]] = parser
+        self.template_file: Optional[str] = template_file
+        self.template: Optional[str] = template
+        self.stop_template: Optional[str] = stop_template
+        self.fn = fn
+        self._fn: str = fn.__name__
+        self._id: int = Prompt.counter.__next__()
 
-        self.display_options = display_options
-
-    # START: Overloaded by the user prompts
-    def prompt(self, inp: Input) -> Union[Request, str]:
-        """
-        Convert from the `Input` type of the function
-        to a request that is sent to the backend.
-        """
-        return str(inp)
-
-    def parse(self, response: str, inp: Input) -> Output:
+    def parse(self, response: str) -> Any:
         """
         Convert from the string response of the function
         to the output type.
         """
-        return response
-        # raise NotImplementedError
+        if isinstance(self.parser, str):
+            if self.parser == "str":
+                return response
+            elif self.parser == "json":
+                return json.loads(response)
+        else:
+            return self.parser(response)
 
-    def set_display_options(self, **kwargs):
-        self.display_options = DisplayOptions(**kwargs)
-    
-    # END: Overloaded by the user prompts
-
-    def _prompt(self, inp: Input) -> Request:
-        with start_action(action_type="Input Function", input=inp):
-            r = self.prompt(inp)
-            if isinstance(r, str):
-                return Request(r)
-            else:
-                return r
-
-    def __call__(self, inp: Input) -> Output:
-        return self.run_verbose(inp)[0][-1]
-
-    def run_verbose(self, inp: Input) -> List[Tuple[Request, str, Output]]:
-        assert self.backend is not None
-        with start_action(action_type=str(type(self))):
-            request = self._prompt(inp)
+    def run_verbose(self, r: Union[str, Request]) -> Tuple[Request, str, Output]:
+        # assert self.backend is not None
+        with start_action(action_type=str(self.fn)):
+            request = _prompt(r)
             with start_action(action_type="Prompted", prompt=request.prompt):
-                result: str = self.backend.run(request)
-            with start_action(action_type="Result", result=result):
-                output = self.parse(result, inp)
-        if not isinstance(result, str):
-            result = "OBJECT"
-        return [(inp, request, result, output)]
-        
-    
-    async def arun(self, inp: Input) -> Output:
-        assert self.backend is not None
-        with start_action(action_type=str(type(self))):
-            request = self._prompt(inp)
-            with start_action(action_type="Prompted", prompt=request.prompt):
-                result = await self.backend.arun(request)
-            with start_action(action_type="Result", result=result):
-                output = self.parse(result, inp)
-        return output
+                response: Union[str, Any] = self.backend.run(request)
+            with start_action(action_type="Response", result=response):
+                output = self.parse(response)
+        if not isinstance(response, str):
+            response = "(data)"
+        return (request, response, output)
 
-    def render_prompt_html(self, inp: Input, prompt: str) -> HTML:
-        return HTML(prompt.replace("\n", "<br>"))
-
-    # Other functions.
-
-    def show(self, inp: Input, response: str) -> HTML:
-        prompt = self.prompt(inp)
-        if isinstance(prompt, Request):
-            prompt = prompt.prompt
-        tmp = env.get_template("prompt.html.tpl")
-        return HTML(
-            tmp.render(
-                **{
-                    "name": type(self).__name__,
-                    "input": str(inp),
-                    "response": response,
-                    "output": str(self.parse(response, inp)),
-                    "prompt": self.render_prompt_html(inp, prompt).html,
-                }
+    def template_fill(self, inp: Any) -> Request:
+        kwargs = inp
+        if self.template_file:
+            tmp = Environment(loader=FileSystemLoader(".")).get_template(
+                name=self.template_file
             )
-        )
+        elif self.template:
+            tmp = Template(self.template)
 
-    def chain(self, other: "Prompt[Output, Output2]") -> "Prompt[Input, Output2]":
-        "Chain together two prompts"
-        return ChainedPrompt(self, other)
+        if not isinstance(kwargs, dict):
+            kwargs = asdict(kwargs)
+        x = tmp.render(**kwargs)
 
-    def map(self) -> "Prompt[Sequence[Input], Sequence[Output]]":
-        "Create a prompt the works on lists of inputs"
-        return MapPrompt(self)
+        if self.stop_template:
+            stop = [Template(self.stop_template).render(**kwargs)]
+        else:
+            stop = None
+        return Request(x, stop)
 
+    def __call__(self, *args: Any) -> FnOutput:
+        verbose: List[Tuple[Request, str, Output]] = []
 
-    def to_gradio_block(self):
-        import gradio as gr
+        def model(input_: Any) -> Output:
+            assert len(verbose) == 0, "Only call `model` once per function"
 
-        # with gr.Accordion(label=type(self).__name__, open=True):
-        # gr.Markdown(value=" ")
-        with gr.Accordion(label=f"👩  {type(self).__name__}", elem_id="prompt"):
-            if self.display_options.markdown:
-                prompt = gr.Markdown(label="", elem_id="inner")
+            if self.template is not None or self.template_file is not None:
+                result = self.template_fill(input_)
             else:
-                prompt = gr.Textbox(label="", elem_id="inner")                    
-        with gr.Accordion(label="💻", elem_id="response"):
-            if self.display_options.markdown:
-                result = gr.Markdown(label="", elem_id="inner")
+                result = input_
+            verbose.append(self.run_verbose(result))
+            return verbose[0][-1]
+
+        def unwrap(a):
+            if isinstance(a, Chain):
+                return a.data
             else:
-                result = gr.Textbox(label="", elem_id="inner")
-
-        with gr.Accordion(label="...", elem_id="json", open=False):
-            input = gr.JSON(elem_id="json", label="Input") 
-            json = gr.JSON(elem_id="json", label="Output") 
-
-        return [input, prompt, result, json]
-        
-    
-    def to_gradio(self, examples=[], fields=[],
-                  initial_state=None,
-                  out_type="markdown", keys={"OPENAI_KEY"},
-                  description="",
-                  code="",
-                  templates=[]):
-        import gradio as gr
-        block = self.to_gradio_block()
-        with gr.Blocks(css="#clean div.form {border: 0px} #response {border: 0px; background: #ffeec6} #prompt {border: 0px;background: aliceblue} #json {border: 0px} #result {border: 0px; background: #c5e0e5} #inner {padding: 20px} #inner textarea {border: 0px}") as demo:
-            state = gr.State(initial_state)
-
-            key_names = {}
-            with gr.Accordion(label="API Keys", elem_id="json", open=False):
-
-                if "OPENAI_KEY" in keys:
-                    key_names["OPENAI_KEY"] = gr.Textbox(os.environ.get("OPENAI_KEY"), label="OpenAI Key", elem_id="json", type="password")
-                    gr.Markdown("""
-                    * [OpenAI Key](https://platform.openai.com/account/api-keys)
-                    """)
-
-                if "HF_KEY" in keys:
-                    gr.Markdown("""
-                    * [Hugging Face Key](https://huggingface.co/settings/tokens)
-                    """)
-
-                    key_names["HF_KEY"] = gr.Textbox(os.environ.get("HF_KEY"), label="Hugging Face Key", elem_id="inner", type="password")
-                if "SERP_KEY" in keys:
-                    gr.Markdown("""
-                    * [Search Key](https://serpapi.com/users/sign_in)
-                    """)
-                    key_names["SERP_KEY"] = gr.Textbox(os.environ.get("SERP_KEY"), label="Search Key", elem_id="inner", type="password")
-
-            gr.Markdown(description)
-            
-            # with gr.Box(elem_id="clean"):
-            if True:
-                inputs = [state]
-                
-                input_names = {}
-                for f in fields:
-                    input_names[f] = gr.Textbox(label=f)
-                inputs += input_names.values()
-                examples = gr.Examples(examples=examples, inputs=list(input_names.values()))
-                query_btn = gr.Button(label="Run")
+                return a
+        args = [unwrap(a) for a in args]
+        output = self.fn(model, *args)
+        t = verbose[0]
+        MinichainContext.prompt_count.setdefault(self._id, 0)
+        count = MinichainContext.prompt_count[self._id]
+        MinichainContext.prompt_store[self._id, count] = (args, t[0], t[1], output)
+        MinichainContext.prompt_count[self._id] += 1
+        return Chain(output)
 
 
-            
-            # query_btn = gr.Button(label="query")
-            outputs = self.to_gradio_block()
-
-            #with gr.Accordion(label="Final Result"):
-            with gr.Accordion(label="✔️", elem_id="result"):
-                if out_type == "json":
-                    output = gr.JSON(elem_id="inner")
-                else:
-                    output = gr.Markdown(elem_id="inner")
-            
-            inputs += key_names.values()
-            
-            def run(data):
-                for k, v in key_names.items():
-                    if data[v] is not None and data[v] != "":
-                        os.environ[k] = data[v]
-
-                if initial_state is not None:
-                    prompt_inputs = data[state]
-                    for k, v in input_names.items():
-                        setattr(prompt_inputs, k, data[v])
-                else:
-                    prompt_inputs = {k: data[v] for k, v in input_names.items()}
-                    
-                ls = self.run_verbose(prompt_inputs)
-                def format(s):
-                    if isinstance(s, str):
-                        return {"string": s}
-                    return s
-                def mark(s):
-                    return s# f"```text\n{s}\n```"
-
-                ret = [x 
-                        for (input, request, result, output) in ls
-                        for x in [format(input), mark(request.prompt), mark(result), format(output)]]  + [ls[-1][-1]]
-                if initial_state is not None:
-                    ret += [ls[-1][-1]]
-                return ret
-                
-
-            outputs = outputs + [output]
-            if initial_state is not None:
-                outputs += [state]
-            # input.submit(run, inputs=set(inputs), outputs=outputs)
-            query_btn.click(run, inputs=set(inputs), outputs=outputs)            
-
-            # with gr.Row():
-            #     key = gr.Textbox(label="OpenAI Key")
-
-            gr.Code(code, language="python", elem_id="inner")
-
-            for tmp in templates:
-                gr.Markdown(f"<center>{tmp.name}</center>")
-                gr.Code(tmp.read(), elem_id="inner")
-            
-        return demo
-
-        
-    
-
-class ChainedPrompt(Prompt[Input, Output2]):
-    def __init__(
-        self, prompt1: Prompt[Input, Output], prompt2: Prompt[Output, Output2]
-    ):
-        self.prompt1 = prompt1
-        self.prompt2 = prompt2
-
-    def to_gradio_block(self):
-        prompt1 = self.prompt1.to_gradio_block()
-        prompt2 = self.prompt2.to_gradio_block()
-        return prompt1 + prompt2
-    
-    def __call__(self, inp: Input) -> Output2:
-        out = self.prompt1(inp)
-        return self.prompt2(out)
-
-    def run_verbose(self, inp: Input) -> List[Tuple[Request, str, Output]]:
-        ls1 = self.prompt1.run_verbose(inp)
-        ls2 = self.prompt2.run_verbose(ls1[-1][-1])
-        return ls1 + ls2
-    
-    async def arun(self, inp: Input) -> Output2:
-        out = await self.prompt1.arun(inp)
-        return await self.prompt2.arun(out)
-
-
-class MapPrompt(Prompt[Sequence[Input], Sequence[Output]]):
-    def __init__(self, prompt: Prompt[Input, Output]):
-        self.prompt1 = prompt
-
-    def __call__(self, inp: Sequence[Input]) -> Sequence[Output]:
-        return [self.prompt1(i) for i in inp]
-
-    async def arun(self, inp: Sequence[Input]) -> Sequence[Output]:
-        results: List[Optional[Output]] = [None] * len(inp)
-
-        async def runner(i: int) -> None:
-            results[i] = await self.prompt1.arun(inp[i])
-
-        async with trio.open_nursery() as nursery:
-            for i in range(len(inp)):
-                nursery.start_soon(runner, i)
-
-        ret: List[Output] = []
-        for i in range(len(inp)):
-            r = results[i]
-            assert r is not None
-            ret.append(r)
-        return ret
+def prompt(
+    backend: Backend,
+    parser: Union[str, Any] = "str",
+    template_file: Optional[str] = None,
+    template: Optional[str] = None,
+    stop_template: Optional[str] = None,
+) -> Callable[[Any], Prompt[Input, Output, FnOutput]]:
+    return lambda fn: Prompt(
+        backend, parser, template_file, template, stop_template, fn
+    )

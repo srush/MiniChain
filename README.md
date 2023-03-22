@@ -6,25 +6,24 @@ A tiny library for **large** language models.
 
 <center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
 
-Write apps that can easily and efficiently call multiple language models.
+Write apps that integram large language models directly into code.
 
-* Code ([math.py](https://github.com/srush/MiniChain/blob/main/examples/math.py)):
+* Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)):
 
 ```python
-# A prompt from the Jinja template below.
-class MathPrompt(TemplatePrompt[str]):
-    template_file = "math.pmpt.tpl"
+@prompt(OpenAI(), template_file="math.pmpt.tpl")
+def math_prompt(model, question):
+    "Prompt to call GPT with a Jinja template"
+    return model(dict(question=question))
 
-with start_chain("math") as backend:
-    # MathPrompt with OpenAI backend
-    p1 = MathPrompt(backend.OpenAI())
-    # A prompt that simply runs Python
-    p2 = SimplePrompt(backend.Python())
-    # Chain them together
-    prompt = p1.chain(p2)
-    # Call chain with a question.
-    question ="'What is the sum of the powers of 3 (3^i) that are smaller than 100?"
-    print(prompt({"question": question}))
+@prompt(Python())
+def python(model, code):
+    "Prompt to call Python interpreter"
+    return int(model(code))
+
+def math_demo(question):
+    "Chain them together"
+    return python(math_prompt(question))
 ```
 
 * Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)):
@@ -45,9 +44,22 @@ Code:
 
 ```bash
 > pip install git+https://github.com/srush/MiniChain/
-> export OPENAI_KEY="sk-***"
-> python math.py
+> export OPENAI_API_KEY="sk-***"
+> python math_demo.py
 ```
+
+* Interactive visualization
+
+```python
+show(math_demo,
+     examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
+              "What is the sum of the 10 first positive integers?"],
+     subprompts=[math_prompt, python],
+     out_type="markdown").launch()
+```
+
+![image](https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png)
+
 
 
 ## Examples

@@ -1,83 +1,64 @@
-# Notebook implementation of the self-ask + Google tool use prompt.
-# Adapted from https://github.com/ofirpress/self-ask
 
-from dataclasses import dataclass
+desc = """
+### Self-Ask
 
-from parsita import *
+ Notebook implementation of the self-ask + Google tool use prompt.
 
-import minichain
+ (Adapted from [Self-Ask repo](https://github.com/ofirpress/self-ask))
+"""
 
-# Define the state of the bot.
+# $
+
+from dataclasses import dataclass, replace
+from typing import Optional
+from minichain import prompt, show, OpenAI, Google
+
 
 @dataclass
-class IntermediateState:
-    s: str
-
-@dataclass
-class FinalState:
-    s: str
-
-@dataclass
-class Out:
-    echo: str
-    state: FinalState | IntermediateState
+class State:
+    question: str
+    history: str =  ""
+    next_query: Optional[str] = None
+    final_answer: Optional[str] = None
 
 
-# Self Ask Prompt
+@prompt(OpenAI(),
+        template_file = "selfask.pmpt.tpl",
+        stop_template = "\nIntermediate answer:")
+def self_ask(model, state):
+    out = model(state)
+    res = out.split(":", 1)[1]
+    if out.startswith("Follow up:"):
+        return replace(state, next_query=res)
+    elif out.startswith("So the final answer is:"):
+        return replace(state, final_answer=res)
+    
+@prompt(Google())
+def google(model, state):
+    if state.next_query is None:
+        return state
+    
+    result = model(state.next_query)
+    return State(state.question,
+                 state.history + "\nIntermediate answer: " + result + "\n")
 
-class SelfAsk(minichain.TemplatePrompt[Out]):
-    template_file = "selfask.pmpt.tpl"
-    stop_template = "\nIntermediate answer:"
-
-    # Parsita parser.
-    class Parser(TextParsers):
-        follow = (lit("Follow up:") >> reg(r".*")) > IntermediateState
-        finish = (lit("So the final answer is: ") >> reg(r".*")) > FinalState
-        response = follow | finish
-
-    def parse(self, response: str, inp) -> Out:
-        return Out(
-            self.prompt(inp).prompt + response,
-            self.Parser.response.parse(response).or_die(),
-        )
-
-# Runtime loop
-
-def selfask(inp: str, openai, google) -> str:
-    prompt1 = SelfAsk(openai)
-    prompt2 = minichain.SimplePrompt(google)
-    suffix = ""
+def selfask(question):
+    state = State(question)
     for i in range(3):
-        out = prompt1(dict(input=inp, suffix=suffix, agent_scratchpad=True))
+        state = self_ask(state)
+        state = google(state)
+    return state
 
-        if isinstance(out.state, FinalState):
-            break
-        suffix += out.echo
-        out2 = prompt2(out.state.s)
-        suffix += "\nIntermediate answer: " + out2 + "\n"
-    return out.state.s
+# $
+
+gradio = show(selfask,
+              examples=["What is the zip code of the city where George Washington was born?"],
+              subprompts=[self_ask, google] * 3,
+              description=desc,
+              code=open("selfask.py", "r").read().split("$")[1].strip().strip("#").strip(),
+              out_type="json"
+              )
+if __name__ == "__main__":
+    gradio.launch()
 
 
-with minichain.start_chain("selfask") as backend:
-    result = selfask(
-        "What is the zip code of the city where George Washington was born?",
-        backend.OpenAI(),
-        backend.Google(),
-    )
-    print(result)
-
-# View prompt examples.
-
-# + tags=["hide_inp"]
-SelfAsk().show(
-    {
-        "input": "What is the zip code of the city where George Washington was born?",
-        "agent_scratchpad": True,
-    },
-    "Follow up: Where was George Washington born?",
-)
-# -
-
-# View log.
-
-minichain.show_log("selfask.log")

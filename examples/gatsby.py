@@ -12,8 +12,7 @@ Chain that does question answering with Hugging Face embeddings. [[Code](https:/
 
 import datasets
 import numpy as np
-
-from minichain import EmbeddingPrompt, TemplatePrompt, show_log, start_chain
+from minichain import prompt, show, HuggingFaceEmbed, OpenAI
 
 # Load data with embeddings (computed beforehand)
 
@@ -22,38 +21,33 @@ gatsby.add_faiss_index("embeddings")
 
 # Fast KNN retieval prompt
 
-class KNNPrompt(EmbeddingPrompt):
-    def prompt(self, inp):
-        return inp["query"]
-    
-    def find(self, out, inp):
-        res = gatsby.get_nearest_examples("embeddings", np.array(out), 1)
-        return {"question": inp["query"], "docs": res.examples["passages"]}
+@prompt(HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2"))
+def get_neighbors(model, inp, k=1):
+    embedding = model(inp)
+    res = olympics.get_nearest_examples("embeddings", np.array(embedding), k)
+    return res.examples["passages"]
 
-# QA prompt to ask question with examples
+@prompt(OpenAI(),
+        template_file="gatsby.pmpt.tpl")
+def ask(model, query, neighbors):
+    return model(dict(question=query, docs=neighbors))
 
+def gatsby(query):
+    n = get_neighbors(query)
+    return ask(query, n)
 
-class QAPrompt(TemplatePrompt):
-    template_file = "gatsby.pmpt.tpl"
-
-
-with start_chain("gatsby") as backend:
-    prompt = KNNPrompt(
-        backend.HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2")
-    ).chain(QAPrompt(backend.OpenAI()))
 
 # $
 
 
-
-gradio = prompt.to_gradio(fields=["query"],
-                          examples=["What did Gatsby do before he met Daisy?",
-                                    "What did the narrator do after getting back to Chicago?"],
-                          keys={"HF_KEY"},
-                          description=desc,
-                          code=open("gatsby.py", "r").read().split("$")[1].strip().strip("#").strip(),
-                          templates=[open("gatsby.pmpt.tpl")]
-                          )
+gradio = show(gatsby,
+              subprompts=[get_neighbors, ask],
+              examples=["What did Gatsby do before he met Daisy?",
+                        "What did the narrator do after getting back to Chicago?"],
+              keys={"HF_KEY"},
+              description=desc,
+              code=open("gatsby.py", "r").read().split("$")[1].strip().strip("#").strip()
+              )
 if __name__ == "__main__":
     gradio.launch()
 
