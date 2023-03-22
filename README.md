@@ -1,6 +1,6 @@
 <img src="https://user-images.githubusercontent.com/35882/227030644-f70e55e8-68a3-48d3-afa3-54c4de8fc210.png" width="100%">
 
-A tiny library for **large** language models. Check out the [MiniChain Zoo](https://srush-minichain.hf.space/) to get a sense of how it works.
+A tiny library for coding with **large** language models. Check out the [MiniChain Zoo](https://srush-minichain.hf.space/) to get a sense of how it works.
 
 ## Coding
 
