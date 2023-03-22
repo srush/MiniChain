@@ -22,7 +22,7 @@ def math_demo(question):
     return python(math_prompt(question))
 ```
 
-* Interactive visualization: MiniChain builds a graph (think like PyTorch) of all the calls you make
+* Chains: MiniChain builds a graph (think like PyTorch) of all the calls you make for debugging and error handling.
 <img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="50%">
 
 
