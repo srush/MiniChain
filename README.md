@@ -1,4 +1,4 @@
-# Mini-Chain - A HuggingFace experiment.
+<img src="https://user-images.githubusercontent.com/35882/227030644-f70e55e8-68a3-48d3-afa3-54c4de8fc210.png" width="100%">
 
 A tiny library for **large** language models. 
 
