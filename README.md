@@ -4,11 +4,6 @@ A tiny library for coding with **large** language models. Check out the [MiniCha
 
 ## Coding
 
-```bash
-pip install git+https://github.com/srush/MiniChain/
-export OPENAI_API_KEY="sk-***"
-```
-
 * Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)):
 
 ```python
@@ -54,7 +49,12 @@ Question:
 Code:
 ```
 
+* Installation
 
+```bash
+pip install git+https://github.com/srush/MiniChain/
+export OPENAI_API_KEY="sk-***"
+```
 
 ## Examples
 
