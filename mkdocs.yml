@@ -286,18 +286,6 @@ extra_javascript:
 ## @@ Begin NAVIGATION
 nav:
   - Home: index.md
-  - API: api.md
-  - Examples:
-    - examples/bash.ipynb
-    - "ChatGPT": examples/chatgpt.ipynb
-    - "SelfAsk": examples/selfask.ipynb
-    - "QA": examples/qa.ipynb
-    - "PAL": examples/pal.ipynb
-    - "NER": examples/ner.ipynb
-    - "Typed Prompts": examples/stats.ipynb
-    - examples/math.ipynb
-    - examples/summary.ipynb
-    - examples/gatsby.ipynb
 
 
 ## @@ End NAVIGATION

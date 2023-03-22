@@ -250,6 +250,9 @@ class MinichainContext:
     name: str = ""
 
 
+def set_minichain_log(name):
+    to_file(open(f"{name}.log", "w"))
+    
 class MiniChain:
     """
     MiniChain session object with backends. Make backend by calling

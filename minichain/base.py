@@ -47,8 +47,11 @@ def simple(model, **kwargs):  # type: ignore
 
 @dataclass
 class Chain:
-    data: Any
-
+    "Future versions of minichain will use laziness."
+    _data: Any
+    def run(self) -> Any:
+        return self._data
+    
 class Prompt(Generic[Input, Output, FnOutput]):
     counter = count()
 
@@ -129,7 +132,7 @@ class Prompt(Generic[Input, Output, FnOutput]):
 
         def unwrap(a):
             if isinstance(a, Chain):
-                return a.data
+                return a._data
             else:
                 return a
         args = [unwrap(a) for a in args]
