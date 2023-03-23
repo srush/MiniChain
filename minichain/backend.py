@@ -38,6 +38,8 @@ class Mock(Backend):
         self.i += 1
         return self.answers[self.i % len(self.answers)]
 
+    def __repr__(self):
+        return f"Mocked Backend {self.answers}"
 
 class Google(Backend):
     def __init__(self) -> None:
@@ -78,6 +80,8 @@ class Google(Backend):
             toret = ""
         return str(toret)
 
+    def __repr__(self):
+        return f"Google Search Backend"
 
 class Python(Backend):
     """Executes bash commands and returns the output."""
@@ -97,6 +101,8 @@ class Python(Backend):
         s = f.getvalue()
         return s
 
+    def __repr__(self):
+        return "Python-Backend"
 
 class Bash(Backend):
     """Executes bash commands and returns the output."""
@@ -124,6 +130,8 @@ class Bash(Backend):
             output = output.strip()
         return output
 
+    def __repr__(self):
+        return "Bash-Backend"
 
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
@@ -134,6 +142,8 @@ class OpenAIBase(Backend):
             temperature=0,
         )
 
+    def __repr__(self):
+        return f"OpenAI Backend {self.options}"
 
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:

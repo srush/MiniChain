@@ -17,8 +17,15 @@ CSS = """
 #inner {margin: 10px; padding: 10px; font-size: 20px; } 
 #inner textarea {border: 0px}
 div.gradio-container {color: black}
+span.head {font-size: 60pt; font-family: cursive;}
+body {
+  --text-sm: 15px;
+  --text-md: 20px;
+  --text-lg: 22px;
+  --input-text-size: 20px;
+  --section-text-size: 20px;
+}
 """
-
 
 @dataclass
 class HTML:
@@ -57,7 +64,8 @@ class Constructor:
 
             
     
-def to_gradio_block(base_prompt: Prompt[Any, Any, Any], i: int,
+def to_gradio_block(base_prompt: Prompt[Any, Any, Any],
+                    i: int,
                     display_options: DisplayOptions=DisplayOptions())-> Constructor:
     
     with gr.Accordion(label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt"):
@@ -72,8 +80,11 @@ def to_gradio_block(base_prompt: Prompt[Any, Any, Any], i: int,
             result = gr.Textbox(label="", elem_id="inner")
 
     with gr.Accordion(label="...", elem_id="json", open=False):
+        backend = gr.Markdown(f"Backend: {base_prompt.backend}", elem_id="json")
         input = gr.JSON(elem_id="json", label="Input") 
         json = gr.JSON(elem_id="json", label="Output")
+        trial = gr.JSON(elem_id="json", label="Previous Trial")
+
         if base_prompt.template_file:
             # gr.Markdown(f"<center>{base_prompt.template_file}</center>")
             c = gr.Code(label = f"Template: {base_prompt.template_file}",
@@ -90,8 +101,9 @@ def to_gradio_block(base_prompt: Prompt[Any, Any, Any], i: int,
     def update(data: Dict[Block, Any]) -> Dict[Block, Any]:
         prev_request_ = ""
         if (base_prompt._id, i - 1) in data[all_data]:
-            prev_request_ = data[all_data][base_prompt._id, i - 1][1].prompt
-        input_, request_, response_, output_ = data[all_data][base_prompt._id, i] 
+            prev_request_ = data[all_data][base_prompt._id, i - 1][-1][1].prompt
+        trials = len(data[all_data][base_prompt._id, i])
+        input_, request_, response_, output_ = data[all_data][base_prompt._id, i][-1]
         def format(s: Any) -> Any :
             if isinstance(s, str):
                 return {"string": s}
@@ -109,16 +121,27 @@ def to_gradio_block(base_prompt: Prompt[Any, Any, Any], i: int,
         else:
             new_prompt = request_.prompt
 
-        
+        if trials == 0:
+            previous_trials = []
+        else:
+            trial_input_, trial_request_, trial_response_, trial_output_ = \
+                data[all_data][base_prompt._id, i][trials-2]
+            previous_trials = {
+                "input": trial_input_,
+                "prompt": trial_request_.prompt,
+                "response": trial_response_,
+                "output": trial_output_,
+                }
         ret =  {
             input: format(input_),
             prompt: mark(new_prompt), 
             result: mark(response_),            
             json: format(output_),
+            trial: previous_trials
         }
         return ret
         
-    return Constructor([update], set(), {input, prompt, result, json})
+    return Constructor([update], set(), {input, prompt, result, json, trial})
 
 def chain_blocks(prompts: List[Prompt[Any, Any, Any]]) -> Constructor:
     cons = Constructor()
