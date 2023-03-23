@@ -1,7 +1,7 @@
 desc = """
 ### Prompt-aided Language Models
 
-Chain for answering complex problems by code generation and execution. [[Code](https://github.com/srush/MiniChain/blob/main/examples/pal.py)]
+Chain for answering complex problems by code generation and execution. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/pal.ipynb)
 
 (Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf)).
 """

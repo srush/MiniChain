@@ -2,7 +2,7 @@
 desc = """
 ### Self-Ask
 
- Notebook implementation of the self-ask + Google tool use prompt.
+ Notebook implementation of the self-ask + Google tool use prompt. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/selfask.ipynb)
 
  (Adapted from [Self-Ask repo](https://github.com/ofirpress/self-ask))
 """

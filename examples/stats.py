@@ -2,7 +2,7 @@
 desc = """
 ### Typed Extraction
 
-Information extraction that is automatically generated from a typed specification. [[Code](https://github.com/srush/MiniChain/blob/main/examples/stats.py)]
+Information extraction that is automatically generated from a typed specification. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/pal.ipynb)
 
 (Novel to MiniChain)
 """

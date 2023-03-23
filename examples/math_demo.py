@@ -2,9 +2,7 @@
 desc = """
 ### Word Problem Solver
 
-Chain that solves a math word problem by first generating and then running Python code. [[Code](https://github.com/srush/MiniChain/blob/main/examples/math.py)]
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/gradio/examples/math_demo.ipynb)
+Chain that solves a math word problem by first generating and then running Python code. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/math_demo.ipynb)
 
 (Adapted from Dust [maths-generate-code](https://dust.tt/spolu/a/d12ac33169))
 """

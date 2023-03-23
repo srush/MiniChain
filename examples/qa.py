@@ -2,7 +2,7 @@
 desc = """
 ### Question Answering with Retrieval
 
-Chain that answers questions with embeedding based retrieval. [[Code](https://github.com/srush/MiniChain/blob/main/examples/qa.py)]
+Chain that answers questions with embeedding based retrieval. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/qa.ipynb)
 
 (Adapted from [OpenAI Notebook](https://github.com/openai/openai-cookbook/blob/main/examples/Question_answering_using_embeddings.ipynb).)
 """

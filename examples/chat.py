@@ -2,7 +2,7 @@
 desc = """
 ### Chat
 
-A chat-like example for multi-turn chat with state. [[Code](https://github.com/srush/MiniChain/blob/main/examples/chat.py)]
+A chat-like example for multi-turn chat with state. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/chat.ipynb)
 
 (Adapted from [LangChain](https://langchain.readthedocs.io/en/latest/modules/memory/examples/chatgpt_clone.html)'s version of this [blog post](https://www.engraved.blog/building-a-virtual-machine-inside/).)
 

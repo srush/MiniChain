@@ -3,7 +3,7 @@
 desc = """
 ### Named Entity Recognition
 
-Chain that does named entity recognition with arbitrary labels. [[Code](https://github.com/srush/MiniChain/blob/main/examples/ner.py)]
+Chain that does named entity recognition with arbitrary labels. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/ner.ipynb)
 
 (Adapted from [promptify](https://github.com/promptslab/Promptify/blob/main/promptify/prompts/nlp/templates/ner.jinja)).
 """

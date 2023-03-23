@@ -3,7 +3,7 @@
 desc = """
 ### Bash Command Suggestion
 
-Chain that ask for a command-line question and then runs the bash command. [[Code](https://github.com/srush/MiniChain/blob/main/examples/bash.py)]
+Chain that ask for a command-line question and then runs the bash command. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/bash.ipynb)
 
 (Adapted from LangChain [BashChain](https://langchain.readthedocs.io/en/latest/modules/chains/examples/llm_bash.html))
 """
