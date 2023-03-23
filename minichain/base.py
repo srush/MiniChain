@@ -164,8 +164,6 @@ class Prompt(Generic[Input, Output, FnOutput]):
         elif self.template:
             tmp = Template(self.template)
 
-        if not isinstance(kwargs, dict):
-            kwargs = asdict(kwargs)
         x = tmp.render(**kwargs)
 
         if self.stop_template:
@@ -193,6 +191,8 @@ class Prompt(Generic[Input, Output, FnOutput]):
                 self.prompt.template is not None
                 or self.prompt.template_file is not None
             ):
+                if not isinstance(input_, dict):
+                    input_ = asdict(input_)
                 input_ = dict(**input_)
                 input_["_trial"] = self.trial
                 input_["_fail_data"] = self.data
