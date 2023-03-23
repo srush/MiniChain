@@ -1,21 +1,33 @@
-from dataclasses import dataclass
-from typing import Any, Generic, List, Optional, Sequence, TypeVar, Union
+import json
+from dataclasses import asdict, dataclass, fields, is_dataclass
+from enum import Enum
+from itertools import count
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
-import trio
 from eliot import start_action
-from jinja2 import Environment, PackageLoader, select_autoescape
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    PackageLoader,
+    Template,
+    select_autoescape,
+)
 
-from .backend import Backend, Request
+from .backend import Backend, MinichainContext, Request
 
-# Type Variables.
-
-Input = TypeVar("Input")
-Input2 = TypeVar("Input2")
-Output = TypeVar("Output")
-Output2 = TypeVar("Output2")
-
-
-# Code for visualization.
 env = Environment(
     loader=PackageLoader("minichain"),
     autoescape=select_autoescape(),
@@ -23,150 +35,197 @@ env = Environment(
 )
 
 
+def _prompt(r: Union[str, Request]) -> Request:
+    if isinstance(r, str):
+        return Request(r)
+    else:
+        return r
+
+
+Input = TypeVar("Input")
+Output = TypeVar("Output")
+FnOutput = TypeVar("FnOutput")
+
+
+def enum(x: Type[Enum]) -> Dict[str, int]:
+    d = {e.name: e.value for e in x}
+    return d
+
+
+def walk(x: Any) -> Any:
+    if issubclass(x if get_origin(x) is None else get_origin(x), List):
+        return {"_t_": "list", "t": walk(get_args(x)[0])}
+    if issubclass(x, Enum):
+        return enum(x)
+
+    if is_dataclass(x):
+        return {y.name: walk(y.type) for y in fields(x)}
+    return x.__name__
+
+
+def type_to_prompt(Out: type) -> str:
+    tmp = env.get_template("type_prompt.pmpt.tpl")
+    d = walk(Out)
+    return tmp.render({"typ": d})
+
+
+def simple(model, **kwargs):  # type: ignore
+    return model(kwargs)
+
+
 @dataclass
-class HTML:
-    html: str
-
-    def _repr_html_(self) -> str:
-        return self.html
+class History:
+    prompt: "Prompt[Input, Output, FnOutput]"
+    inputs: List[Any]
 
 
-# Main Class
+@dataclass
+class Fail:
+    arg_num: int
+    data: Any
 
 
-class Prompt(Generic[Input, Output]):
-    """`Prompt` represents a typed function from Input to Output.
-    It computes its output value by calling an external services, generally
-    a large language model (LLM).
+@dataclass
+class Chain:
+    # TODO: Add caching
+    history: History
 
-    To define a new prompt, you need to inherit from this class and
-    define the function `prompt` which takes a argument of type
-    `Input` and produces a string to be sent to the LLM, and the
-    function `parse` which takes a string and produces a value of type
-    `Output`.
+    def run(self, trial: int = 0, data: Any = None) -> Any:
+        args = []
+        count = []
+        for inp in self.history.inputs:
+            if isinstance(inp, Chain):
+                inp = inp.run()
+            args.append(inp)
+            count.append(0)
+        out = self.history.prompt.expand(args, trial, data)
+        while isinstance(out, Fail):
+            count[out.arg_num] += 1
+            inp = self.history.inputs[out.arg_num]
+            assert isinstance(inp, Chain)
+            args[out.arg_num] = inp.run(trial=count[out.arg_num], data=out.data)
+            out = self.history.prompt.expand(args, trial, data)
+
+        return out
 
 
-    To use the `Prompt` you call `__call__` or `arun` with an LLM
-    backend and the arguments of the form `Input`.
+class Prompt(Generic[Input, Output, FnOutput]):
+    counter = count()
 
-    """
+    def __init__(
+        self,
+        backend: Backend,
+        parser: Union[str, Callable[[str], Output]],
+        template_file: Optional[str],
+        template: Optional[str],
+        stop_template: Optional[str],
+        fn: Callable[[Callable[[Input], Output]], FnOutput] = simple,
+    ):
+        self.backend: Backend = backend
+        self.parser: Union[str, Callable[[str], Output]] = parser
+        self.template_file: Optional[str] = template_file
+        self.template: Optional[str] = template
+        self.stop_template: Optional[str] = stop_template
+        self.fn = fn
+        self._fn: str = fn.__name__
+        self._id: int = Prompt.counter.__next__()
 
-    def __init__(self, backend: Optional[Backend] = None, data: Any = None):
-        self.backend = backend
-        self.data = data
-
-    # START: Overloaded by the user prompts
-    def prompt(self, inp: Input) -> Union[Request, str]:
-        """
-        Convert from the `Input` type of the function
-        to a request that is sent to the backend.
-        """
-        return str(inp)
-
-    def parse(self, response: str, inp: Input) -> Output:
+    def parse(self, response: str) -> Any:
         """
         Convert from the string response of the function
         to the output type.
         """
-        raise NotImplementedError
+        if isinstance(self.parser, str):
+            if self.parser == "str":
+                return response
+            elif self.parser == "json":
+                return json.loads(response)
+        else:
+            return self.parser(response)
 
-    # END: Overloaded by the user prompts
-
-    def _prompt(self, inp: Input) -> Request:
-        with start_action(action_type="Input Function", input=inp):
-            r = self.prompt(inp)
-            if isinstance(r, str):
-                return Request(r)
-            else:
-                return r
-
-    def __call__(self, inp: Input) -> Output:
-        assert self.backend is not None
-        with start_action(action_type=str(type(self))):
-            request = self._prompt(inp)
+    def run_verbose(self, r: Union[str, Request]) -> Tuple[Request, str, Output]:
+        # assert self.backend is not None
+        with start_action(action_type=str(self.fn)):
+            request = _prompt(r)
             with start_action(action_type="Prompted", prompt=request.prompt):
-                result: str = self.backend.run(request)
-            with start_action(action_type="Result", result=result):
-                output = self.parse(result, inp)
-        return output
+                response: Union[str, Any] = self.backend.run(request)
+            with start_action(action_type="Response", result=response):
+                output = self.parse(response)
+        if not isinstance(response, str):
+            response = "(data)"
+        return (request, response, output)
 
-    async def arun(self, inp: Input) -> Output:
-        assert self.backend is not None
-        with start_action(action_type=str(type(self))):
-            request = self._prompt(inp)
-            with start_action(action_type="Prompted", prompt=request.prompt):
-                result = await self.backend.arun(request)
-            with start_action(action_type="Result", result=result):
-                output = self.parse(result, inp)
-        return output
-
-    def render_prompt_html(self, inp: Input, prompt: str) -> HTML:
-        return HTML(prompt.replace("\n", "<br>"))
-
-    # Other functions.
-
-    def show(self, inp: Input, response: str) -> HTML:
-        prompt = self.prompt(inp)
-        if isinstance(prompt, Request):
-            prompt = prompt.prompt
-        tmp = env.get_template("prompt.html.tpl")
-        return HTML(
-            tmp.render(
-                **{
-                    "name": type(self).__name__,
-                    "input": str(inp),
-                    "response": response,
-                    "output": str(self.parse(response, inp)),
-                    "prompt": self.render_prompt_html(inp, prompt).html,
-                }
+    def template_fill(self, inp: Any) -> Request:
+        kwargs = inp
+        if self.template_file:
+            tmp = Environment(loader=FileSystemLoader(".")).get_template(
+                name=self.template_file
             )
-        )
+        elif self.template:
+            tmp = Template(self.template)
 
-    def chain(self, other: "Prompt[Output, Output2]") -> "Prompt[Input, Output2]":
-        "Chain together two prompts"
-        return ChainedPrompt(self, other)
+        if not isinstance(kwargs, dict):
+            kwargs = asdict(kwargs)
+        x = tmp.render(**kwargs)
 
-    def map(self) -> "Prompt[Sequence[Input], Sequence[Output]]":
-        "Create a prompt the works on lists of inputs"
-        return MapPrompt(self)
+        if self.stop_template:
+            stop = [Template(self.stop_template).render(**kwargs)]
+        else:
+            stop = None
+        return Request(x, stop)
+
+    def __call__(self, *args: Any) -> FnOutput:
+        return Chain(History(self, args))
+
+    class Model:
+        def __init__(self, prompt, trial, data):
+            self.prompt = prompt
+            self.trial = trial
+            self.data = data
+            self.run_log = None
+
+        def fail(self, argnum: int, data: Any = None) -> Fail:
+            return Fail(argnum - 1, data)
+
+        def __call__(self, input_):
+            assert self.run_log is None, "Only call `model` once per function"
+            if (
+                self.prompt.template is not None
+                or self.prompt.template_file is not None
+            ):
+                input_ = dict(**input_)
+                input_["_trial"] = self.trial
+                input_["_fail_data"] = self.data
+
+                result = self.prompt.template_fill(input_)
+            else:
+                result = input_
+            self.run_log = self.prompt.run_verbose(result)
+            return self.run_log[-1]
+
+    def expand(self, args, trial=0, data=None):
+        model = self.Model(self, trial, data)
+        output = self.fn(model, *args)
+        if not isinstance(output, Fail):
+            t = model.run_log
+            MinichainContext.prompt_count.setdefault(self._id, -1)
+            if trial == 0:
+                MinichainContext.prompt_count[self._id] += 1
+            count = MinichainContext.prompt_count[self._id]
+            MinichainContext.prompt_store.setdefault((self._id, count), [])
+            MinichainContext.prompt_store[self._id, count].append(
+                (args, t[0], t[1], output)
+            )
+        return output
 
 
-class ChainedPrompt(Prompt[Input, Output2]):
-    def __init__(
-        self, prompt1: Prompt[Input, Output], prompt2: Prompt[Output, Output2]
-    ):
-        self.prompt1 = prompt1
-        self.prompt2 = prompt2
-
-    def __call__(self, inp: Input) -> Output2:
-        out = self.prompt1(inp)
-        return self.prompt2(out)
-
-    async def arun(self, inp: Input) -> Output2:
-        out = await self.prompt1.arun(inp)
-        return await self.prompt2.arun(out)
-
-
-class MapPrompt(Prompt[Sequence[Input], Sequence[Output]]):
-    def __init__(self, prompt: Prompt[Input, Output]):
-        self.prompt1 = prompt
-
-    def __call__(self, inp: Sequence[Input]) -> Sequence[Output]:
-        return [self.prompt1(i) for i in inp]
-
-    async def arun(self, inp: Sequence[Input]) -> Sequence[Output]:
-        results: List[Optional[Output]] = [None] * len(inp)
-
-        async def runner(i: int) -> None:
-            results[i] = await self.prompt1.arun(inp[i])
-
-        async with trio.open_nursery() as nursery:
-            for i in range(len(inp)):
-                nursery.start_soon(runner, i)
-
-        ret: List[Output] = []
-        for i in range(len(inp)):
-            r = results[i]
-            assert r is not None
-            ret.append(r)
-        return ret
+def prompt(
+    backend: Backend,
+    parser: Union[str, Any] = "str",
+    template_file: Optional[str] = None,
+    template: Optional[str] = None,
+    stop_template: Optional[str] = None,
+) -> Callable[[Any], Prompt[Input, Output, FnOutput]]:
+    return lambda fn: Prompt(
+        backend, parser, template_file, template, stop_template, fn
+    )

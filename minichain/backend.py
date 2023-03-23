@@ -1,13 +1,10 @@
-import json
 import os
 import subprocess
-import sys
 from dataclasses import dataclass
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Callable, List, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
 
 from eliot import start_action, to_file
-from eliottree import render_tasks, tasks_from_iterable
 
 if TYPE_CHECKING:
     import manifest
@@ -34,24 +31,29 @@ class Id(Backend):
 
 class Mock(Backend):
     def __init__(self, answers: List[str] = []):
-        self.i = 0
+        self.i = -1
         self.answers = answers
 
     def run(self, request: Request) -> str:
         self.i += 1
-        return self.answers[self.i - 1]
+        return self.answers[self.i % len(self.answers)]
+
+    def __repr__(self) -> str:
+        return f"Mocked Backend {self.answers}"
 
 
 class Google(Backend):
     def __init__(self) -> None:
+        pass
+
+    def run(self, request: Request) -> str:
+        from serpapi import GoogleSearch
+
         serpapi_key = os.environ.get("SERP_KEY")
         assert (
             serpapi_key
         ), "Need a SERP_KEY. Get one here https://serpapi.com/users/welcome"
         self.serpapi_key = serpapi_key
-
-    def run(self, request: Request) -> str:
-        from serpapi import GoogleSearch
 
         params = {
             "api_key": self.serpapi_key,
@@ -80,6 +82,9 @@ class Google(Backend):
             toret = ""
         return str(toret)
 
+    def __repr__(self) -> str:
+        return f"Google Search Backend"
+
 
 class Python(Backend):
     """Executes bash commands and returns the output."""
@@ -89,14 +94,21 @@ class Python(Backend):
         from contextlib import redirect_stdout
         from io import StringIO
 
+        p = request.prompt.strip()
+        if p.startswith("```"):
+            p = "\n".join(p.strip().split("\n")[1:-1])
+
         f = StringIO()
         with redirect_stdout(f):
-            exec(request.prompt)
+            exec(p)
         s = f.getvalue()
         return s
 
+    def __repr__(self) -> str:
+        return "Python-Backend"
 
-class BashProcess(Backend):
+
+class Bash(Backend):
     """Executes bash commands and returns the output."""
 
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
@@ -122,16 +134,12 @@ class BashProcess(Backend):
             output = output.strip()
         return output
 
+    def __repr__(self) -> str:
+        return "Bash-Backend"
+
 
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
-
-        import openai
-
-        self.api_key = os.environ.get("OPENAI_KEY")
-        assert self.api_key, "Need an OPENAI_KEY. Get one here https://openai.com/api/"
-
-        openai.api_key = self.api_key
         self.model = model
         self.options = dict(
             model=model,
@@ -139,21 +147,35 @@ class OpenAIBase(Backend):
             temperature=0,
         )
 
+    def __repr__(self) -> str:
+        return f"OpenAI Backend {self.options}"
+
 
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
-        import openai
+        import manifest
 
-        ans = openai.Completion.create(
-            **self.options,
-            stop=request.stop,
-            prompt=request.prompt,
+        manifest = manifest.Manifest(
+            client_name="openai",
+            max_tokens=self.options["max_tokens"],
+            cache_name="sqlite",
+            cache_connection=f"{MinichainContext.name}",
         )
-        return str(ans["choices"][0]["text"])
+
+        ans = manifest.run(
+            # openai.Completion.create(
+            # **self.options,
+            # kstop=request.stop,
+            # prompt=
+            request.prompt,
+            stop_sequences=request.stop,
+        )
+        return str(ans)
 
     async def arun(self, request: Request) -> str:
         import async_openai
 
+        self.api_key = os.environ.get("OPENAI_API_KEY")
         async_openai.OpenAI.configure(
             api_key=self.api_key,
             debug_enabled=False,
@@ -173,6 +195,12 @@ class OpenAIEmbed(OpenAIBase):
     def run(self, request: Request) -> str:
         import openai
 
+        self.api_key = os.environ.get("OPENAI_API_KEY")
+        assert (
+            self.api_key
+        ), "Need an OPENAI_API_KEY. Get one here https://openai.com/api/"
+        openai.api_key = self.api_key
+
         ans = openai.Embedding.create(
             engine=self.model,
             input=request.prompt,
@@ -183,14 +211,15 @@ class OpenAIEmbed(OpenAIBase):
 class HuggingFaceBase(Backend):
     def __init__(self, model: str = "gpt2") -> None:
         self.model = model
-        self.api_key = os.environ.get("HF_KEY")
-        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
 
 class HuggingFace(HuggingFaceBase):
     def run(self, request: Request) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
+
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="text-generation"
@@ -203,6 +232,9 @@ class HuggingFaceEmbed(HuggingFaceBase):
     def run(self, request: Request) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
+
+        self.api_key = os.environ.get("HF_KEY")
+        assert self.api_key, "Need an HF_KEY. Get one here https://huggingface.co/"
 
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="feature-extraction"
@@ -228,6 +260,17 @@ class Manifest(Backend):
         return self.client.run(request.prompt)  # type: ignore
 
 
+class MinichainContext:
+    id_: int = 0
+    prompt_store: Dict[Tuple[int, int], Tuple[Any, Request, str, Any]] = {}
+    prompt_count: Dict[int, int] = {}
+    name: str = ""
+
+
+def set_minichain_log(name: str) -> None:
+    to_file(open(f"{name}.log", "w"))
+
+
 class MiniChain:
     """
     MiniChain session object with backends. Make backend by calling
@@ -239,6 +282,9 @@ class MiniChain:
         self.name = name
 
     def __enter__(self) -> "MiniChain":
+        MinichainContext.prompt_store = {}
+        MinichainContext.prompt_count = {}
+        MinichainContext.name = self.name
         self.action = start_action(action_type=self.name)
         return self
 
@@ -249,18 +295,10 @@ class MiniChain:
         traceback: Optional[TracebackType],
     ) -> None:
         self.action.finish()
-
-    Mock = Mock
-    Google = Google
-
-    OpenAI = OpenAI
-    OpenAIEmbed = OpenAIEmbed
-    HuggingFace = HuggingFace
-    HuggingFaceEmbed = HuggingFaceEmbed
-    BashProcess = BashProcess
-    Python = Python
-    Manifest = Manifest
-    Id = Id
+        self.prompt_store = dict(MinichainContext.prompt_store)
+        MinichainContext.prompt_store = {}
+        MinichainContext.prompt_count = {}
+        MinichainContext.name = ""
 
 
 def start_chain(name: str) -> MiniChain:
@@ -271,13 +309,13 @@ def start_chain(name: str) -> MiniChain:
     return MiniChain(name)
 
 
-def show_log(filename: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
-    """
-    Write out the full asynchronous log from file `filename`.
-    """
-    render_tasks(
-        o,
-        tasks_from_iterable([json.loads(line) for line in open(filename)]),
-        colorize=True,
-        human_readable=True,
-    )
+# def show_log(filename: str, o: Callable[[str], Any] = sys.stderr.write) -> None:
+#     """
+#     Write out the full asynchronous log from file `filename`.
+#     """
+#     render_tasks(
+#         o,
+#         tasks_from_iterable([json.loads(line) for line in open(filename)]),
+#         colorize=True,
+#         human_readable=True,
+#     )

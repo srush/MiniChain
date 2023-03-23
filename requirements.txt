@@ -2,7 +2,9 @@ async-openai
 datasets
 eliot
 eliot-tree
+faiss-cpu
 google-search-results
+gradio==3.21.0
 huggingface-hub
 jinja2
 jinja2-highlight

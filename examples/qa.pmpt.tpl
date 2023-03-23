@@ -8,5 +8,5 @@ Context:
 
  Q: {{question}}
 
- A: 
+ A:
 

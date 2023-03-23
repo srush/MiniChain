@@ -1,33 +1,41 @@
-# Mini-Chain
+<img src="https://user-images.githubusercontent.com/35882/227030644-f70e55e8-68a3-48d3-afa3-54c4de8fc210.png" width="100%">
 
-A tiny library for **large** language models.
+A tiny library for coding with **large** language models. Check out the [MiniChain Zoo](https://srush-minichain.hf.space/) to get a sense of how it works.
 
-[[Documentation and Examples](https://srush.github.io/MiniChain)]
+## Coding
 
-<center><img width="200px" src="https://user-images.githubusercontent.com/35882/218286642-67985b6f-d483-49be-825b-f62b72c469cd.png"/></center>
-
-Write apps that can easily and efficiently call multiple language models.
-
-* Code ([math.py](https://github.com/srush/MiniChain/blob/main/examples/math.py)):
+* Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)): Annotate Python functions that call language models.
 
 ```python
-# A prompt from the Jinja template below.
-class MathPrompt(TemplatePrompt[str]):
-    template_file = "math.pmpt.tpl"
+@prompt(OpenAI(), template_file="math.pmpt.tpl")
+def math_prompt(model, question):
+    "Prompt to call GPT with a Jinja template"
+    return model(dict(question=question))
 
-with start_chain("math") as backend:
-    # MathPrompt with OpenAI backend
-    p1 = MathPrompt(backend.OpenAI())
-    # A prompt that simply runs Python
-    p2 = SimplePrompt(backend.Python())
-    # Chain them together
-    prompt = p1.chain(p2)
-    # Call chain with a question.
-    question ="'What is the sum of the powers of 3 (3^i) that are smaller than 100?"
-    print(prompt({"question": question}))
+@prompt(Python())
+def python(model, code):
+    "Prompt to call Python interpreter"
+    return int(model(code))
+
+def math_demo(question):
+    "Chain them together"
+    return python(math_prompt(question))
 ```
 
-* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)):
+* Chains ([Space](https://srush-minichain.hf.space/)): MiniChain builds a graph (think like PyTorch) of all the calls you make for debugging and error handling.
+<img src="https://user-images.githubusercontent.com/35882/226965531-78df7927-988d-45a7-9faa-077359876730.png" width="50%">
+
+
+```python
+show(math_demo,
+     examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
+               "What is the sum of the 10 first positive integers?"],
+     subprompts=[math_prompt, python],
+     out_type="markdown").launch()
+```
+
+
+* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)): Prompts are separated from code.
 
 ```
 ...
@@ -41,14 +49,12 @@ Question:
 Code:
 ```
 
-* Install and Execute:
+* Installation
 
 ```bash
-> pip install git+https://github.com/srush/MiniChain/
-> export OPENAI_KEY="sk-***"
-> python math.py
+pip install git+https://github.com/srush/MiniChain/
+export OPENAI_API_KEY="sk-***"
 ```
-
 
 ## Examples
 
@@ -83,65 +89,68 @@ functionality in a tiny digestable library.
 
 ## Tutorial
 
-Mini-chain is based on Prompts.
+Mini-chain is based on annotating functions as prompts.
 
 ![image](https://user-images.githubusercontent.com/35882/221280012-d58c186d-4da2-4cb6-96af-4c4d9069943f.png)
 
-You can write your own prompts by overriding the `prompt` and `parse`
-function on the `Prompt[Input, Output]` class.
 
 ```python
-class ColorPrompt(Prompt[str, bool]):
-    def prompt(inp: str) -> str:
-        "Encode prompting logic"
-        return f"Answer 'Yes' if this is a color, {inp}. Answer:"
-
-    def parse(out: str, inp) -> bool:
-        # Encode the parsing logic
-        return out == "Yes"
+@prompt(OpenAI())
+def color_prompt(model, input):
+    response = model(f"Answer 'Yes' if this is a color, {input}. Answer:")
+    return out == "Yes"
 ```
 
-The LLM for the Prompt is specified by the backend. To run a prompt, we give a backend and then call it like a function. To access backends, you need to call `start_chain`
-which also manages logging.
+Prompt functions act like python functions, except they are lazy to access the result you need to call `run()`.
 
 ```python
-with start_chain("color") as backend:
-    prompt1 = ColorPrompt(backend.OpenAI())
-    if prompt1("blue"):
-        print("It's a color!")
+if color_prompt("blue").run():
+    print("It's a color")
 ```
-
-You can write a standard Python program just by calling these prompts. Alternatively you can chain prompts together.
+Alternatively you can chain prompts together.
 
 ![image](https://user-images.githubusercontent.com/35882/221281771-3770be96-02ce-4866-a6f8-c458c9a11c6f.png)
 
-
 ```python
-with start_chain("mychain") as backend:
-    prompt0 = SimplePrompt(backend.OpenAI())
-    chained_prompt = prompt0.chain(prompt1)
-    if chained_prompt("..."):
-        ...
+@prompt(OpenAI())
+def adjective_prompt(model, input):
+    return model(f"Give an adjective to describe {input}. Answer:")
 ```
 
-Prompt `SimplePrompt` simply passes its input string to the
-language-model and returns its output string.
 
-We also include `TemplatePrompt[Output]` which assumes `parse` uses template from the
+```python
+adjective = adjective_prompt("rainbow")
+if color_prompt(adjective).run():
+    print("It's a color")
+
+```
+
+We also include an argument `template_file` which assumes model uses template from the
 [Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language.
+This allows us to separate prompt text from the python code.
 
 ```python
-class MathPrompt(TemplatePrompt[str]):
-    template_file = "math.pmpt.tpl"
+@prompt(OpenAI(), template_file="math.pmpt.tpl")
+def math_prompt(model, question):
+    return model(dict(question=question))
 ```
 
-Logging is done automatically based on the name of your chain using the [eliot](https://eliot.readthedocs.io/en/stable/) logging framework.
-You can run the following command to get the full output of your
-system.
+### Visualization
+
+MiniChain has a built-in prompt visualization system using `Gradio`.
+If you construct a function that calls a prompt chain you can visualize it
+by calling `show` and `launch`. This can be done directly in a notebook as well.
 
 ```python
-show_log("mychain.log")
+show(math_demo,
+     examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
+              "What is the sum of the 10 first positive integers?"],
+     subprompts=[math_prompt, python],
+     out_type="markdown").launch()
 ```
+
+You can also get the full log the process by calling `set_minichain_log('chain_name')`.
+
 ### Memory
 
 MiniChain does not build in an explicit stateful memory class. We recommend implementing it as a queue.
@@ -157,7 +166,7 @@ class State:
     human_input: str = ""
 
     def push(self, response: str) -> "State":
-        memory = self.memory if len(self.memory) < MEMORY else self.memory[1:]
+        memory = self.memory if len(self.memory) < MEMORY_LIMIT else self.memory[1:]
         return State(memory + [(self.human_input, response)])
 ```
 
@@ -167,7 +176,7 @@ It keeps track of the last two responses that it has seen.
 
 ### Documents and Embeddings
 
-MiniChain is agnostic to how you manage documents and embeddings. We recommend using
+MiniChain does not manage documents and embeddings. We recommend using
 the [Hugging Face Datasets](https://huggingface.co/docs/datasets/index) library with
 built in FAISS indexing.
 
@@ -181,12 +190,14 @@ Here is the implementation.
 olympics = datasets.load_from_disk("olympics.data")
 olympics.add_faiss_index("embeddings")
 
-class KNNPrompt(EmbeddingPrompt):
-    def find(self, out, inp):
-        return olympics.get_nearest_examples("embeddings", np.array(out), 3)
+@prompt(OpenAIEmbed())
+def get_neighbors(model, inp, k):
+    embedding = model(inp)
+    res = olympics.get_nearest_examples("embeddings", np.array(embedding), k)
+    return res.examples["content"]
 ```
 
-This creates a K-nearest neighbors (KNN) `Prompt` that looks up the
+This creates a K-nearest neighbors (KNN) prompt that looks up the
 3 closest documents based on embeddings of the question asked.
 See the full [Retrieval-Augemented QA](https://srush.github.io/MiniChain/examples/qa/)
 example.
@@ -207,59 +218,34 @@ x.save_to_disk("olympics.data")
 There are other ways to do this such as [sqllite](https://github.com/asg017/sqlite-vss)
 or [Weaviate](https://weaviate.io/).
 
-## Advanced
 
-### Asynchronous Calls
-
-Prompt chains make it easier to manage asynchronous execution. Prompt has a method `arun` which will
-make the language model call asynchronous.
-Async calls need the [trio](https://trio.readthedocs.io/en/stable/) library.
-
-```python
-import trio
-async def fn1(prompt1):
-        if await prompt1.arun("blue"):
-        ...
-
-trio.run(prompt1)
-```
-
-A convenient construct is the `map` function which runs a prompt on a list of inputs.
-
-![image](https://user-images.githubusercontent.com/35882/221283494-6f76ee85-3652-4bb3-bc42-4e961acd1477.png)
-
-
-This code runs a summarization prompt with asynchonous calls to the API.
-
-
-```python
-with start_chain("summary") as backend:
-    list_prompt = SummaryPrompt(backend.OpenAI()).map()
-    out = trio.run(list_prompt.arun, documents)
-```
-
-### Typed Prompt
+### Typed Prompts
 
 MiniChain can automatically generate a prompt header for you that aims to ensure the
 output follows a given typed specification. For example, if you run the following code
-MiniChain will produce prompt that returns a list of `Color` objects.
+MiniChain will produce prompt that returns a list of `Player` objects.
 
 ```python
-class ColorType(Enum):
-    RED = 1
-    GREEN = 2
-    BLUE = 3
+class StatType(Enum):
+    POINTS = 1
+    REBOUNDS = 2
+    ASSISTS = 3
 
 @dataclass
-class Color:
-    color: ColorType
-    object: str
-    explanation: str
+class Stat:
+    value: int
+    stat: StatType
+
+@dataclass
+class Player:
+    player: str
+    stats: List[Stat]
 
 
-class ColorPrompt(minichain.TypedTemplatePrompt):
-    template_file = "color.pmpt.tpl"
-    Out = Color
+@prompt(OpenAI(), template_file="stats.pmpt.tpl", parser="json")
+def stats(model, passage):
+    out = model(dict(passage=passage, typ=type_to_prompt(Player)))
+    return [Player(**j) for j in out]
 ```
 
 Specifically it will provide your template with a string `typ` that you can use. For this example the string will be of the following form:
@@ -297,26 +283,4 @@ Make sure every output is exactly seen in the document. Find as many as you can.
 
 This will then be converted to an object automatically for you.
 
-
-### Parsing
-
-Minichain lets you use whatever parser you would like.
-One example is [parsita](https://parsita.drhagen.com/) a
-cool parser combinator library. This example builds a little
-state machine based on the LLM response with error handling.
-
-```python
-class SelfAsk(TemplatePrompt[IntermediateState | FinalState]):
-    template_file = "selfask.pmpt.tpl"
-
-    class Parser(TextParsers):
-        follow = (lit("Follow up:") >> reg(r".*")) > IntermediateState
-        finish = (lit("So the final answer is: ") >> reg(r".*")) > FinalState
-        response = follow | finish
-
-    def parse(self, response: str, inp):
-        return self.Parser.response.parse(response).or_die()
-```
-
-[[Full Examples](https://srush.github.io/MiniChain)]
 

@@ -9,7 +9,7 @@ LIBNAME: str = "minichain"
 
 setup(
     name=LIBNAME,
-    version="0.1",
+    version="0.2",
     packages=find_packages(
         include=["minichain", "minichain*"],
         exclude=["examples", "docs", "test*"],
@@ -41,15 +41,16 @@ setup(
         "Topic :: Scientific/Engineering",
     ],
     install_requires=[
-        "async-openai",
+        "manifest-ml",
+        "datasets",
+        "gradio==3.21.0",
+        "faiss-cpu",
         "eliot",
         "eliot-tree",
         "google-search-results",
         "jinja2",
         "jinja2-highlight",
         "openai",
-        "parsita==1.7.1",
         "trio",
-        "hf-api @ git+https://github.com/huggingface/hfapi/",
     ],
 )

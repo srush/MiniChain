@@ -1,45 +1,40 @@
-# Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf).
+desc = """
+### Prompt-aided Language Models
 
-import minichain
+Chain for answering complex problems by code generation and execution. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/pal.ipynb)
 
-# PAL Prompt
+(Adapted from Prompt-aided Language Models [PAL](https://arxiv.org/pdf/2211.10435.pdf)).
+"""
 
-class PalPrompt(minichain.TemplatePrompt):
-    template_file = "pal.pmpt.tpl"
+# $
 
-# Prompt to run and print python code.
+from minichain import prompt, show, OpenAI, Python
 
-class PyPrompt(minichain.Prompt):
-    def prompt(self, inp):
-        return inp + "\nprint(solution())"
+@prompt(OpenAI(), template_file="pal.pmpt.tpl")
+def pal_prompt(model, question):
+    return model(dict(question=question))
 
-    def parse(self, response, inp):
-        return int(response)
+@prompt(Python())
+def python(model, inp):
+    return float(model(inp + "\nprint(solution())"))
 
-# Chain the prompts.
+def pal(question):
+    return python(pal_prompt(question))
 
-with minichain.start_chain("pal") as backend:
-    question = "Melanie is a door-to-door saleswoman. She sold a third of her ' \
-    'vacuum cleaners at the green house, 2 more to the red house, and half of ' \
-    'what was left at the orange house. If Melanie has 5 vacuum cleaners left, ' \
-    'how many did she start with?'"
-    prompt = PalPrompt(backend.OpenAI()).chain(PyPrompt(backend.Python()))
-    result = prompt({"question": question})
-    print(result)
+# $
 
-# View prompt examples.
+question = "Melanie is a door-to-door saleswoman. She sold a third of her " \
+    "vacuum cleaners at the green house, 2 more to the red house, and half of " \
+    "what was left at the orange house. If Melanie has 5 vacuum cleaners left, " \
+    "how many did she start with?"
 
-# + tags=["hide_inp"]
-PalPrompt().show(
-    {"question": "Joe has 10 cars and Bobby has 12. How many do they have together?"},
-    "def solution():\n\treturn 10 + 12",
-)
-# -
+gradio = show(pal,
+              examples=[question],
+              subprompts=[pal_prompt, python],
+              description=desc,
+              out_type="json",
+              code=open("pal.py", "r").read().split("$")[1].strip().strip("#").strip(),
+              )
 
-# + tags=["hide_inp"]
-PyPrompt().show("def solution():\n\treturn 10 + 12", "22")
-# -
-
-# View the log.
-
-minichain.show_log("pal.log")
+if __name__ == "__main__":
+    gradio.launch()

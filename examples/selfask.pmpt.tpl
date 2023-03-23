@@ -34,6 +34,6 @@ Follow up: Where is Martin Campbell from?
 Intermediate answer: New Zealand.
 So the final answer is: No
 
-Question: {{input}}
-Are followup questions needed here: {% if agent_scratchpad %}Yes{%else%}No{% endif %}.
-{{suffix}}
+Question: {{question}}
+Are followup questions needed here: Yes
+{{history}}
