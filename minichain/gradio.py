@@ -69,7 +69,7 @@ class Constructor:
     def fn(self, data: Dict[Block, Any]) -> Dict[Block, Any]:
         out: Dict[Block, Any] = {}
         for fn in self.fns:
-            out |= fn(data)
+            out = {**out, **fn(data)}
         return out
 
 
