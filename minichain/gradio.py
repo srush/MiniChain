@@ -103,15 +103,15 @@ def to_gradio_block(
                 value=open(base_prompt.template_file).read(),
                 elem_id="inner",
             )
-            btn = gr.Button("Modify Template")
-            if base_prompt.template_file is not None:
+            # btn = gr.Button("Modify Template")
+            # if base_prompt.template_file is not None:
 
-                def update_template(template: str) -> None:
-                    if base_prompt.template_file is not None:
-                        with open(base_prompt.template_file, "w") as doc:
-                            doc.write(template)
+            #     def update_template(template: str) -> None:
+            #         if base_prompt.template_file is not None:
+            #             with open(base_prompt.template_file, "w") as doc:
+            #                 doc.write(template)
 
-                btn.click(update_template, inputs=c)
+            #     btn.click(update_template, inputs=c)
 
     def update(data: Dict[Block, Any]) -> Dict[Block, Any]:
         prev_request_ = ""
