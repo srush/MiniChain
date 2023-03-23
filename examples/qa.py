@@ -57,12 +57,3 @@ gradio = show(qa,
 if __name__ == "__main__":
     gradio.launch()
 
-
-
-# # + tags=["hide_inp"]
-# QAPrompt().show(
-#     {"question": "Who won the race?", "docs": ["doc1", "doc2", "doc3"]}, "Joe Bob"
-# )
-# # -
-
-# show_log("qa.log")
