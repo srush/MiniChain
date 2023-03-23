@@ -24,7 +24,7 @@ gatsby.add_faiss_index("embeddings")
 @prompt(HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2"))
 def get_neighbors(model, inp, k=1):
     embedding = model(inp)
-    res = olympics.get_nearest_examples("embeddings", np.array(embedding), k)
+    res = gatsby.get_nearest_examples("embeddings", np.array(embedding), k)
     return res.examples["passages"]
 
 @prompt(OpenAI(),

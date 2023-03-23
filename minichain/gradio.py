@@ -139,7 +139,7 @@ def to_gradio_block(
         else:
             new_prompt = request_.prompt
 
-        if trials == 0:
+        if trials == 1:
             previous_trials = []
         else:
             trial_input_, trial_request_, trial_response_, trial_output_ = data[
