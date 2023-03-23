@@ -1,11 +1,30 @@
 import json
-from dataclasses import asdict, dataclass, is_dataclass, fields
-from itertools import count
-from typing import Any, Callable, Generic, List, Optional, Tuple, TypeVar, Union, Type, get_args, get_origin, Dict
+from dataclasses import asdict, dataclass, fields, is_dataclass
 from enum import Enum
-from eliot import start_action
-from jinja2 import Environment, FileSystemLoader, Template, PackageLoader,  select_autoescape
+from itertools import count
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
+from eliot import start_action
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    PackageLoader,
+    Template,
+    select_autoescape,
+)
 
 from .backend import Backend, MinichainContext, Request
 
@@ -43,30 +62,35 @@ def walk(x: Any) -> Any:
         return {y.name: walk(y.type) for y in fields(x)}
     return x.__name__
 
-def type_to_prompt(Out) -> str:
+
+def type_to_prompt(Out: type) -> str:
     tmp = env.get_template("type_prompt.pmpt.tpl")
     d = walk(Out)
     return tmp.render({"typ": d})
 
+
 def simple(model, **kwargs):  # type: ignore
     return model(kwargs)
 
+
 @dataclass
 class History:
-    prompt: "Prompt"
+    prompt: "Prompt[Input, Output, FnOutput]"
     inputs: List[Any]
+
 
 @dataclass
 class Fail:
     arg_num: int
     data: Any
-    
+
+
 @dataclass
 class Chain:
     # TODO: Add caching
     history: History
-    
-    def run(self, trial=0, data=None) -> Any:
+
+    def run(self, trial: int = 0, data: Any = None) -> Any:
         args = []
         count = []
         for inp in self.history.inputs:
@@ -79,12 +103,12 @@ class Chain:
             count[out.arg_num] += 1
             inp = self.history.inputs[out.arg_num]
             assert isinstance(inp, Chain)
-            args[out.arg_num] = inp.run(trial=count[out.arg_num],
-                                        data=out.data)
+            args[out.arg_num] = inp.run(trial=count[out.arg_num], data=out.data)
             out = self.history.prompt.expand(args, trial, data)
-            
-        return out 
-    
+
+        return out
+
+
 class Prompt(Generic[Input, Output, FnOutput]):
     counter = count()
 
@@ -160,12 +184,15 @@ class Prompt(Generic[Input, Output, FnOutput]):
             self.data = data
             self.run_log = None
 
-        def fail(self, argnum, data=None):
-            return Fail(argnum-1, data)
-            
+        def fail(self, argnum: int, data: Any = None) -> Fail:
+            return Fail(argnum - 1, data)
+
         def __call__(self, input_):
             assert self.run_log is None, "Only call `model` once per function"
-            if self.prompt.template is not None or self.prompt.template_file is not None:
+            if (
+                self.prompt.template is not None
+                or self.prompt.template_file is not None
+            ):
                 input_ = dict(**input_)
                 input_["_trial"] = self.trial
                 input_["_fail_data"] = self.data
@@ -174,8 +201,8 @@ class Prompt(Generic[Input, Output, FnOutput]):
             else:
                 result = input_
             self.run_log = self.prompt.run_verbose(result)
-            return self.run_log[-1]            
-    
+            return self.run_log[-1]
+
     def expand(self, args, trial=0, data=None):
         model = self.Model(self, trial, data)
         output = self.fn(model, *args)
@@ -186,9 +213,12 @@ class Prompt(Generic[Input, Output, FnOutput]):
                 MinichainContext.prompt_count[self._id] += 1
             count = MinichainContext.prompt_count[self._id]
             MinichainContext.prompt_store.setdefault((self._id, count), [])
-            MinichainContext.prompt_store[self._id, count].append((args, t[0], t[1], output))
+            MinichainContext.prompt_store[self._id, count].append(
+                (args, t[0], t[1], output)
+            )
         return output
-    
+
+
 def prompt(
     backend: Backend,
     parser: Union[str, Any] = "str",

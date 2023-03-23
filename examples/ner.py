@@ -40,21 +40,3 @@ gradio = show(ner,
 
 if __name__ == "__main__":
     gradio.launch()
-
-
-# View prompt examples.
-
-# + tags=["hide_inp"]
-# NERPrompt().show(
-#     {
-#         "input": "I went to New York",
-#         "domain": "Travel",
-#         "labels": ["City"]
-#     },
-#     '[{"T": "City", "E": "New York"}]',
-# )
-# # -
-
-# # View log.
-
-# minichain.show_log("ner.log")

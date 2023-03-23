@@ -32,12 +32,12 @@ def self_ask(model, state):
         return replace(state, next_query=res)
     elif out.startswith("So the final answer is:"):
         return replace(state, final_answer=res)
-    
+
 @prompt(Google())
 def google(model, state):
     if state.next_query is None:
         return state
-    
+
     result = model(state.next_query)
     return State(state.question,
                  state.history + "\nIntermediate answer: " + result + "\n")

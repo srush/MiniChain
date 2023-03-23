@@ -29,8 +29,8 @@ def math_demo(question):
     return python(math_prompt(question))
 
 # $
-    
-# + tags=["hide_inp"]    
+
+# + tags=["hide_inp"]
 gradio = show(math_demo,
               examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
                         "What is the sum of the 10 first positive integers?",],
@@ -43,4 +43,4 @@ gradio = show(math_demo,
 if __name__ == "__main__":
     gradio.launch()
 # -
-    
+

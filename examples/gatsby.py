@@ -50,11 +50,3 @@ gradio = show(gatsby,
               )
 if __name__ == "__main__":
     gradio.launch()
-
-
-
-# + tags=["hide_inp"]
-# QAPrompt().show({"question": "Who was Gatsby?", "docs": ["doc1", "doc2", "doc3"]}, "")
-# # -
-
-# show_log("gatsby.log")

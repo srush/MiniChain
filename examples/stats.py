@@ -37,7 +37,7 @@ class Player:
 @prompt(OpenAI(), template_file="stats.pmpt.tpl", parser="json")
 def stats(model, passage):
     out = model(dict(passage=passage, typ=type_to_prompt(Player)))
-    return [Player(**j) for j in out]  
+    return [Player(**j) for j in out]
 
 # $
 

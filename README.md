@@ -35,7 +35,7 @@ show(math_demo,
 ```
 
 
-* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)): Prompts are separated from code. 
+* Template ([math.pmpt.tpl](https://github.com/srush/MiniChain/blob/main/examples/math.pmpt.tpl)): Prompts are separated from code.
 
 ```
 ...
@@ -126,7 +126,7 @@ if color_prompt(adjective).run():
 ```
 
 We also include an argument `template_file` which assumes model uses template from the
-[Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language. 
+[Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language.
 This allows us to separate prompt text from the python code.
 
 ```python
@@ -137,9 +137,9 @@ def math_prompt(model, question):
 
 ### Visualization
 
-MiniChain has a built-in prompt visualization system using `Gradio`. 
-If you construct a function that calls a prompt chain you can visualize it 
-by calling `show` and `launch`. This can be done directly in a notebook as well. 
+MiniChain has a built-in prompt visualization system using `Gradio`.
+If you construct a function that calls a prompt chain you can visualize it
+by calling `show` and `launch`. This can be done directly in a notebook as well.
 
 ```python
 show(math_demo,
@@ -149,7 +149,7 @@ show(math_demo,
      out_type="markdown").launch()
 ```
 
-You can also get the full log the process by calling `set_minichain_log('chain_name')`. 
+You can also get the full log the process by calling `set_minichain_log('chain_name')`.
 
 ### Memory
 

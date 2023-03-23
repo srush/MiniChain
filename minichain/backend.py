@@ -38,8 +38,9 @@ class Mock(Backend):
         self.i += 1
         return self.answers[self.i % len(self.answers)]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Mocked Backend {self.answers}"
+
 
 class Google(Backend):
     def __init__(self) -> None:
@@ -47,6 +48,7 @@ class Google(Backend):
 
     def run(self, request: Request) -> str:
         from serpapi import GoogleSearch
+
         serpapi_key = os.environ.get("SERP_KEY")
         assert (
             serpapi_key
@@ -80,8 +82,9 @@ class Google(Backend):
             toret = ""
         return str(toret)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Google Search Backend"
+
 
 class Python(Backend):
     """Executes bash commands and returns the output."""
@@ -101,8 +104,9 @@ class Python(Backend):
         s = f.getvalue()
         return s
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Python-Backend"
+
 
 class Bash(Backend):
     """Executes bash commands and returns the output."""
@@ -130,8 +134,9 @@ class Bash(Backend):
             output = output.strip()
         return output
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Bash-Backend"
+
 
 class OpenAIBase(Backend):
     def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
@@ -142,8 +147,9 @@ class OpenAIBase(Backend):
             temperature=0,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"OpenAI Backend {self.options}"
+
 
 class OpenAI(OpenAIBase):
     def run(self, request: Request) -> str:
@@ -162,7 +168,7 @@ class OpenAI(OpenAIBase):
             # kstop=request.stop,
             # prompt=
             request.prompt,
-            stop_sequences=request.stop
+            stop_sequences=request.stop,
         )
         return str(ans)
 
@@ -261,9 +267,10 @@ class MinichainContext:
     name: str = ""
 
 
-def set_minichain_log(name):
+def set_minichain_log(name: str) -> None:
     to_file(open(f"{name}.log", "w"))
-    
+
+
 class MiniChain:
     """
     MiniChain session object with backends. Make backend by calling
@@ -292,8 +299,7 @@ class MiniChain:
         MinichainContext.prompt_store = {}
         MinichainContext.prompt_count = {}
         MinichainContext.name = ""
-        
-        
+
 
 def start_chain(name: str) -> MiniChain:
     """
