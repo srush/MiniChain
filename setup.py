@@ -43,6 +43,8 @@ setup(
     install_requires=[
         "manifest-ml",
         "datasets",
+        "gradio==3.21.0",
+        "faiss-cpu",
         "eliot",
         "eliot-tree",
         "google-search-results",
