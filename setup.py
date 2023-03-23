@@ -41,14 +41,14 @@ setup(
         "Topic :: Scientific/Engineering",
     ],
     install_requires=[
-        "async-openai",
+        "manifest-ml",
+        "datasets",
         "eliot",
         "eliot-tree",
         "google-search-results",
         "jinja2",
         "jinja2-highlight",
         "openai",
-        "parsita==1.7.1",
         "trio",
     ],
 )
