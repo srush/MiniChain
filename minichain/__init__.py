@@ -1,4 +1,5 @@
 from .backend import (
+    Backend,
     Bash,
     Google,
     HuggingFaceEmbed,
@@ -7,6 +8,7 @@ from .backend import (
     OpenAI,
     OpenAIEmbed,
     Python,
+    Request,
     set_minichain_log,
     start_chain,
 )
