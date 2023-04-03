@@ -139,12 +139,12 @@ class Bash(Backend):
 
 
 class OpenAIBase(Backend):
-    def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256) -> None:
+    def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256, temperature: float = 0.0) -> None:
         self.model = model
         self.options = dict(
             model=model,
             max_tokens=max_tokens,
-            temperature=0,
+            temperature=temperature,
         )
 
     def __repr__(self) -> str:
