@@ -3,6 +3,7 @@ from .backend import (
     Bash,
     Google,
     HuggingFaceEmbed,
+    Id,
     Manifest,
     Mock,
     OpenAI,
