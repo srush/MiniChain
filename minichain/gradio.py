@@ -252,7 +252,7 @@ def show(
         fields: The names of the field input to the prompt.
         initial_state: For stateful prompts, the initial value.
     """
-    fields = [arg for arg in inspect.getargspec(prompt).args if arg != "state"]
+    fields = [arg for arg in inspect.getfullargspec(prompt).args if arg != "state"]
     with gr.Blocks(css=CSS, theme=gr.themes.Monochrome()) as demo:
         # API Keys
         api_keys()
