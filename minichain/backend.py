@@ -87,7 +87,7 @@ class Google(Backend):
 
 
 class Python(Backend):
-    """Executes bash commands and returns the output."""
+    """Executes Python commands and returns the output."""
 
     def run(self, request: Request) -> str:
         """Run commands and return final output."""
