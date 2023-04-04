@@ -19,7 +19,7 @@ from minichain import prompt, show, HuggingFaceEmbed, OpenAI
 gatsby = datasets.load_from_disk("gatsby")
 gatsby.add_faiss_index("embeddings")
 
-# Fast KNN retieval prompt
+# Fast KNN retrieval prompt
 
 @prompt(HuggingFaceEmbed("sentence-transformers/all-mpnet-base-v2"))
 def get_neighbors(model, inp, k=1):
@@ -32,7 +32,7 @@ def get_neighbors(model, inp, k=1):
 def ask(model, query, neighbors):
     return model(dict(question=query, docs=neighbors))
 
-def gatsby(query):
+def gatsby_q(query):
     n = get_neighbors(query)
     return ask(query, n)
 
@@ -40,7 +40,7 @@ def gatsby(query):
 # $
 
 
-gradio = show(gatsby,
+gradio = show(gatsby_q,
               subprompts=[get_neighbors, ask],
               examples=["What did Gatsby do before he met Daisy?",
                         "What did the narrator do after getting back to Chicago?"],
