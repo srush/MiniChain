@@ -225,7 +225,8 @@ class Prompt(Generic[Input, Output, FnOutput]):
 
         def __call__(self, input_):
             for r in self.stream(input_):
-                return r
+                pass
+            return r
 
         def stream(self, input_):
             assert self.run_log is None, "Only call `model` once per function"

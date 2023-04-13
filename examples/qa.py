@@ -55,5 +55,5 @@ gradio = show(qa,
               code=open("qa.py", "r").read().split("$")[1].strip().strip("#").strip(),
               )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()
 

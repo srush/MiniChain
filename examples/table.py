@@ -2,6 +2,8 @@
 desc = """
 ### Table
 
+Example of extracting tables from a textual document. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srush/MiniChain/blob/master/examples/table.ipynb)
+
 """
 # -
 

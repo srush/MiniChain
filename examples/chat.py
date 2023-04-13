@@ -29,6 +29,9 @@ class State:
         memory = self.memory if len(self.memory) < MEMORY else self.memory[1:]
         return State(memory + [(self.human_input, response)])
 
+    def __str__(self):
+        return self.memory[-1][-1]
+
 # Chat prompt with memory
 
 @prompt(OpenAI(), template_file="chat.pmpt.tpl")
@@ -58,6 +61,6 @@ gradio = show(lambda command, state: chat_prompt(replace(state, human_input=comm
               code=open("chat.py", "r").read().split("$")[1].strip().strip("#").strip(),
 )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()
 
 

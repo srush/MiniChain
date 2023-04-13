@@ -41,6 +41,6 @@ gradio = show(math_demo,
               code=open("math_demo.py", "r").read().split("$")[1].strip().strip("#").strip(),
               )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()
 # -
 

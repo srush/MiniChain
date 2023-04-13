@@ -50,7 +50,7 @@ gradio = show(lambda passage: stats(passage),
               code=open("stats.py", "r").read().split("$")[1].strip().strip("#").strip(),
 )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()
 
 
 # ExtractionPrompt().show({"passage": "Harden had 10 rebounds."},

@@ -59,6 +59,6 @@ gradio = show(selfask,
               out_type="json"
               )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()
 
 

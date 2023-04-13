@@ -49,4 +49,4 @@ gradio = show(gatsby_q,
               code=open("gatsby.py", "r").read().split("$")[1].strip().strip("#").strip()
               )
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()

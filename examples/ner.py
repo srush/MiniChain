@@ -39,4 +39,4 @@ gradio = show(ner,
               )
 
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()

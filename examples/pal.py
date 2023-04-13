@@ -8,14 +8,19 @@ Chain for answering complex problems by code generation and execution. [![Open I
 
 # $
 
-from minichain import prompt, show, OpenAI, Python
+from minichain import prompt, show, OpenAIStream, Python
+import gradio as gr
 
-@prompt(OpenAI(), template_file="pal.pmpt.tpl")
+@prompt(OpenAIStream(), template_file="pal.pmpt.tpl", stream=True)
 def pal_prompt(model, question):
-    return model(dict(question=question))
+    out = ""
+    for t in model.stream(dict(question=question)):
+        out += t
+        yield out
 
-@prompt(Python())
+@prompt(Python(), block_input=lambda: gr.Code(language="python"))
 def python(model, inp):
+    print(inp)
     return float(model(inp + "\nprint(solution())"))
 
 def pal(question):
@@ -37,4 +42,4 @@ gradio = show(pal,
               )
 
 if __name__ == "__main__":
-    gradio.launch()
+    gradio.queue().launch()

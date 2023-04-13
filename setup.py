@@ -9,7 +9,7 @@ LIBNAME: str = "minichain"
 
 setup(
     name=LIBNAME,
-    version="0.2.1",
+    version="0.2.2",
     packages=find_packages(
         include=["minichain", "minichain*"],
         exclude=["examples", "docs", "test*"],
