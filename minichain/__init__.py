@@ -8,6 +8,7 @@ from .backend import (
     Mock,
     OpenAI,
     OpenAIEmbed,
+    OpenAIStream,
     Python,
     Request,
     set_minichain_log,

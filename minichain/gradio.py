@@ -5,10 +5,10 @@ from typing import Any, Callable, Dict, List, Set, Tuple, Union
 
 import gradio as gr
 from gradio.blocks import Block
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 from minichain import start_chain
 
+from .backend import MinichainContext
 from .base import Prompt
 
 CSS = """
@@ -16,19 +16,22 @@ CSS = """
 #response {border: 0px; background: #ffeec6}
 #prompt {border: 0px;background: aliceblue}
 #json {border: 0px}
-#result {border: 0px; background: #c5e0e5}
-#inner {margin: 10px; padding: 10px; font-size: 20px; }
-#inner textarea {border: 0px}
-div.gradio-container {color: black}
 span.head {font-size: 60pt; font-family: cursive;}
-body {
-  --text-sm: 15px;
-  --text-md: 20px;
-  --text-lg: 22px;
-  --input-text-size: 20px;
-  --section-text-size: 20px;
-}
+div.gradio-container {color: black}
+div.form {background: inherit}
+div.form div {background: inherit}
 """
+# #result {border: 0px; background: #c5e0e5}
+# #inner {margin: 10px; padding: 10px; font-size: 20px; }
+# #inner textarea {border: 0px}
+
+# body {
+#   --text-sm: 15px;
+#   --text-md: 20px;
+#   --text-lg: 22px;
+#   --input-text-size: 20px;
+#   --section-text-size: 20px;
+# }
 
 
 @dataclass
@@ -80,25 +83,30 @@ def to_gradio_block(
 ) -> Constructor:
 
     with gr.Accordion(label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt"):
-        if display_options.markdown:
-            prompt = gr.Markdown(label="", elem_id="inner")
+        if base_prompt.block_input is not None:
+            prompt = base_prompt.block_input()
+        elif hasattr(base_prompt.backend, "block_input"):
+            prompt = base_prompt.backend.block_input()
         else:
-            prompt = gr.Textbox(label="", elem_id="inner")
-    with gr.Accordion(label="💻", elem_id="response"):
-        if display_options.markdown:
-            result = gr.Markdown(label="", elem_id="inner")
-        else:
-            result = gr.Textbox(label="", elem_id="inner")
+            prompt = gr.Textbox(label="")
 
-    with gr.Accordion(label="...", elem_id="json", open=False):
-        backend = gr.Markdown(f"Backend: {base_prompt.backend}", elem_id="json")
+    with gr.Accordion(label="💻", elem_id="response"):
+        if base_prompt.block_output is not None:
+            result = base_prompt.block_output()
+        elif hasattr(base_prompt.backend, "block_output"):
+            result = base_prompt.backend.block_output()
+        else:
+            result = gr.Textbox(label="")
+
+    with gr.Accordion(label="...", elem_id="advanced", open=False):
+        gr.Markdown(f"Backend: {base_prompt.backend}", elem_id="json")
         input = gr.JSON(elem_id="json", label="Input")
         json = gr.JSON(elem_id="json", label="Output")
         trial = gr.JSON(elem_id="json", label="Previous Trial")
 
         if base_prompt.template_file:
             # gr.Markdown(f"<center>{base_prompt.template_file}</center>")
-            c = gr.Code(
+            gr.Code(
                 label=f"Template: {base_prompt.template_file}",
                 value=open(base_prompt.template_file).read(),
                 elem_id="inner",
@@ -115,6 +123,9 @@ def to_gradio_block(
 
     def update(data: Dict[Block, Any]) -> Dict[Block, Any]:
         prev_request_ = ""
+        if (base_prompt._id, i) not in data[all_data]:
+            return {}
+
         if (base_prompt._id, i - 1) in data[all_data]:
             prev_request_ = data[all_data][base_prompt._id, i - 1][-1][1].prompt
         trials = len(data[all_data][base_prompt._id, i])
@@ -126,7 +137,7 @@ def to_gradio_block(
             return s
 
         def mark(s: Any) -> Any:
-            return s  # f"```text\n{s}\n```"
+            return str(s)  # f"```text\n{s}\n```"
 
         j = 0
         for (a, b) in zip(request_.prompt, prev_request_):
@@ -154,8 +165,8 @@ def to_gradio_block(
         ret = {
             input: format(input_),
             prompt: mark(new_prompt),
-            result: mark(response_),
-            json: format(output_),
+            result: mark(output_),
+            json: format(response_),
             trial: previous_trials,
         }
         return ret
@@ -241,7 +252,7 @@ def show(
     keys: Set[str] = {"OPENAI_API_KEY"},
     description: str = "",
     code: str = "",
-    templates: List[str] = [],
+    css="",
 ) -> gr.Blocks:
     """
     Constructs a gradio component to show a prompt chain.
@@ -249,11 +260,20 @@ def show(
     Args:
         prompt: A prompt or prompt chain to display.
         examples: A list of example inputs, either string or tuples of fields
+        subprompts: The `Prompt` objects to display.
         fields: The names of the field input to the prompt.
         initial_state: For stateful prompts, the initial value.
+        out_type: type of final output
+        keys: user keys required
+        description: description of the model
+        code: code to display
+        css : additional css
+
+    Returns:
+        Gradio block
     """
     fields = [arg for arg in inspect.getfullargspec(prompt).args if arg != "state"]
-    with gr.Blocks(css=CSS, theme=gr.themes.Monochrome()) as demo:
+    with gr.Blocks(css=CSS + "\n" + css, theme=gr.themes.Monochrome()) as demo:
         # API Keys
         api_keys()
 
@@ -291,15 +311,15 @@ def show(
             if initial_state is not None:
                 prompt_inputs["state"] = data[state]
 
-            with start_chain("temp") as r:
-                output = prompt(**prompt_inputs).run()
-            # except Exception as inst:
-            #     print(inst)
-            #     gr.Error(str(inst))
-            #     return {}
-            data[all_data] = dict(r.prompt_store)
-            data[final_output] = output
-            return constructor.fn(data)
+            with start_chain("temp"):
+
+                for output in prompt(**prompt_inputs).run_gen():
+                    data[all_data] = dict(MinichainContext.prompt_store)
+                    data[final_output] = output
+                    yield constructor.fn(data)
+                    if output is not None:
+                        break
+            yield constructor.fn(data)
 
         query_btn.click(run, inputs=constructor.inputs, outputs=constructor.outputs)
 

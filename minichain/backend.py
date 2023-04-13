@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from dataclasses import dataclass
 from types import TracebackType
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
@@ -17,6 +18,12 @@ class Request:
 
 
 class Backend:
+    needs_request = True
+
+    @property
+    def description(self):
+        return ""
+
     def run(self, request: Request) -> str:
         raise NotImplementedError
 
@@ -37,6 +44,13 @@ class Mock(Backend):
     def run(self, request: Request) -> str:
         self.i += 1
         return self.answers[self.i % len(self.answers)]
+
+    def run_stream(self, request: Request) -> str:
+        self.i += 1
+        result = self.answers[self.i % len(self.answers)]
+        for c in result:
+            yield c
+            time.sleep(10)
 
     def __repr__(self) -> str:
         return f"Mocked Backend {self.answers}"
@@ -83,7 +97,7 @@ class Google(Backend):
         return str(toret)
 
     def __repr__(self) -> str:
-        return f"Google Search Backend"
+        return "Google Search Backend"
 
 
 class Python(Backend):
@@ -139,7 +153,12 @@ class Bash(Backend):
 
 
 class OpenAIBase(Backend):
-    def __init__(self, model: str = "text-davinci-003", max_tokens: int = 256, temperature: float = 0.0) -> None:
+    def __init__(
+        self,
+        model: str = "text-davinci-003",
+        max_tokens: int = 256,
+        temperature: float = 0.0,
+    ) -> None:
         self.model = model
         self.options = dict(
             model=model,
@@ -149,6 +168,32 @@ class OpenAIBase(Backend):
 
     def __repr__(self) -> str:
         return f"OpenAI Backend {self.options}"
+
+
+class OpenAIStream:
+    def __init__(self, answers: List[str] = []):
+        pass
+
+    def run_stream(self, prompt):
+        import openai
+
+        self.api_key = os.environ.get("OPENAI_API_KEY")
+        assert (
+            self.api_key
+        ), "Need an OPENAI_API_KEY. Get one here https://openai.com/api/"
+        openai.api_key = self.api_key
+
+        for chunk in openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            stream=True,
+        ):
+            content = chunk["choices"][0].get("delta", {}).get("content")
+            if content is not None:
+                yield content
+
+    def __repr__(self) -> str:
+        return "OpenAI Stream Backend"
 
 
 class OpenAI(OpenAIBase):

@@ -1,0 +1,31 @@
+You are a utility built to extract structured information from documents. You are returning a TSV table. Here are the headers .
+
+----
+{{type}}        {% for k in player_keys %}{{k[0]}}{{"\t" if not loop.last}}{% endfor %}
+----
+
+Return the rest of the table in TSV format. Here are some examples
+
+{% for example in examples %}
+Example
+---
+{{example.input}}
+---
+
+Output
+---
+{{example.output}}
+---
+{% endfor %}
+
+Article:
+----
+{{passage}}
+----
+
+All other values should be numbers or _.
+Only include numbers that appear explicitly in the passage below.
+If you cannot find the value in the table, output _. Most cells will be _.
+
+Ok, here is the correctly valid TSV with headers and nothing else. Remember only include values that are directly written in the article. Do not guess or combine rows.
+
