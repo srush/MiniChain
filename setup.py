@@ -9,7 +9,7 @@ LIBNAME: str = "minichain"
 
 setup(
     name=LIBNAME,
-    version="0.2.2",
+    version="0.2.3",
     packages=find_packages(
         include=["minichain", "minichain*"],
         exclude=["examples", "docs", "test*"],
@@ -43,7 +43,7 @@ setup(
     install_requires=[
         "manifest-ml",
         "datasets",
-        "gradio==3.21.0",
+        "gradio",
         "faiss-cpu",
         "eliot",
         "eliot-tree",
