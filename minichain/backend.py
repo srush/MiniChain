@@ -3,13 +3,14 @@ import subprocess
 import time
 from dataclasses import dataclass
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple
 
 import gradio as gr
 from eliot import start_action, to_file
 
 if TYPE_CHECKING:
     import manifest
+
 
 class Backend:
     @property
@@ -19,13 +20,16 @@ class Backend:
     def run(self, request: str) -> str:
         raise NotImplementedError
 
+    def run_stream(self, request: str) -> Iterator[str]:
+        raise NotImplementedError
+
     async def arun(self, request: str) -> str:
         return self.run(request)
 
-    def block_input(self):
+    def block_input(self) -> gr.Blocks:
         return gr.Textbox(show_label=False)
 
-    def block_output(self):
+    def block_output(self) -> gr.Blocks:
         return gr.Textbox(show_label=False)
 
 
@@ -48,7 +52,7 @@ class Mock(Backend):
         result = self.answers[self.i % len(self.answers)]
         for c in result:
             yield c
-            time.sleep(10)
+            time.sleep(0.1)
 
     def __repr__(self) -> str:
         return f"Mocked Backend {self.answers}"
@@ -101,12 +105,12 @@ class Google(Backend):
 class Python(Backend):
     """Executes Python commands and returns the output."""
 
-    def block_input(self):
+    def block_input(self) -> gr.Blocks:
         return gr.Code()
-    
-    def block_output(self):
+
+    def block_output(self) -> gr.Blocks:
         return gr.Code()
-    
+
     def run(self, request: str) -> str:
         """Run commands and return final output."""
         from contextlib import redirect_stdout
@@ -129,10 +133,10 @@ class Python(Backend):
 class Bash(Backend):
     """Executes bash commands and returns the output."""
 
-    def block_input(self):
+    def block_input(self) -> gr.Blocks:
         return gr.Code()
-    
-    def block_output(self):
+
+    def block_output(self) -> gr.Blocks:
         return gr.Code()
 
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
@@ -168,7 +172,7 @@ class OpenAIBase(Backend):
         model: str = "gpt-3.5-turbo",
         max_tokens: int = 256,
         temperature: float = 0.0,
-        stop = None
+        stop: Optional[List[str]] = None,
     ) -> None:
         self.model = model
         self.stop = stop
@@ -220,11 +224,10 @@ class OpenAI(OpenAIBase):
                 yield content
 
 
-
 class OpenAIEmbed(OpenAIBase):
-    def block_output(self):
+    def block_output(self) -> gr.Blocks:
         return gr.Textbox(label="Embedding")
-    
+
     def __init__(self, model: str = "text-embedding-ada-002", **kwargs: Any) -> None:
         super().__init__(model, **kwargs)
 
@@ -296,9 +299,24 @@ class Manifest(Backend):
         return self.client.run(request)  # type: ignore
 
 
+@dataclass
+class RunLog:
+    request: str = ""
+    response: Optional[str] = ""
+    output: str = ""
+    dynamic: int = 0
+
+
+@dataclass
+class PromptSnap:
+    input_: Any = ""
+    run_log: RunLog = RunLog()
+    output: Any = ""
+
+
 class MinichainContext:
     id_: int = 0
-    prompt_store: Dict[Tuple[int, int], Tuple[Any, str, str, Any]] = {}
+    prompt_store: Dict[Tuple[int, int], List[PromptSnap]] = {}
     prompt_count: Dict[int, int] = {}
     name: str = ""
 

@@ -47,7 +47,7 @@ def update(state, chat_output):
 def chat(command, state):
     state = replace(state, human_input=command)
     return update(state, chat_response(state))
-    
+
 # $
 
 examples = [

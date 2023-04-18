@@ -25,11 +25,11 @@ div.form div.block {padding: 0px; background: #fcfcfc}
 
 @dataclass
 class GradioConf:
-    block_input : Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
-    block_output : Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
-    postprocess_output: Callable[[Any], Any] =  lambda x: x
-    preprocess_input: Callable[[Any], Any] =  lambda x: x
-        
+    block_input: Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
+    block_output: Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
+    postprocess_output: Callable[[Any], Any] = lambda x: x
+    preprocess_input: Callable[[Any], Any] = lambda x: x
+
 
 @dataclass
 class HTML:
@@ -82,7 +82,9 @@ def to_gradio_block(
     prompts = []
     results = []
     bp = base_prompt
-    with gr.Accordion(label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt", visible=False) as accordion_in:
+    with gr.Accordion(
+        label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt", visible=False
+    ) as accordion_in:
         for backend in base_prompt.backend:
             if bp.gradio_conf is not None:
                 prompt = bp.gradio_conf.block_input()
@@ -132,9 +134,9 @@ def to_gradio_block(
                 ret[p] = gr.update(visible=False)
                 ret[r] = gr.update(visible=False)
             return ret
-        
+
         if (base_prompt._id, i - 1) in data[all_data]:
-            prev_request_ = data[all_data][base_prompt._id, i - 1].run_log.request
+            prev_request_ = data[all_data][base_prompt._id, i - 1][-1].run_log.request
 
         snap = data[all_data][base_prompt._id, i][-1]
         input_, request_, response_, output_ = (
@@ -153,20 +155,19 @@ def to_gradio_block(
             return str(s)  # f"```text\n{s}\n```"
 
         j = 0
-        print(request_, prev_request_)
         for (a, b) in zip(request_, prev_request_):
             if a != b:
                 break
             j += 1
 
         if base_prompt.gradio_conf is not None:
-            request = base_prompt.gradio_conf.preprocess_input(request_)
+            request_ = base_prompt.gradio_conf.preprocess_input(request_)
             output_ = base_prompt.gradio_conf.postprocess_output(output_)
-        if j > 30:
-            new_prompt = "...\n" + request_[j:]
-        else:
-            new_prompt = request_
-            
+        # if j > 30:
+        #     new_prompt = "...\n" + request_[j:]
+        # else:
+        new_prompt = request_
+
         ret = {
             input: format(input_),
             json: format(response_),
@@ -175,21 +176,21 @@ def to_gradio_block(
         }
         for j, (prompt, result) in enumerate(zip(prompts, results)):
             if j == snap.run_log.dynamic:
-                ret[prompt] = gr.update(
-                    value=new_prompt, visible=True
-                )
+                ret[prompt] = gr.update(value=new_prompt, visible=True)
                 if output_:
-                    ret[result] = gr.update(value=output_, visible=True)            
+                    ret[result] = gr.update(value=output_, visible=True)
                 else:
                     ret[result] = gr.update(visible=True)
             else:
                 ret[prompt] = gr.update(visible=False)
                 ret[result] = gr.update(visible=False)
-                
+
         return ret
 
     return Constructor(
-        [update], set(), {accordion_in, accordion_out, input, json} | set(prompts) | set(results)
+        [update],
+        set(),
+        {accordion_in, accordion_out, input, json} | set(prompts) | set(results),
     )
 
 
@@ -197,7 +198,7 @@ def chain_blocks(
     prompts: List[Prompt[Any, Any, Any]], show_advanced: bool = True
 ) -> Constructor:
     cons = Constructor()
-    count = {}
+    count: Dict[int, int] = {}
     for p in prompts:
         count.setdefault(p._id, 0)
         i = count[p._id]
@@ -273,8 +274,8 @@ def show(
     keys: Set[str] = {"OPENAI_API_KEY"},
     description: str = "",
     code: str = "",
-    css="",
-    show_advanced=True,
+    css: str = "",
+    show_advanced: bool = True,
 ) -> gr.Blocks:
     """
     Constructs a gradio component to show a prompt chain.
@@ -290,6 +291,7 @@ def show(
         description: description of the model
         code: code to display
         css : additional css
+        show_advanced : show the "..." advanced elements
 
     Returns:
         Gradio block
@@ -321,15 +323,15 @@ def show(
             )
 
         # Final Output result
-        with gr.Accordion(label="✔️", elem_id="result"):
-            typ = gr.JSON if out_type == "json" else gr.Markdown
-            output = typ(elem_id="inner")
+        # with gr.Accordion(label="✔️", elem_id="result"):
+        # typ = gr.JSON if out_type == "json" else gr.Markdown
+        # output = typ(elem_id="inner")
 
         def output_fn(data: Dict[Block, Any]) -> Dict[Block, Any]:
             final = data[final_output]
-            return {state: final, output: final}
+            return {state: final}  # output: final}
 
-        constructor = constructor.merge(Constructor([output_fn], set(), {output}))
+        constructor = constructor.merge(Constructor([output_fn], set(), set()))
 
         def run(data):  # type: ignore
             prompt_inputs = {k: data[v] for k, v in zip(fields, inputs)}
