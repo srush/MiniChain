@@ -14,7 +14,7 @@ A chat-like example for multi-turn chat with state. [![Open In Colab](https://co
 
 from dataclasses import dataclass, replace
 from typing import List, Tuple
-from minichain import OpenAI, prompt, show
+from minichain import OpenAI, prompt, show, transform, Mock
 
 # Generic stateful Memory
 
@@ -35,10 +35,18 @@ class State:
 # Chat prompt with memory
 
 @prompt(OpenAI(), template_file="chat.pmpt.tpl")
-def chat_prompt(model, state: State) -> State:
-    out = model(state)
-    result = out.split("Assistant:")[-1]
+def chat_response(model, state: State) -> State:
+    return model.stream(state)
+
+@transform()
+def update(state, chat_output):
+    result = chat_output.split("Assistant:")[-1]
     return state.push(result)
+
+
+def chat(command, state):
+    state = replace(state, human_input=command)
+    return update(state, chat_response(state))
 
 # $
 
@@ -52,9 +60,11 @@ examples = [
     "nvidia-smi"
 ]
 
-gradio = show(lambda command, state: chat_prompt(replace(state, human_input=command)),
+print(chat("ls", State([])).run())
+
+gradio = show(chat,
               initial_state=State([]),
-              subprompts=[chat_prompt],
+              subprompts=[chat_response],
               examples=examples,
               out_type="json",
               description=desc,

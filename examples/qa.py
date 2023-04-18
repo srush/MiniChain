@@ -12,7 +12,7 @@ Chain that answers questions with embeedding based retrieval. [![Open In Colab](
 
 import datasets
 import numpy as np
-from minichain import prompt, show, OpenAIEmbed, OpenAI
+from minichain import prompt, transform, show, OpenAIEmbed, OpenAI
 from manifest import Manifest
 
 # We use Hugging Face Datasets as the database by assigning
@@ -25,18 +25,20 @@ olympics.add_faiss_index("embeddings")
 # Fast KNN retieval prompt
 
 @prompt(OpenAIEmbed())
-def get_neighbors(model, inp, k):
-    embedding = model(inp)
-    res = olympics.get_nearest_examples("embeddings", np.array(embedding), k)
+def embed(model, inp):
+    return model(inp)
+
+@transform()
+def get_neighbors(inp, k):
+    res = olympics.get_nearest_examples("embeddings", np.array(inp), k)
     return res.examples["content"]
 
-@prompt(OpenAI(),
-        template_file="qa.pmpt.tpl")
+@prompt(OpenAI(), template_file="qa.pmpt.tpl")
 def get_result(model, query, neighbors):
     return model(dict(question=query, docs=neighbors))
 
 def qa(query):
-    n = get_neighbors(query, 3)
+    n = get_neighbors(embed(query), 3)
     return get_result(query, n)
 
 # $
@@ -50,7 +52,7 @@ questions = ["Who won the 2020 Summer Olympics men's high jump?",
 
 gradio = show(qa,
               examples=questions,
-              subprompts=[get_neighbors, get_result],
+              subprompts=[embed, get_result],
               description=desc,
               code=open("qa.py", "r").read().split("$")[1].strip().strip("#").strip(),
               )

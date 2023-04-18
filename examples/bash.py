@@ -16,11 +16,11 @@ from minichain import show, prompt, OpenAI, Bash
 
 @prompt(OpenAI(), template_file = "bash.pmpt.tpl")
 def cli_prompt(model, query):
-    x = model(dict(question=query))
-    return "\n".join(x.strip().split("\n")[1:-1])
+    return model(dict(question=query))
 
 @prompt(Bash())
 def bash_run(model, x):
+    x = "\n".join(x.strip().split("\n")[1:-1])
     return model(x)
 
 def bash(query):

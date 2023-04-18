@@ -7,15 +7,16 @@ A tiny library for coding with **large** language models. Check out the [MiniCha
 * Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)): Annotate Python functions that call language models.
 
 ```python
-@prompt(OpenAI(), template_file="math.pmpt.tpl")
+@prompt(OpenAI(), template_file="math.pmpt.tpl"
 def math_prompt(model, question):
     "Prompt to call GPT with a Jinja template"
     return model(dict(question=question))
 
-@prompt(Python())
+@prompt(Python(), template="import math\n{{code}}")
 def python(model, code):
     "Prompt to call Python interpreter"
-    return int(model(code))
+    code = "\n".join(code.strip().split("\n")[1:-1])
+    return model(dict(code=code))
 
 def math_demo(question):
     "Chain them together"
@@ -31,7 +32,7 @@ show(math_demo,
      examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
                "What is the sum of the 10 first positive integers?"],
      subprompts=[math_prompt, python],
-     out_type="markdown").launch()
+     out_type="markdown").queue().launch()
 ```
 
 
@@ -52,7 +53,7 @@ Code:
 * Installation
 
 ```bash
-pip install git+https://github.com/srush/MiniChain/
+pip install minichain
 export OPENAI_API_KEY="sk-***"
 ```
 
@@ -97,17 +98,22 @@ Mini-chain is based on annotating functions as prompts.
 ```python
 @prompt(OpenAI())
 def color_prompt(model, input):
-    response = model(f"Answer 'Yes' if this is a color, {input}. Answer:")
-    return out == "Yes"
+    return model(f"Answer 'Yes' if this is a color, {input}. Answer:")
 ```
 
 Prompt functions act like python functions, except they are lazy to access the result you need to call `run()`.
 
 ```python
-if color_prompt("blue").run():
+if color_prompt("blue").run() == "Yes":
     print("It's a color")
 ```
-Alternatively you can chain prompts together.
+Alternatively you can chain prompts together. Prompts are lazy, so if you want to manipulate them you need to add `@transform()` to your function. For example:
+
+```python
+@transform()
+def said_yes(input):
+    return input == "Yes"
+```
 
 ![image](https://user-images.githubusercontent.com/35882/221281771-3770be96-02ce-4866-a6f8-c458c9a11c6f.png)
 
@@ -120,10 +126,10 @@ def adjective_prompt(model, input):
 
 ```python
 adjective = adjective_prompt("rainbow")
-if color_prompt(adjective).run():
+if said_yes(color_prompt(adjective)).run():
     print("It's a color")
-
 ```
+
 
 We also include an argument `template_file` which assumes model uses template from the
 [Jinja](https://jinja.palletsprojects.com/en/3.1.x/templates/) language.
@@ -146,10 +152,9 @@ show(math_demo,
      examples=["What is the sum of the powers of 3 (3^i) that are smaller than 100?",
               "What is the sum of the 10 first positive integers?"],
      subprompts=[math_prompt, python],
-     out_type="markdown").launch()
+     out_type="markdown").queue().launch()
 ```
 
-You can also get the full log the process by calling `set_minichain_log('chain_name')`.
 
 ### Memory
 
@@ -170,9 +175,18 @@ class State:
         return State(memory + [(self.human_input, response)])
 ```
 
-See the full [Chat](https://srush.github.io/MiniChain/examples/chatgpt/) example.
+See the full Chat example.
 It keeps track of the last two responses that it has seen.
 
+### Tools and agents.
+
+MiniChain does not provide `agents` or `tools`. If you want that functionality you can use the `tool_num` argument of model which allows you to select from multiple different possible backends. It's easy to add new backends of your own (see the GradioExample).
+
+```python
+@prompt([Python(), Bash()])
+def math_prompt(model, input, lang):
+    return model(input, tool_num= 0 if lang == "python" else 1)
+```
 
 ### Documents and Embeddings
 

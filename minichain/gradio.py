@@ -19,19 +19,16 @@ CSS = """
 span.head {font-size: 60pt; font-family: cursive;}
 div.gradio-container {color: black}
 div.form {background: inherit}
-div.form div {background: inherit}
+div.form div.block {padding: 0px; background: #fcfcfc}
 """
-# #result {border: 0px; background: #c5e0e5}
-# #inner {margin: 10px; padding: 10px; font-size: 20px; }
-# #inner textarea {border: 0px}
 
-# body {
-#   --text-sm: 15px;
-#   --text-md: 20px;
-#   --text-lg: 22px;
-#   --input-text-size: 20px;
-#   --section-text-size: 20px;
-# }
+
+@dataclass
+class GradioConf:
+    block_input: Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
+    block_output: Callable[[], gr.Blocks] = lambda: gr.Textbox(show_label=False)
+    postprocess_output: Callable[[Any], Any] = lambda x: x
+    preprocess_input: Callable[[Any], Any] = lambda x: x
 
 
 @dataclass
@@ -80,56 +77,74 @@ def to_gradio_block(
     base_prompt: Prompt[Any, Any, Any],
     i: int,
     display_options: DisplayOptions = DisplayOptions(),
+    show_advanced: bool = True,
 ) -> Constructor:
+    prompts = []
+    results = []
+    bp = base_prompt
+    with gr.Accordion(
+        label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt", visible=False
+    ) as accordion_in:
+        for backend in base_prompt.backend:
+            if bp.gradio_conf is not None:
+                prompt = bp.gradio_conf.block_input()
+            elif hasattr(backend, "block_input"):
+                prompt = backend.block_input()
+            else:
+                prompt = GradioConf().block_input()
+            prompts.append(prompt)
 
-    with gr.Accordion(label=f"👩  Prompt: {str(base_prompt._fn)}", elem_id="prompt"):
-        if base_prompt.block_input is not None:
-            prompt = base_prompt.block_input()
-        elif hasattr(base_prompt.backend, "block_input"):
-            prompt = base_prompt.backend.block_input()
-        else:
-            prompt = gr.Textbox(label="")
+    with gr.Accordion(label="💻", elem_id="response", visible=False) as accordion_out:
+        for backend in base_prompt.backend:
+            if bp.gradio_conf is not None:
+                result = bp.gradio_conf.block_output()
+            elif hasattr(backend, "block_output"):
+                result = backend.block_output()
+            else:
+                result = GradioConf().block_output()
+            results.append(result)
 
-    with gr.Accordion(label="💻", elem_id="response"):
-        if base_prompt.block_output is not None:
-            result = base_prompt.block_output()
-        elif hasattr(base_prompt.backend, "block_output"):
-            result = base_prompt.backend.block_output()
-        else:
-            result = gr.Textbox(label="")
+        with gr.Accordion(label="...", open=False, visible=show_advanced):
+            gr.Markdown(f"Backend: {base_prompt.backend}", elem_id="json")
+            input = gr.JSON(elem_id="json", label="Input")
+            json = gr.JSON(elem_id="json", label="Output")
 
-    with gr.Accordion(label="...", elem_id="advanced", open=False):
-        gr.Markdown(f"Backend: {base_prompt.backend}", elem_id="json")
-        input = gr.JSON(elem_id="json", label="Input")
-        json = gr.JSON(elem_id="json", label="Output")
-        trial = gr.JSON(elem_id="json", label="Previous Trial")
+            if base_prompt.template_file:
+                gr.Code(
+                    label=f"Template: {base_prompt.template_file}",
+                    value=open(base_prompt.template_file).read(),
+                    elem_id="inner",
+                )
+                # btn = gr.Button("Modify Template")
+                # if base_prompt.template_file is not None:
 
-        if base_prompt.template_file:
-            # gr.Markdown(f"<center>{base_prompt.template_file}</center>")
-            gr.Code(
-                label=f"Template: {base_prompt.template_file}",
-                value=open(base_prompt.template_file).read(),
-                elem_id="inner",
-            )
-            # btn = gr.Button("Modify Template")
-            # if base_prompt.template_file is not None:
+                #     def update_template(template: str) -> None:
+                #         if base_prompt.template_file is not None:
+                #             with open(base_prompt.template_file, "w") as doc:
+                #                 doc.write(template)
 
-            #     def update_template(template: str) -> None:
-            #         if base_prompt.template_file is not None:
-            #             with open(base_prompt.template_file, "w") as doc:
-            #                 doc.write(template)
-
-            #     btn.click(update_template, inputs=c)
+                #     btn.click(update_template, inputs=c)
 
     def update(data: Dict[Block, Any]) -> Dict[Block, Any]:
+        "Update the prompt block"
         prev_request_ = ""
         if (base_prompt._id, i) not in data[all_data]:
-            return {}
+            ret = {}
+            for p, r in zip(prompts, results):
+                ret[p] = gr.update(visible=False)
+                ret[r] = gr.update(visible=False)
+            return ret
 
         if (base_prompt._id, i - 1) in data[all_data]:
-            prev_request_ = data[all_data][base_prompt._id, i - 1][-1][1].prompt
-        trials = len(data[all_data][base_prompt._id, i])
-        input_, request_, response_, output_ = data[all_data][base_prompt._id, i][-1]
+            prev_request_ = data[all_data][base_prompt._id, i - 1][-1].run_log.request
+
+        snap = data[all_data][base_prompt._id, i][-1]
+        input_, request_, response_, output_ = (
+            snap.input_,
+            snap.run_log.request,
+            snap.run_log.response,
+            snap.output,
+        )
 
         def format(s: Any) -> Any:
             if isinstance(s, str):
@@ -140,47 +155,54 @@ def to_gradio_block(
             return str(s)  # f"```text\n{s}\n```"
 
         j = 0
-        for (a, b) in zip(request_.prompt, prev_request_):
+        for (a, b) in zip(request_, prev_request_):
             if a != b:
                 break
             j += 1
 
-        if j > 30:
-            new_prompt = "...\n" + request_.prompt[j:]
-        else:
-            new_prompt = request_.prompt
+        if base_prompt.gradio_conf is not None:
+            request_ = base_prompt.gradio_conf.preprocess_input(request_)
+            output_ = base_prompt.gradio_conf.postprocess_output(output_)
+        # if j > 30:
+        #     new_prompt = "...\n" + request_[j:]
+        # else:
+        new_prompt = request_
 
-        if trials == 1:
-            previous_trials = []
-        else:
-            trial_input_, trial_request_, trial_response_, trial_output_ = data[
-                all_data
-            ][base_prompt._id, i][trials - 2]
-            previous_trials = {
-                "input": trial_input_,
-                "prompt": trial_request_.prompt,
-                "response": trial_response_,
-                "output": trial_output_,
-            }
         ret = {
             input: format(input_),
-            prompt: mark(new_prompt),
-            result: mark(output_),
             json: format(response_),
-            trial: previous_trials,
+            accordion_in: gr.update(visible=True),
+            accordion_out: gr.update(visible=bool(output_)),
         }
+        for j, (prompt, result) in enumerate(zip(prompts, results)):
+            if j == snap.run_log.dynamic:
+                ret[prompt] = gr.update(value=new_prompt, visible=True)
+                if output_:
+                    ret[result] = gr.update(value=output_, visible=True)
+                else:
+                    ret[result] = gr.update(visible=True)
+            else:
+                ret[prompt] = gr.update(visible=False)
+                ret[result] = gr.update(visible=False)
+
         return ret
 
-    return Constructor([update], set(), {input, prompt, result, json, trial})
+    return Constructor(
+        [update],
+        set(),
+        {accordion_in, accordion_out, input, json} | set(prompts) | set(results),
+    )
 
 
-def chain_blocks(prompts: List[Prompt[Any, Any, Any]]) -> Constructor:
+def chain_blocks(
+    prompts: List[Prompt[Any, Any, Any]], show_advanced: bool = True
+) -> Constructor:
     cons = Constructor()
-    count = {}
+    count: Dict[int, int] = {}
     for p in prompts:
         count.setdefault(p._id, 0)
         i = count[p._id]
-        cons = cons.merge(to_gradio_block(p, i))
+        cons = cons.merge(to_gradio_block(p, i, show_advanced=show_advanced))
         count[p._id] += 1
     return cons
 
@@ -252,7 +274,8 @@ def show(
     keys: Set[str] = {"OPENAI_API_KEY"},
     description: str = "",
     code: str = "",
-    css="",
+    css: str = "",
+    show_advanced: bool = True,
 ) -> gr.Blocks:
     """
     Constructs a gradio component to show a prompt chain.
@@ -268,6 +291,7 @@ def show(
         description: description of the model
         code: code to display
         css : additional css
+        show_advanced : show the "..." advanced elements
 
     Returns:
         Gradio block
@@ -292,19 +316,22 @@ def show(
         query_btn = gr.Button(label="Run")
         constructor = constructor.add_inputs(inputs)
 
-        # Intermediate prompt displays
-        constructor = constructor.merge(chain_blocks(subprompts))
+        with gr.Box():
+            # Intermediate prompt displays
+            constructor = constructor.merge(
+                chain_blocks(subprompts, show_advanced=show_advanced)
+            )
 
         # Final Output result
-        with gr.Accordion(label="✔️", elem_id="result"):
-            typ = gr.JSON if out_type == "json" else gr.Markdown
-            output = typ(elem_id="inner")
+        # with gr.Accordion(label="✔️", elem_id="result"):
+        # typ = gr.JSON if out_type == "json" else gr.Markdown
+        # output = typ(elem_id="inner")
 
         def output_fn(data: Dict[Block, Any]) -> Dict[Block, Any]:
             final = data[final_output]
-            return {state: final, output: final}
+            return {state: final}  # output: final}
 
-        constructor = constructor.merge(Constructor([output_fn], set(), {output}))
+        constructor = constructor.merge(Constructor([output_fn], set(), set()))
 
         def run(data):  # type: ignore
             prompt_inputs = {k: data[v] for k, v in zip(fields, inputs)}

@@ -3,37 +3,39 @@ import subprocess
 import time
 from dataclasses import dataclass
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple
 
+import gradio as gr
 from eliot import start_action, to_file
 
 if TYPE_CHECKING:
     import manifest
 
 
-@dataclass
-class Request:
-    prompt: str
-    stop: Optional[Sequence[str]] = None
-
-
 class Backend:
-    needs_request = True
-
     @property
-    def description(self):
+    def description(self) -> str:
         return ""
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         raise NotImplementedError
 
-    async def arun(self, request: Request) -> str:
+    def run_stream(self, request: str) -> Iterator[str]:
+        raise NotImplementedError
+
+    async def arun(self, request: str) -> str:
         return self.run(request)
+
+    def block_input(self) -> gr.Blocks:
+        return gr.Textbox(show_label=False)
+
+    def block_output(self) -> gr.Blocks:
+        return gr.Textbox(show_label=False)
 
 
 class Id(Backend):
-    def run(self, request: Request) -> str:
-        return request.prompt
+    def run(self, request: str) -> str:
+        return request
 
 
 class Mock(Backend):
@@ -41,16 +43,16 @@ class Mock(Backend):
         self.i = -1
         self.answers = answers
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         self.i += 1
         return self.answers[self.i % len(self.answers)]
 
-    def run_stream(self, request: Request) -> str:
+    def run_stream(self, request: str) -> Iterator[str]:
         self.i += 1
         result = self.answers[self.i % len(self.answers)]
         for c in result:
             yield c
-            time.sleep(10)
+            time.sleep(0.1)
 
     def __repr__(self) -> str:
         return f"Mocked Backend {self.answers}"
@@ -60,7 +62,7 @@ class Google(Backend):
     def __init__(self) -> None:
         pass
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         from serpapi import GoogleSearch
 
         serpapi_key = os.environ.get("SERP_KEY")
@@ -72,7 +74,7 @@ class Google(Backend):
         params = {
             "api_key": self.serpapi_key,
             "engine": "google",
-            "q": request.prompt,
+            "q": request,
             "google_domain": "google.com",
             "gl": "us",
             "hl": "en",
@@ -103,12 +105,18 @@ class Google(Backend):
 class Python(Backend):
     """Executes Python commands and returns the output."""
 
-    def run(self, request: Request) -> str:
+    def block_input(self) -> gr.Blocks:
+        return gr.Code()
+
+    def block_output(self) -> gr.Blocks:
+        return gr.Code()
+
+    def run(self, request: str) -> str:
         """Run commands and return final output."""
         from contextlib import redirect_stdout
         from io import StringIO
 
-        p = request.prompt.strip()
+        p = request.strip()
         if p.startswith("```"):
             p = "\n".join(p.strip().split("\n")[1:-1])
 
@@ -125,16 +133,22 @@ class Python(Backend):
 class Bash(Backend):
     """Executes bash commands and returns the output."""
 
+    def block_input(self) -> gr.Blocks:
+        return gr.Code()
+
+    def block_output(self) -> gr.Blocks:
+        return gr.Code()
+
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
         """Initialize with stripping newlines."""
         self.strip_newlines = strip_newlines
         self.return_err_output = return_err_output
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         """Run commands and return final output."""
         try:
             output = subprocess.run(
-                request.prompt,
+                request,
                 shell=True,
                 check=True,
                 stdout=subprocess.PIPE,
@@ -155,11 +169,13 @@ class Bash(Backend):
 class OpenAIBase(Backend):
     def __init__(
         self,
-        model: str = "text-davinci-003",
+        model: str = "gpt-3.5-turbo",
         max_tokens: int = 256,
         temperature: float = 0.0,
+        stop: Optional[List[str]] = None,
     ) -> None:
         self.model = model
+        self.stop = stop
         self.options = dict(
             model=model,
             max_tokens=max_tokens,
@@ -170,11 +186,25 @@ class OpenAIBase(Backend):
         return f"OpenAI Backend {self.options}"
 
 
-class OpenAIStream:
-    def __init__(self, answers: List[str] = []):
-        pass
+class OpenAI(OpenAIBase):
+    def run(self, request: str) -> str:
+        import manifest
 
-    def run_stream(self, prompt):
+        chat = {"gpt-4", "gpt-3.5-turbo"}
+        manifest = manifest.Manifest(
+            client_name="openaichat" if self.model in chat else "openai",
+            max_tokens=self.options["max_tokens"],
+            cache_name="sqlite",
+            cache_connection=f"{MinichainContext.name}",
+        )
+
+        ans = manifest.run(
+            request,
+            stop_sequences=self.stop,
+        )
+        return str(ans)
+
+    def run_stream(self, prompt: str) -> Iterator[str]:
         import openai
 
         self.api_key = os.environ.get("OPENAI_API_KEY")
@@ -184,60 +214,24 @@ class OpenAIStream:
         openai.api_key = self.api_key
 
         for chunk in openai.ChatCompletion.create(
-            model="gpt-4",
+            model=self.model,
             messages=[{"role": "user", "content": prompt}],
             stream=True,
+            stop=self.stop,
         ):
             content = chunk["choices"][0].get("delta", {}).get("content")
             if content is not None:
                 yield content
 
-    def __repr__(self) -> str:
-        return "OpenAI Stream Backend"
-
-
-class OpenAI(OpenAIBase):
-    def run(self, request: Request) -> str:
-        import manifest
-
-        manifest = manifest.Manifest(
-            client_name="openai",
-            max_tokens=self.options["max_tokens"],
-            cache_name="sqlite",
-            cache_connection=f"{MinichainContext.name}",
-        )
-
-        ans = manifest.run(
-            # openai.Completion.create(
-            # **self.options,
-            # kstop=request.stop,
-            # prompt=
-            request.prompt,
-            stop_sequences=request.stop,
-        )
-        return str(ans)
-
-    async def arun(self, request: Request) -> str:
-        import async_openai
-
-        self.api_key = os.environ.get("OPENAI_API_KEY")
-        async_openai.OpenAI.configure(
-            api_key=self.api_key,
-            debug_enabled=False,
-        )
-        ans = await async_openai.OpenAI.Completions.async_create(
-            **self.options,
-            stop=request.stop,
-            prompt=request.prompt,
-        )
-        return str(ans.choices[0].text)
-
 
 class OpenAIEmbed(OpenAIBase):
+    def block_output(self) -> gr.Blocks:
+        return gr.Textbox(label="Embedding")
+
     def __init__(self, model: str = "text-embedding-ada-002", **kwargs: Any) -> None:
         super().__init__(model, **kwargs)
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         import openai
 
         self.api_key = os.environ.get("OPENAI_API_KEY")
@@ -248,7 +242,7 @@ class OpenAIEmbed(OpenAIBase):
 
         ans = openai.Embedding.create(
             engine=self.model,
-            input=request.prompt,
+            input=request,
         )
         return ans["data"][0]["embedding"]  # type: ignore
 
@@ -259,7 +253,7 @@ class HuggingFaceBase(Backend):
 
 
 class HuggingFace(HuggingFaceBase):
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
 
@@ -269,12 +263,12 @@ class HuggingFace(HuggingFaceBase):
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="text-generation"
         )
-        response = self.client(inputs=request.prompt)
+        response = self.client(inputs=request)
         return response  # type: ignore
 
 
 class HuggingFaceEmbed(HuggingFaceBase):
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
 
         from huggingface_hub.inference_api import InferenceApi
 
@@ -284,7 +278,7 @@ class HuggingFaceEmbed(HuggingFaceBase):
         self.client = InferenceApi(
             token=self.api_key, repo_id=self.model, task="feature-extraction"
         )
-        response = self.client(inputs=request.prompt)
+        response = self.client(inputs=request)
         return response  # type: ignore
 
 
@@ -293,7 +287,7 @@ class Manifest(Backend):
         "Client from [Manifest-ML](https://github.com/HazyResearch/manifest)."
         self.client = client
 
-    def run(self, request: Request) -> str:
+    def run(self, request: str) -> str:
         try:
             import manifest
         except ImportError:
@@ -302,12 +296,27 @@ class Manifest(Backend):
             self.client, manifest.Manifest
         ), "Client must be a `manifest.Manifest` instance."
 
-        return self.client.run(request.prompt)  # type: ignore
+        return self.client.run(request)  # type: ignore
+
+
+@dataclass
+class RunLog:
+    request: str = ""
+    response: Optional[str] = ""
+    output: str = ""
+    dynamic: int = 0
+
+
+@dataclass
+class PromptSnap:
+    input_: Any = ""
+    run_log: RunLog = RunLog()
+    output: Any = ""
 
 
 class MinichainContext:
     id_: int = 0
-    prompt_store: Dict[Tuple[int, int], Tuple[Any, Request, str, Any]] = {}
+    prompt_store: Dict[Tuple[int, int], List[PromptSnap]] = {}
     prompt_count: Dict[int, int] = {}
     name: str = ""
 
