@@ -11,7 +11,7 @@ desc = """
 
 from dataclasses import dataclass, replace
 from typing import Optional
-from minichain import prompt, show, OpenAI, Google
+from minichain import prompt, show, OpenAI, Google, transform
 
 
 @dataclass
@@ -22,12 +22,14 @@ class State:
     final_answer: Optional[str] = None
 
 
-@prompt(OpenAI(),
-        template_file = "selfask.pmpt.tpl",
-        stop_template = "\nIntermediate answer:")
+@prompt(OpenAI(stop="\nIntermediate answer:"),
+        template_file = "selfask.pmpt.tpl")
 def self_ask(model, state):
-    out = model(state)
-    res = out.split(":", 1)[1]
+    return model(state)
+
+@transform()
+def next_step(ask):
+    res = ask.split(":", 1)[1]
     if out.startswith("Follow up:"):
         return replace(state, next_query=res)
     elif out.startswith("So the final answer is:"):
@@ -36,17 +38,22 @@ def self_ask(model, state):
 @prompt(Google())
 def google(model, state):
     if state.next_query is None:
-        return state
+        return ""
 
-    result = model(state.next_query)
+    return model(state.next_query)
+
+@transform()
+def update(state, result):
+    if not result:
+        return state
     return State(state.question,
                  state.history + "\nIntermediate answer: " + result + "\n")
 
 def selfask(question):
     state = State(question)
     for i in range(3):
-        state = self_ask(state)
-        state = google(state)
+        state = next_step(self_ask(state))
+        state = update(google(state))
     return state
 
 # $

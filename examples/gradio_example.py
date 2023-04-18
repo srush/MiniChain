@@ -10,24 +10,25 @@ Examples using the gradio tool [![Open In Colab](https://colab.research.google.c
 
 # $
 
-from minichain import show, prompt, OpenAI, OpenAIStream
+from minichain import show, prompt, OpenAI, GradioConf
 import gradio as gr
 from gradio_tools.tools import StableDiffusionTool, ImageCaptioningTool
 
-@prompt(OpenAIStream(), stream=True)
+@prompt(OpenAI())
 def picture(model, query):
-    out = ""
-    for r in model.stream(query):
-        out += r
-        yield out
+    return model(query)
 
-@prompt(StableDiffusionTool(), stream=True, block_input=lambda: gr.Textbox(label=""))
+@prompt(StableDiffusionTool(),
+        gradio_conf=GradioConf(
+            block_output= lambda: gr.Image(),
+            block_input= lambda: gr.Textbox(show_label=False)))
 def gen(model, query):
-    for r in model.stream(query):
-        yield "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
-    yield r
+    return model(query)
 
-@prompt(ImageCaptioningTool(), block_output=lambda: gr.Textbox(label=""))
+@prompt(ImageCaptioningTool(),
+        gradio_conf=GradioConf(
+            block_input= lambda: gr.Image(),
+            block_output=lambda: gr.Textbox(show_label=False)))
 def caption(model, img_src):
     return model(img_src)
 
@@ -43,8 +44,7 @@ gradio = show(gradio_example,
                         'Describe a one-sentence scene happening on the moon.'],
               out_type="markdown",
               description=desc,
-              css="#advanced {display: none}"
-
+              show_advanced=False
               )
 if __name__ == "__main__":
     gradio.queue().launch()

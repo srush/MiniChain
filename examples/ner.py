@@ -11,11 +11,16 @@ Chain that does named entity recognition with arbitrary labels. [![Open In Colab
 
 # $
 
-from minichain import prompt, show, OpenAI
+from minichain import prompt, transform, show, OpenAI
+import json
 
-@prompt(OpenAI(), template_file = "ner.pmpt.tpl", parser="json")
+@prompt(OpenAI(), template_file = "ner.pmpt.tpl")
 def ner_extract(model, kwargs):
     return model(kwargs)
+
+@transform()
+def to_json(chat_output):
+    return json.loads(chat_output)
 
 @prompt(OpenAI())
 def team_describe(model, inp):
@@ -25,7 +30,7 @@ def team_describe(model, inp):
 
 
 def ner(text_input, labels, domain):
-    extract = ner_extract(dict(text_input=text_input, labels=labels, domain=domain))
+    extract = to_json(ner_extract(dict(text_input=text_input, labels=labels, domain=domain)))
     return team_describe(extract)
 
 
