@@ -21,7 +21,7 @@ class Backend:
         raise NotImplementedError
 
     def run_stream(self, request: str) -> Iterator[str]:
-        raise NotImplementedError
+        yield self.run(request)
 
     async def arun(self, request: str) -> str:
         return self.run(request)
