@@ -347,7 +347,6 @@ def show(
                     if output is not None:
                         break
             yield constructor.fn(data)
-        print(constructor.outputs)
         query_btn.click(run, inputs=constructor.inputs, outputs=constructor.outputs)
 
         if code:
