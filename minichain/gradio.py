@@ -88,8 +88,8 @@ def to_gradio_block(
         for backend in base_prompt.backend:
             if bp.gradio_conf is not None:
                 prompt = bp.gradio_conf.block_input()
-            elif hasattr(backend, "block_input"):
-                prompt = backend.block_input()
+            elif hasattr(backend, "_block_input"):
+                prompt = backend._block_input(gr)
             else:
                 prompt = GradioConf().block_input()
             prompts.append(prompt)
@@ -98,8 +98,8 @@ def to_gradio_block(
         for backend in base_prompt.backend:
             if bp.gradio_conf is not None:
                 result = bp.gradio_conf.block_output()
-            elif hasattr(backend, "block_output"):
-                result = backend.block_output()
+            elif hasattr(backend, "_block_output"):
+                result = backend._block_output(gr)
             else:
                 result = GradioConf().block_output()
             results.append(result)
@@ -347,7 +347,7 @@ def show(
                     if output is not None:
                         break
             yield constructor.fn(data)
-
+        print(constructor.outputs)
         query_btn.click(run, inputs=constructor.inputs, outputs=constructor.outputs)
 
         if code:
