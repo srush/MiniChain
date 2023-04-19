@@ -26,10 +26,10 @@ class Backend:
     async def arun(self, request: str) -> str:
         return self.run(request)
 
-    def block_input(self) -> gr.Blocks:
+    def _block_input(self) -> gr.Blocks:
         return gr.Textbox(show_label=False)
 
-    def block_output(self) -> gr.Blocks:
+    def _block_output(self) -> gr.Blocks:
         return gr.Textbox(show_label=False)
 
 
@@ -105,10 +105,10 @@ class Google(Backend):
 class Python(Backend):
     """Executes Python commands and returns the output."""
 
-    def block_input(self) -> gr.Blocks:
+    def _block_input(self) -> gr.Blocks:
         return gr.Code()
 
-    def block_output(self) -> gr.Blocks:
+    def _block_output(self) -> gr.Blocks:
         return gr.Code()
 
     def run(self, request: str) -> str:
@@ -133,10 +133,10 @@ class Python(Backend):
 class Bash(Backend):
     """Executes bash commands and returns the output."""
 
-    def block_input(self) -> gr.Blocks:
+    def _block_input(self) -> gr.Blocks:
         return gr.Code()
 
-    def block_output(self) -> gr.Blocks:
+    def _block_output(self) -> gr.Blocks:
         return gr.Code()
 
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
@@ -225,7 +225,7 @@ class OpenAI(OpenAIBase):
 
 
 class OpenAIEmbed(OpenAIBase):
-    def block_output(self) -> gr.Blocks:
+    def _block_output(self) -> gr.Blocks:
         return gr.Textbox(label="Embedding")
 
     def __init__(self, model: str = "text-embedding-ada-002", **kwargs: Any) -> None:
