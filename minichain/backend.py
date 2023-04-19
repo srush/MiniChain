@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from types import TracebackType
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple
 
-import gradio as gr
 from eliot import start_action, to_file
 
 if TYPE_CHECKING:
@@ -26,10 +25,10 @@ class Backend:
     async def arun(self, request: str) -> str:
         return self.run(request)
 
-    def _block_input(self) -> gr.Blocks:
+    def _block_input(self, gr):  # type: ignore
         return gr.Textbox(show_label=False)
 
-    def _block_output(self) -> gr.Blocks:
+    def _block_output(self, gr):  # type: ignore
         return gr.Textbox(show_label=False)
 
 
@@ -105,10 +104,10 @@ class Google(Backend):
 class Python(Backend):
     """Executes Python commands and returns the output."""
 
-    def _block_input(self) -> gr.Blocks:
+    def _block_input(self, gr):  # type: ignore
         return gr.Code()
 
-    def _block_output(self) -> gr.Blocks:
+    def _block_output(self, gr):  # type: ignore
         return gr.Code()
 
     def run(self, request: str) -> str:
@@ -133,10 +132,10 @@ class Python(Backend):
 class Bash(Backend):
     """Executes bash commands and returns the output."""
 
-    def _block_input(self) -> gr.Blocks:
+    def _block_input(self, gr):  # type: ignore
         return gr.Code()
 
-    def _block_output(self) -> gr.Blocks:
+    def _block_output(self, gr):  # type: ignore
         return gr.Code()
 
     def __init__(self, strip_newlines: bool = False, return_err_output: bool = False):
@@ -225,7 +224,7 @@ class OpenAI(OpenAIBase):
 
 
 class OpenAIEmbed(OpenAIBase):
-    def _block_output(self) -> gr.Blocks:
+    def _block_output(self, gr):  # type: ignore
         return gr.Textbox(label="Embedding")
 
     def __init__(self, model: str = "text-embedding-ada-002", **kwargs: Any) -> None:
