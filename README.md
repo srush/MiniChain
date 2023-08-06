@@ -7,7 +7,7 @@ A tiny library for coding with **large** language models. Check out the [MiniCha
 * Code ([math_demo.py](https://github.com/srush/MiniChain/blob/main/examples/math_demo.py)): Annotate Python functions that call language models.
 
 ```python
-@prompt(OpenAI(), template_file="math.pmpt.tpl"
+@prompt(OpenAI(), template_file="math.pmpt.tpl")
 def math_prompt(model, question):
     "Prompt to call GPT with a Jinja template"
     return model(dict(question=question))
