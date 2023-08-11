@@ -85,7 +85,7 @@ notably: [LangChain](https://langchain.readthedocs.io/en/latest/),
 [GPTIndex](https://gpt-index.readthedocs.io/en/latest/reference/prompts.html).
 These library are useful, but they are extremely large and
 complex. MiniChain aims to implement the core prompt chaining
-functionality in a tiny digestable library.
+functionality in a tiny digestible library.
 
 
 ## Tutorial
