@@ -56,7 +56,7 @@ for i in range(few_shot_examples):
 def make_html(out):
     return "<table><tr><td>" + out.replace("\t", "</td><td>").replace("\n", "</td></tr><tr><td>")  + "</td></td></table>"
 
-@prompt(OpenAI(), template_file="table.pmpt.txt",
+@prompt(OpenAI("gpt-4"), template_file="table.pmpt.txt",
         gradio_conf=GradioConf(block_output=gr.HTML,
                                postprocess_output = make_html)
         )

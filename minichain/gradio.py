@@ -313,10 +313,10 @@ def show(
         # Build the top query box with one input for each field.
         inputs = list([gr.Textbox(label=f) for f in fields])
         examples = gr.Examples(examples=examples, inputs=inputs)
-        query_btn = gr.Button(label="Run")
+        query_btn = gr.Button(value="Run")
         constructor = constructor.add_inputs(inputs)
 
-        with gr.Box():
+        with gr.Group():
             # Intermediate prompt displays
             constructor = constructor.merge(
                 chain_blocks(subprompts, show_advanced=show_advanced)

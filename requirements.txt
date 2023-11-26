@@ -4,10 +4,10 @@ eliot
 eliot-tree
 faiss-cpu
 google-search-results
-gradio==3.21.0
+gradio==4.7
 huggingface-hub
 jinja2
 jinja2-highlight
-openai
+openai==0.28
 parsita==1.7.1
 trio
