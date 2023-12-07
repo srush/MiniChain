@@ -50,7 +50,7 @@ setup(
         "google-search-results",
         "jinja2",
         "jinja2-highlight",
-        "openai",
+        "openai==0.28",
         "trio",
     ],
 )
